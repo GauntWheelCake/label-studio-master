@@ -27,13 +27,13 @@ from projects.models import Project
 
 logger = logging.getLogger(__name__)
 
-
+# 创建列表任务
 @method_decorator(name='post', decorator=swagger_auto_schema(
         tags=['Tasks'],
         operation_summary='Create task',
         operation_description='Create a new labeling task in Label Studio.',
         request_body=TaskSerializer))
-class TaskListAPI(generics.ListCreateAPIView):
+class TaskListAPI(generics.ListCreateAPIView): 
     parser_classes = (JSONParser, FormParser, MultiPartParser)
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
@@ -52,7 +52,7 @@ class TaskListAPI(generics.ListCreateAPIView):
     def post(self, request, *args, **kwargs):
         return super(TaskListAPI, self).post(request, *args, **kwargs)
 
-
+# 获取、更新、删除任务
 @method_decorator(name='get', decorator=swagger_auto_schema(
         tags=['Tasks'],
         operation_summary='Get task',
@@ -117,7 +117,62 @@ class TaskAPI(generics.RetrieveUpdateDestroyAPIView):
     @swagger_auto_schema(auto_schema=None)
     def put(self, request, *args, **kwargs):
         return super(TaskAPI, self).put(request, *args, **kwargs)
+    
+# === 审核判定 API（Task 级动作）===
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 
+from .models import Task, Annotation
+
+class TaskReviewDecisionAPI(APIView):
+    """
+    POST /api/tasks/<task_id>/review-decision
+    body: {"decision": "approved" | "rejected", "comment": "<可选；当 rejected 时必填>"}
+
+    业务规则：
+      - 任务必须已有“有效标注”（未取消且 result 非空）
+      - decision 必须是 approved 或 rejected
+      - rejected 时必须填写 comment
+      - 写入 Task.review_status / review_comment
+    """
+
+    def post(self, request, task_id: int):
+        # 1) 取任务
+        try:
+            task = Task.objects.get(pk=task_id)
+        except Task.DoesNotExist:
+            return Response({"detail": "Task not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        # 2) 校验：必须已有有效标注
+        has_ann = Annotation.objects.filter(task=task, was_cancelled=False).exclude(result=None).exists()
+        if not has_ann:
+            return Response({"detail": "Cannot review task without annotations"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # 3) 解析输入
+        decision = (request.data.get("decision") or "").strip().lower()
+        comment  = (request.data.get("comment") or "").strip()
+
+        ok = {Task.ReviewStatus.APPROVED, Task.ReviewStatus.REJECTED}
+        if decision not in ok:
+            return Response({"detail": "Invalid decision"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if decision == Task.ReviewStatus.REJECTED and not comment:
+            return Response({"detail": "Comment is required when rejecting"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # 4) 写入任务审核结果
+        task.review_status = decision
+        task.review_comment = comment if decision == Task.ReviewStatus.REJECTED else ""
+        task.save(update_fields=["review_status", "review_comment"])
+
+        return Response({
+            "id": task.id,
+            "review_status": task.review_status,
+            "review_comment": task.review_comment or ""
+        }, status=status.HTTP_200_OK)
+
+
+# 单条标注的查改删
 @method_decorator(name='get', decorator=swagger_auto_schema(
         tags=['Annotations'],
         operation_summary='Get annotation by its ID',
@@ -256,7 +311,7 @@ class AnnotationsListAPI(RequestDebugLogMixin, generics.ListCreateAPIView):
 
         return annotation
 
-
+#草稿的增删改查
 class AnnotationDraftListAPI(RequestDebugLogMixin, generics.ListCreateAPIView):
 
     parser_classes = (JSONParser, MultiPartParser, FormParser)
@@ -297,7 +352,7 @@ class AnnotationDraftAPI(RequestDebugLogMixin, generics.RetrieveUpdateDestroyAPI
     )
     swagger_schema = None
 
-
+# 预测的 CRUD
 @method_decorator(name='list', decorator=swagger_auto_schema(
     tags=['Predictions'], operation_summary="List predictions", 
     filter_inspectors=[DjangoFilterDescriptionInspector],

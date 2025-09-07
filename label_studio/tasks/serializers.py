@@ -478,6 +478,16 @@ class TaskWithAnnotationsAndPredictionsAndDraftsSerializer(TaskSerializer):
             drafts = drafts.filter(user=user)
 
         return AnnotationDraftSerializer(drafts, many=True, read_only=True, default=[], context=self.context).data
+    
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        # —— 兜底补丁：如果父类没有带出，就手动补齐（不覆盖已有值）
+        if 'review_status' not in data:
+            data['review_status'] = getattr(instance, 'review_status', None)
+        if 'review_comment' not in data:
+            data['review_comment'] = getattr(instance, 'review_comment', '') or ''
+        return data
+
 
 
 class TaskIDWithAnnotationsAndPredictionsSerializer(ModelSerializer):

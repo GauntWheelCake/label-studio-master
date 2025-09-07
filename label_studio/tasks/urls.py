@@ -15,6 +15,9 @@ _api_urlpatterns = [
     path('', api.TaskListAPI.as_view(), name='task-list'),
     path('<int:pk>/', api.TaskAPI.as_view(), name='task-detail'),
 
+     # 新增：任务审核判定（通过 / 驳回 + 备注）
+    path('<int:pk>/review-decision/', api.TaskReviewDecisionAPI.as_view(), name='task-review-decision'),
+
     path('<int:pk>/annotations/', api.AnnotationsListAPI.as_view(), name='task-annotations'),
     path('<int:pk>/drafts', api.AnnotationDraftListAPI.as_view(), name='task-drafts'),
     path('<int:pk>/annotations/<int:annotation_id>/drafts', api.AnnotationDraftListAPI.as_view(), name='task-annotations-drafts'),

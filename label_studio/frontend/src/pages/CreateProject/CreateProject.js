@@ -53,7 +53,7 @@ export const CreateProject = ({ onClose }) => {
   const rootClass = cn("create-project");
   const tabClass = rootClass.elem("tab");
   const steps = {
-    name: <span className={tabClass.mod({ disabled: !!error })}>项目名称</span>,
+    name: <span className={tabClass.mod({ disabled: !!error })}>项目名称2</span>,
     import: <span className={tabClass.mod({ disabled: uploadDisabled })}>数据导入</span>,
     config: "Labeling Setup",
   };

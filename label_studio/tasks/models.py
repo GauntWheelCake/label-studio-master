@@ -257,6 +257,25 @@ class Task(TaskMixin, models.Model):
             models.Index(fields=['project', 'is_labeled']),
             models.Index(fields=['id', 'overlap'])
         ]
+    # 仅对 Task 生效的本地枚举，避免污染全局命名空间,增加对每个Task审核状态的支持
+    class ReviewStatus(models.TextChoices):
+        PENDING  = "pending",  "未审核"
+        APPROVED = "approved", "已通过"
+        REJECTED = "rejected", "已驳回"
+
+    review_status = models.CharField(
+        max_length=16,
+        choices=ReviewStatus.choices,
+        default=ReviewStatus.PENDING,
+        db_index=True,
+        help_text="任务审核状态：未审核/已通过/已驳回",
+    )
+
+    review_comment = models.TextField(
+        blank=True,
+        null=True,
+        help_text="审核备注（例如驳回原因、修改建议等）",
+    )
 
 
 pre_bulk_create = Signal(providing_args=["objs", "batch_size"])
