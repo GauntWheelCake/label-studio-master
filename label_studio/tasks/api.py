@@ -118,6 +118,17 @@ class TaskAPI(generics.RetrieveUpdateDestroyAPIView):
     def put(self, request, *args, **kwargs):
         return super(TaskAPI, self).put(request, *args, **kwargs)
     
+
+# 权限：最简权限兜底，后期修改
+from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import permissions
+
+class IsStaffOrSuperuser(permissions.BasePermission):
+    def has_permission(self, request, view):
+        user = request.user
+        return bool(user and user.is_authenticated and (user.is_staff or user.is_superuser))
+
 # === 审核判定 API（Task 级动作）===
 from rest_framework.views import APIView
 from rest_framework.response import Response

@@ -1,0 +1,12 @@
+:root {
+  --tag-pending:  #9aa0a6;
+  --tag-approved: #1a7f37;
+  --tag-rejected: #d93025;
+}
+.tag {
+  display:inline-flex; align-items:center; padding:.125rem .5rem;
+  border-radius:999px; font-size:12px; line-height:18px; color:#fff; font-weight:600;
+}
+.tag[data-status="pending"]  { background: var(--tag-pending);  }
+.tag[data-status="approved"] { background: var(--tag-approved); }
+.tag[data-status="rejected"] { background: var(--tag-rejected); }

@@ -17,6 +17,9 @@ import { AsyncPage } from './AsyncPage/AsyncPage';
 import ErrorBoundary from './ErrorBoundary';
 import { RootPage } from './RootPage';
 
+import '../styles/review-tags.css';
+
+
 const baseURL = new URL(APP_SETTINGS.hostname || location.origin);
 
 const browserHistory = createBrowserHistory({
