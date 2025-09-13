@@ -190,7 +190,10 @@ class DataManagerTaskSerializer(TaskSerializer):
             "drafts",
             "file_upload",
             "annotators",
-            "project"
+            "project",
+            # 审核状态
+            "review_status",
+        
         ]
 
     @staticmethod

@@ -189,7 +189,18 @@ def get_all_columns(project):
                 'explore': True,
                 'labeling': False
             }
-        }
+        },
+        # 添加审阅状态
+                # --- Review status (展示中文；也保留 review_status 便于筛选) ---
+        {
+            'id': 'review_status',   # 列的 id 对应我们刚加的 serializer 方法字段
+            'title': '审核状态',
+            'type': 'String',
+            'target': 'tasks',
+            'help': '任务的审核状态（已通过/已驳回/待审核）',
+            'visibility_defaults': {'explore': True, 'labeling': False},
+        },
+
     ]
 
     result['columns'].append(data_root)
