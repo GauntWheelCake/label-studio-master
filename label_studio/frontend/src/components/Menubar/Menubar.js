@@ -5,6 +5,7 @@ import { useConfig } from '../../providers/ConfigProvider';
 import { useContextComponent, useFixedLocation } from '../../providers/RoutesProvider';
 import { cn } from '../../utils/bem';
 import { absoluteURL } from '../../utils/helpers';
+import { DEFAULT_ROLE, ensureRoleInitialized, setStoredRole, subscribeToRoleChange, UserRole } from '../../utils/roles';
 import { Breadcrumbs } from '../Breadcrumbs/Breadcrumbs';
 import { Dropdown } from "../Dropdown/Dropdown";
 import { Hamburger } from "../Hamburger/Hamburger";
@@ -54,6 +55,7 @@ export const Menubar = ({
   const config = useConfig();
   const [sidebarOpened, setSidebarOpened] = useState(defaultOpened ?? false);
   const [sidebarPinned, setSidebarPinned] = useState(defaultPinned ?? false);
+  const [activeRole, setActiveRole] = useState(() => ensureRoleInitialized());
   const [PageContext, setPageContext] = useState({
     Component: null,
     props: {},
@@ -64,6 +66,29 @@ export const Menubar = ({
   const sidebarClass = cn('sidebar');
   const contentClass = cn('content-wrapper');
   const contextItem = menubarClass.elem('context-item');
+  const roleSwitcherClass = menubarClass.elem('role-switcher');
+  const roleLabelClass = menubarClass.elem('role-label');
+  const roleSelectClass = menubarClass.elem('role-select');
+
+  useEffect(() => {
+    const unsubscribe = subscribeToRoleChange((role) => setActiveRole(role));
+
+    return unsubscribe;
+  }, []);
+
+  const handleRoleChange = useCallback((event) => {
+    const value = event?.target?.value;
+    const availableRoles = Object.values(UserRole);
+    const nextRole = availableRoles.includes(value) ? value : DEFAULT_ROLE;
+
+    setStoredRole(nextRole);
+  }, []);
+
+  const roleOptions = useMemo(() => ([
+    { label: '管理员', value: UserRole.Admin },
+    { label: '批注者', value: UserRole.Annotator },
+    { label: '审阅者', value: UserRole.Reviewer },
+  ]), []);
 
   const sidebarPin = useCallback((e) => {
     e.preventDefault();
@@ -130,6 +155,25 @@ export const Menubar = ({
             <LeftContextMenu className={contextItem.mod({left: true})}/>
 
             <RightContextMenu className={contextItem.mod({right: true})}/>
+          </div>
+
+          <div className={roleSwitcherClass}>
+            <label className={roleLabelClass} htmlFor="ls-role-select">
+              当前身份
+            </label>
+            <select
+              id="ls-role-select"
+              className={roleSelectClass}
+              onChange={handleRoleChange}
+              value={activeRole ?? DEFAULT_ROLE}
+              aria-label="切换当前身份"
+            >
+              {roleOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
           </div>
 
           <Dropdown.Trigger ref={useMenuRef} align="right" content={(
