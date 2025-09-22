@@ -197,7 +197,7 @@ def get_all_columns(project):
             'title': '审核状态',
             'type': 'String',
             'target': 'tasks',
-            'help': '任务的审核状态（已通过/已驳回/待审核）',
+            'help': '任务的审核状态（已通过/已驳回/未审核）',
             'visibility_defaults': {'explore': True, 'labeling': False},
         },
 
