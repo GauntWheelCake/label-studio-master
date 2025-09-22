@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { generatePath, useHistory } from 'react-router';
 import { NavLink } from 'react-router-dom';
 import { Button } from '../../components/Button/Button';
@@ -41,6 +41,34 @@ const initializeDataManager = async (root, props, params) => {
   };
 
   return new window.DataManager(dmConfig);
+};
+
+const REVIEW_STATUS_LABELS = {
+  pending: '未审核',
+  approved: '已通过',
+  rejected: '已驳回',
+};
+
+const detectUserRole = (user = {}) => {
+  const candidates = [
+    user.project_role,
+    user.role,
+    user.role_slug,
+    user.default_role,
+    user.current_role,
+  ];
+
+  const normalized = candidates
+    .filter(Boolean)
+    .map(value => String(value).toLowerCase());
+
+  if (normalized.some(value => value.includes('review'))) return 'reviewer';
+  if (normalized.some(value => value.includes('admin'))) return 'admin';
+  if (normalized.some(value => value.includes('annot'))) return 'annotator';
+
+  if (user.is_staff || user.is_superuser) return 'admin';
+
+  return 'annotator';
 };
 
 const buildLink = (path, params) => {
@@ -177,6 +205,40 @@ DataManagerPage.context = ({dmRef}) => {
   const location = useFixedLocation();
   const {project} = useProject();
   const [mode, setMode] = useState(dmRef?.mode ?? "explorer");
+  const [currentTaskId, setCurrentTaskId] = useState(null);
+  const [currentReviewStatus, setCurrentReviewStatus] = useState('pending');
+  const [pendingDecision, setPendingDecision] = useState(null);
+
+  const userRole = useMemo(() => detectUserRole(window.APP_SETTINGS?.user ?? {}), []);
+  const isReviewer = userRole === 'reviewer';
+  const isAdmin = userRole === 'admin';
+  const canReview = isReviewer && !isAdmin;
+
+  const resolveTaskId = useCallback((task) => {
+    if (!task) return null;
+    return task.id ?? task.task_id ?? task.pk ?? task.task?.id ?? null;
+  }, []);
+
+  const resolveReviewStatus = useCallback((task) => {
+    if (!task) return 'pending';
+    const status = task.review_status ?? task.task?.review_status ?? 'pending';
+    return String(status || 'pending').toLowerCase();
+  }, []);
+
+  const extractTaskInfo = useCallback(() => {
+    if (!dmRef?.store) {
+      setCurrentTaskId(null);
+      setCurrentReviewStatus('pending');
+      return;
+    }
+
+    const selected = dmRef.store.taskStore?.selected;
+    const id = resolveTaskId(selected);
+    const status = resolveReviewStatus(selected);
+
+    setCurrentTaskId(id);
+    setCurrentReviewStatus(status || 'pending');
+  }, [dmRef, resolveReviewStatus, resolveTaskId]);
 
   const links = {
     '/settings': 'Settings',
@@ -221,6 +283,7 @@ DataManagerPage.context = ({dmRef}) => {
     setMode(currentMode);
     updateCrumbs(currentMode);
     showLabelingInstruction(currentMode);
+    extractTaskInfo();
   };
 
   useEffect(() => {
@@ -233,8 +296,96 @@ DataManagerPage.context = ({dmRef}) => {
     };
   }, [dmRef, project]);
 
+  useEffect(() => {
+    if (!dmRef) return;
+
+    const update = () => extractTaskInfo();
+
+    update();
+    dmRef.on?.('taskSelected', update);
+    dmRef.on?.('labelStudioLoad', update);
+    dmRef.on?.('lsf:taskLoad', update);
+
+    return () => {
+      dmRef?.off?.('taskSelected', update);
+      dmRef?.off?.('labelStudioLoad', update);
+      dmRef?.off?.('lsf:taskLoad', update);
+    };
+  }, [dmRef, extractTaskInfo]);
+
+  const sendReviewDecision = useCallback(async (decision) => {
+    if (!dmRef) return;
+
+    const selected = dmRef.store?.taskStore?.selected;
+    const taskId = resolveTaskId(selected);
+
+    if (!taskId) return;
+
+    setPendingDecision(decision);
+
+    try {
+      const result = await dmRef.apiCall?.('reviewDecision', { taskID: taskId }, {
+        body: { decision, comment: '' },
+      });
+
+      if (result) {
+        const loadTask = dmRef.store?.taskStore?.loadTask;
+
+        if (typeof loadTask === 'function') {
+          await loadTask.call(dmRef.store.taskStore, taskId, { select: true });
+        }
+
+        extractTaskInfo();
+      }
+    } finally {
+      setPendingDecision(null);
+    }
+  }, [dmRef, extractTaskInfo, resolveTaskId]);
+
+  const statusText = REVIEW_STATUS_LABELS[currentReviewStatus] ?? REVIEW_STATUS_LABELS.pending;
+  const hasTask = !!currentTaskId;
+  const reviewDisabled = !canReview || !hasTask;
+  const disabledMessage = !hasTask
+    ? '暂无可审阅的任务'
+    : !canReview
+      ? (isAdmin ? '管理员不可执行审核操作' : '仅审阅者可执行审核操作')
+      : '';
+  const approveDisabled = reviewDisabled || pendingDecision !== null;
+  const rejectDisabled = reviewDisabled || pendingDecision !== null;
+  const showReviewControls = mode !== 'explorer';
+
   return project && project.id ? (
     <Space size="small">
+      {showReviewControls && (
+        <Space size="small">
+          <span>
+            审核状态：
+            <span style={{ fontWeight: 600 }}>
+              {statusText}
+            </span>
+          </span>
+          <Button
+            size="compact"
+            look="primary"
+            disabled={approveDisabled}
+            waiting={pendingDecision === 'approved'}
+            onClick={() => sendReviewDecision('approved')}
+            title={approveDisabled && disabledMessage ? disabledMessage : undefined}
+          >
+            通过
+          </Button>
+          <Button
+            size="compact"
+            disabled={rejectDisabled}
+            waiting={pendingDecision === 'rejected'}
+            onClick={() => sendReviewDecision('rejected')}
+            title={rejectDisabled && disabledMessage ? disabledMessage : undefined}
+          >
+            驳回
+          </Button>
+        </Space>
+      )}
+
       {(project.expert_instruction && mode !== 'explorer') && (
         <Button size="compact" onClick={() => {
           modal({
