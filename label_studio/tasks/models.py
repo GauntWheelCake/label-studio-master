@@ -259,8 +259,7 @@ class Task(TaskMixin, models.Model):
         ]
     # 仅对 Task 生效的本地枚举，避免污染全局命名空间,增加对每个Task审核状态的支持
     class ReviewStatus(models.TextChoices):
-        # 按需求统一使用“待审核”文案，确保前后端展示一致
-        PENDING  = "pending",  "待审核"
+        PENDING  = "pending",  "未审核"
         APPROVED = "approved", "已通过"
         REJECTED = "rejected", "已驳回"
 
@@ -269,8 +268,7 @@ class Task(TaskMixin, models.Model):
         choices=ReviewStatus.choices,
         default=ReviewStatus.PENDING,
         db_index=True,
-        # 后端帮助信息也同步替换，保持与新文案一致
-        help_text="任务审核状态：待审核/已通过/已驳回",
+        help_text="任务审核状态：未审核/已通过/已驳回",
     )
 
     review_comment = models.TextField(

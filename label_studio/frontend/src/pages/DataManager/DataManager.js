@@ -93,8 +93,7 @@ export const DataManagerPage = ({...props}) => {
       // 渲染到单元格里的内容（用我们全局的 .tag 样式）
       render: (value/*, row*/) => {
         const map = {
-          // “待审核”对应后端 pending 枚举，保证列表呈现与模型一致
-          pending:  '待审核',
+          pending:  '未审核',
           approved: '已通过',
           rejected: '已驳回',
         };
