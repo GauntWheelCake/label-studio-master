@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { generatePath, useHistory } from 'react-router';
 import { NavLink } from 'react-router-dom';
 import { Button } from '../../components/Button/Button';
@@ -461,7 +461,129 @@ DataManagerPage.context = ({dmRef}) => {
   const [currentReviewStatus, setCurrentReviewStatus] = useState('pending');
   const [pendingDecision, setPendingDecision] = useState(null);
 
-  const userRole = useMemo(() => detectUserRole(window.APP_SETTINGS?.user ?? {}), []);
+  const showReviewError = useCallback((message) => {
+    let modalInstance;
+    const footer = (
+      <Space align="end">
+        <Button
+          size="compact"
+          look="primary"
+          onClick={() => modalInstance?.close()}
+        >
+          知道了
+        </Button>
+      </Space>
+    );
+
+    modalInstance = modal({
+      title: '审核失败',
+      body: () => (
+        <div>
+          {message ?? '提交审核结果时出现错误，请稍后重试。'}
+        </div>
+      ),
+      footer,
+    });
+
+    return modalInstance;
+  }, []);
+
+  const requestRejectComment = useCallback(() => {
+    return new Promise((resolve) => {
+      const commentRef = { current: '' };
+      const setErrorRef = { current: null };
+
+      const RejectCommentForm = () => {
+        const [value, setValue] = useState('');
+        const [error, setError] = useState('');
+
+        useEffect(() => {
+          setErrorRef.current = setError;
+          return () => {
+            setErrorRef.current = null;
+          };
+        }, []);
+
+        useEffect(() => {
+          commentRef.current = value;
+        }, [value]);
+
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <textarea
+              autoFocus
+              rows={4}
+              value={value}
+              onChange={(event) => setValue(event.target.value)}
+              placeholder="请输入驳回原因"
+              style={{ width: '100%', resize: 'vertical', padding: '8px 10px' }}
+            />
+            {error ? (
+              <div style={{ color: '#d32029' }}>
+                {error}
+              </div>
+            ) : null}
+          </div>
+        );
+      };
+
+      let modalInstance;
+
+      const closeWithResult = (result) => {
+        resolve(result);
+        modalInstance?.close();
+      };
+
+      const footer = (
+        <Space align="end">
+          <Button
+            size="compact"
+            onClick={() => closeWithResult(null)}
+          >
+            取消
+          </Button>
+          <Button
+            size="compact"
+            look="primary"
+            onClick={() => {
+              const trimmed = commentRef.current.trim();
+              if (!trimmed) {
+                setErrorRef.current?.('请填写驳回原因');
+                return;
+              }
+              closeWithResult(trimmed);
+            }}
+          >
+            提交
+          </Button>
+        </Space>
+      );
+
+      modalInstance = modal({
+        title: '填写驳回原因',
+        body: RejectCommentForm,
+        allowClose: false,
+        width: 480,
+        footer,
+      });
+    });
+  }, []);
+
+  const [userRole, setUserRole] = useState(() => {
+    const storedRole = getStoredRole();
+
+    if (storedRole) return storedRole;
+
+    return detectUserRole((typeof window !== 'undefined' ? window.APP_SETTINGS?.user : {}) ?? {});
+  });
+
+  useEffect(() => {
+    const unsubscribe = subscribeToRoleChange((role) => {
+      setUserRole((currentRole) => (currentRole === role ? currentRole : role));
+    }, { immediate: true });
+
+    return unsubscribe;
+  }, []);
   const isReviewer = userRole === 'reviewer';
   const isAdmin = userRole === 'admin';
   const canReview = isReviewer && !isAdmin;
@@ -565,7 +687,7 @@ DataManagerPage.context = ({dmRef}) => {
     };
   }, [dmRef, extractTaskInfo]);
 
-  const sendReviewDecision = useCallback(async (decision) => {
+  const sendReviewDecision = useCallback(async (decision, options = {}) => {
     if (!dmRef) return;
 
     const selected = dmRef.store?.taskStore?.selected;
@@ -576,9 +698,18 @@ DataManagerPage.context = ({dmRef}) => {
     setPendingDecision(decision);
 
     try {
+      const comment = options.comment ?? '';
+
       const result = await dmRef.apiCall?.('reviewDecision', { taskID: taskId }, {
-        body: { decision, comment: '' },
+        body: { decision, comment },
       });
+
+      if (result?.error || (result?.response && result.response?.detail)) {
+        const responseDetail = typeof result?.response === 'string'
+          ? result.response
+          : result?.response?.detail;
+        throw new Error(responseDetail || result.error || '提交审核结果失败');
+      }
 
       if (result) {
         const loadTask = dmRef.store?.taskStore?.loadTask;
@@ -587,12 +718,33 @@ DataManagerPage.context = ({dmRef}) => {
           await loadTask.call(dmRef.store.taskStore, taskId, { select: true });
         }
 
+        const updatedStatus = result?.review_status ?? decision;
+        if (updatedStatus) {
+          setCurrentReviewStatus(String(updatedStatus || 'pending').toLowerCase());
+        }
+
         extractTaskInfo();
       }
+      return true;
+    } catch (error) {
+      console.error('[review] Failed to submit review decision', error);
+      const detail = error?.message ?? '提交审核结果时出现错误，请稍后重试。';
+      showReviewError(detail);
+      return false;
     } finally {
       setPendingDecision(null);
     }
-  }, [dmRef, extractTaskInfo, resolveTaskId]);
+  }, [dmRef, extractTaskInfo, resolveTaskId, showReviewError]);
+
+  const handleApprove = useCallback(() => {
+    sendReviewDecision('approved', { comment: '' });
+  }, [sendReviewDecision]);
+
+  const handleReject = useCallback(async () => {
+    const comment = await requestRejectComment();
+    if (!comment) return;
+    await sendReviewDecision('rejected', { comment });
+  }, [requestRejectComment, sendReviewDecision]);
 
   const statusText = REVIEW_STATUS_LABELS[currentReviewStatus] ?? REVIEW_STATUS_LABELS.pending;
   const hasTask = !!currentTaskId;
@@ -621,7 +773,7 @@ DataManagerPage.context = ({dmRef}) => {
             look="primary"
             disabled={approveDisabled}
             waiting={pendingDecision === 'approved'}
-            onClick={() => sendReviewDecision('approved')}
+            onClick={handleApprove}
             title={approveDisabled && disabledMessage ? disabledMessage : undefined}
           >
             通过
@@ -630,7 +782,7 @@ DataManagerPage.context = ({dmRef}) => {
             size="compact"
             disabled={rejectDisabled}
             waiting={pendingDecision === 'rejected'}
-            onClick={() => sendReviewDecision('rejected')}
+            onClick={handleReject}
             title={rejectDisabled && disabledMessage ? disabledMessage : undefined}
           >
             驳回
