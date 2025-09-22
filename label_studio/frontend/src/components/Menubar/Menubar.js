@@ -1,6 +1,6 @@
 import { createContext, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { StaticContent } from '../../app/StaticContent/StaticContent';
-import { IconBook, IconFolder, IconPersonInCircle, IconPin, IconTerminal, LsDoor, LsGitHub, LsSettings, LsSlack } from '../../assets/icons';
+import { IconFolder, IconPersonInCircle, IconPin, LsDoor, LsSettings } from '../../assets/icons';
 import { useConfig } from '../../providers/ConfigProvider';
 import { useContextComponent, useFixedLocation } from '../../providers/RoutesProvider';
 import { cn } from '../../utils/bem';
@@ -186,31 +186,6 @@ export const Menubar = ({
                 <Menu.Spacer/>
 
                 <VersionNotifier showNewVersion/>
-
-                <Menu.Item
-                  label="API"
-                  href="/docs/api"
-                  icon={<IconTerminal/>}
-                  target="_blank"
-                />
-                <Menu.Item
-                  label="Docs"
-                  href="https://labelstud.io/guide"
-                  icon={<IconBook/>}
-                  target="_blank"
-                />
-                <Menu.Item
-                  label="GitHub"
-                  href="https://github.com/heartexlabs/label-studio"
-                  icon={<LsGitHub/>}
-                  target="_blank"
-                />
-                <Menu.Item
-                  label="Slack Community"
-                  href="http://slack.labelstud.io.s3-website-us-east-1.amazonaws.com?source=product-menu"
-                  icon={<LsSlack/>}
-                  target="_blank"
-                />
 
                 <VersionNotifier showCurrentVersion/>
 

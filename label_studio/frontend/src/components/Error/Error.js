@@ -1,12 +1,9 @@
 import React, { Fragment, useCallback, useMemo, useState } from 'react';
-import { LsSlack } from '../../assets/icons';
 import { Block, Elem } from '../../utils/bem';
 import { absoluteURL, copyText } from '../../utils/helpers';
 import { Button } from '../Button/Button';
 import { Space } from '../Space/Space';
 import "./Error.styl";
-
-const SLACK_INVITE_URL = "http://slack.labelstud.io.s3-website-us-east-1.amazonaws.com?source=product-error-msg";
 
 export const ErrorWrapper = ({title, message, errorId, stacktrace, validation, version, onGoBack, onReload, possum = false}) => {
   const preparedStackTrace = useMemo(() => {
@@ -75,18 +72,12 @@ export const ErrorWrapper = ({title, message, errorId, stacktrace, validation, v
       )}
 
       <Elem name="actions">
-        <Space spread>
-          <Elem tag={Button} name="action-slack" target="_blank" icon={<LsSlack/>} href={SLACK_INVITE_URL}>
-            Ask on Slack
-          </Elem>
-
-          <Space size="small">
-            {preparedStackTrace && <Button disabled={copied} onClick={copyStacktrace} style={{width: 180}}>
-              {copied ? "Copied" : "Copy Stacktrace"}
-            </Button>}
-            {onGoBack && <Button onClick={onGoBack}>Go Back</Button>}
-            {onReload && <Button onClick={onReload}>Reload</Button>}
-          </Space>
+        <Space size="small">
+          {preparedStackTrace && <Button disabled={copied} onClick={copyStacktrace} style={{width: 180}}>
+            {copied ? "Copied" : "Copy Stacktrace"}
+          </Button>}
+          {onGoBack && <Button onClick={onGoBack}>Go Back</Button>}
+          {onReload && <Button onClick={onReload}>Reload</Button>}
         </Space>
       </Elem>
 
