@@ -50,6 +50,9 @@ export const APIConfig = {
     /** Submit annotation */
     submitAnnotation: "POST:/../tasks/:taskID/annotations",
 
+    /** Submit review decision for a task */
+    reviewDecision: "POST:/../tasks/:taskID/review-decision",
+
     /** Update annotation */
     updateAnnotation: "PATCH:/../annotations/:annotationID",
 
