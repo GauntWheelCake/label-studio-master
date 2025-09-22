@@ -18,6 +18,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='task',
             name='review_status',
-            field=models.CharField(choices=[('pending', '未审核'), ('approved', '已通过'), ('rejected', '已驳回')], db_index=True, default='pending', help_text='任务审核状态：未审核/已通过/已驳回', max_length=16),
+            field=models.CharField(
+                # 将中文翻译更新为“待审核”，与前端文案保持一致
+                choices=[('pending', '待审核'), ('approved', '已通过'), ('rejected', '已驳回')],
+                db_index=True,
+                default='pending',
+                help_text='任务审核状态：待审核/已通过/已驳回',
+                max_length=16,
+            ),
         ),
     ]
