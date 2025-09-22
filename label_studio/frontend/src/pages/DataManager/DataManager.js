@@ -9,10 +9,86 @@ import { useProject } from '../../providers/ProjectProvider';
 import { useContextProps, useFixedLocation, useParams } from '../../providers/RoutesProvider';
 import { addAction, addCrumb, deleteAction, deleteCrumb } from '../../services/breadrumbs';
 import { Block, Elem } from '../../utils/bem';
+import { DEFAULT_ROLE, getStoredRole, subscribeToRoleChange, UserRole } from '../../utils/roles';
 import { ImportModal } from '../CreateProject/Import/ImportModal';
 import { ExportPage } from '../ExportPage/ExportPage';
 import { APIConfig } from './api-config';
 import "./DataManager.styl";
+
+const ROLE_PERMISSIONS = {
+  [UserRole.Admin]: { annotate: false, review: false },
+  [UserRole.Annotator]: { annotate: true, review: false },
+  [UserRole.Reviewer]: { annotate: false, review: true },
+};
+
+const ROLE_TOOLTIPS = {
+  annotate: '当前身份不可提交标注',
+  review: '当前身份不可执行审核',
+  start: '当前身份不可发起标注',
+};
+
+const ANNOTATION_KEYWORDS = ['submit', 'update'];
+const REVIEW_KEYWORDS = ['accept', 'reject'];
+
+const normalizeText = (node) => (node?.textContent ?? '').trim().toLowerCase();
+
+const setElementRoleState = (element, allowed, message) => {
+  if (!element) return;
+
+  if (!allowed) {
+    if (element.dataset.roleDisabled === 'true') {
+      if (message) element.setAttribute('title', message);
+      return;
+    }
+
+    element.dataset.roleDisabled = 'true';
+
+    const originalTitle = element.getAttribute('title');
+    element.dataset.roleOriginalTitle = originalTitle ?? '';
+
+    const originalTabIndex = element.getAttribute('tabindex');
+    element.dataset.roleOriginalTabIndex = originalTabIndex ?? '';
+
+    if (message) {
+      element.setAttribute('title', message);
+    }
+
+    element.setAttribute('aria-disabled', 'true');
+    element.setAttribute('tabindex', '-1');
+    element.classList.add('ls-role-disabled');
+    element.style.pointerEvents = 'none';
+    element.style.cursor = 'not-allowed';
+    element.style.opacity = '0.5';
+  } else if (element.dataset.roleDisabled === 'true') {
+    const originalTitle = element.dataset.roleOriginalTitle;
+    if (originalTitle !== undefined) {
+      if (originalTitle) {
+        element.setAttribute('title', originalTitle);
+      } else {
+        element.removeAttribute('title');
+      }
+    }
+
+    const originalTabIndex = element.dataset.roleOriginalTabIndex;
+    if (originalTabIndex !== undefined) {
+      if (originalTabIndex) {
+        element.setAttribute('tabindex', originalTabIndex);
+      } else {
+        element.removeAttribute('tabindex');
+      }
+    }
+
+    element.removeAttribute('aria-disabled');
+    element.classList.remove('ls-role-disabled');
+    element.style.pointerEvents = '';
+    element.style.cursor = '';
+    element.style.opacity = '';
+
+    delete element.dataset.roleDisabled;
+    delete element.dataset.roleOriginalTitle;
+    delete element.dataset.roleOriginalTabIndex;
+  }
+};
 
 const initializeDataManager = async (root, props, params) => {
   if (!window.LabelStudio) throw Error("Label Studio Frontend doesn't exist on the page");
@@ -56,6 +132,85 @@ export const DataManagerPage = ({...props}) => {
   const setContextProps = useContextProps();
   const [crashed, setCrashed] = useState(false);
   const dataManagerRef = useRef();
+  const [activeRole, setActiveRole] = useState(getStoredRole());
+  const roleRef = useRef(activeRole);
+  const labelButtonInitialState = useRef(null);
+
+  const applyAnnotationControlState = useCallback((roleValue) => {
+    if (typeof document === 'undefined') return;
+
+    const resolvedRole = roleValue ?? DEFAULT_ROLE;
+    const permissions = ROLE_PERMISSIONS[resolvedRole] ?? ROLE_PERMISSIONS[DEFAULT_ROLE];
+    const controlsRoot = document.querySelector('.lsf-controls');
+
+    if (!controlsRoot) return;
+
+    const interactiveElements = controlsRoot.querySelectorAll('button.lsf-button, a.lsf-button');
+
+    interactiveElements.forEach((element) => {
+      const text = normalizeText(element);
+      if (!text) return;
+
+      if (ANNOTATION_KEYWORDS.some((keyword) => text.includes(keyword))) {
+        setElementRoleState(element, permissions.annotate, permissions.annotate ? '' : ROLE_TOOLTIPS.annotate);
+      } else if (REVIEW_KEYWORDS.some((keyword) => text.includes(keyword))) {
+        setElementRoleState(element, permissions.review, permissions.review ? '' : ROLE_TOOLTIPS.review);
+      }
+    });
+  }, []);
+
+  const applyDataManagerInterface = useCallback((roleValue) => {
+    if (typeof document === 'undefined') return;
+
+    const resolvedRole = roleValue ?? DEFAULT_ROLE;
+    const permissions = ROLE_PERMISSIONS[resolvedRole] ?? ROLE_PERMISSIONS[DEFAULT_ROLE];
+    const annotateAllowed = permissions.annotate;
+
+    const store = dataManagerRef.current?.store;
+
+    if (store?.interfaceEnabled && store?.disableInterface && store?.enableInterface) {
+      try {
+        if (!annotateAllowed) {
+          if (labelButtonInitialState.current === null && typeof store.interfaceEnabled === 'function') {
+            labelButtonInitialState.current = store.interfaceEnabled('labelButton');
+          }
+          store.disableInterface('labelButton');
+        } else if (labelButtonInitialState.current !== null) {
+          if (labelButtonInitialState.current) {
+            store.enableInterface('labelButton');
+          } else {
+            store.disableInterface('labelButton');
+          }
+          labelButtonInitialState.current = null;
+        }
+      } catch (err) {
+        console.warn('[roles] Failed to update Data Manager interfaces', err);
+      }
+    }
+
+    const labelButtons = document.querySelectorAll('.dm-button');
+    labelButtons.forEach((element) => {
+      const text = normalizeText(element);
+      if (!text) return;
+
+      if (text.startsWith('label') || text.includes('标注')) {
+        setElementRoleState(element, annotateAllowed, annotateAllowed ? '' : ROLE_TOOLTIPS.start);
+      }
+    });
+  }, [dataManagerRef, labelButtonInitialState]);
+
+  const applyRoleRestrictions = useCallback((roleValue) => {
+    const resolvedRole = roleValue ?? roleRef.current ?? DEFAULT_ROLE;
+
+    roleRef.current = resolvedRole;
+
+    if (typeof document !== 'undefined' && document.body) {
+      document.body.setAttribute('data-user-role', resolvedRole);
+    }
+
+    applyAnnotationControlState(resolvedRole);
+    applyDataManagerInterface(resolvedRole);
+  }, [applyAnnotationControlState, applyDataManagerInterface, roleRef]);
 
   const init = useCallback(async () => {
     if (!LabelStudio) return;
@@ -140,14 +295,111 @@ export const DataManagerPage = ({...props}) => {
     });
 
     setContextProps({dmRef: dataManager});
-  }, [LabelStudio, DataManager]);
+
+    applyRoleRestrictions(roleRef.current ?? DEFAULT_ROLE);
+  }, [LabelStudio, DataManager, applyRoleRestrictions]);
 
   const destroyDM = useCallback(() => {
     if (dataManagerRef.current) {
       dataManagerRef.current.destroy();
       dataManagerRef.current = null;
     }
+    labelButtonInitialState.current = null;
   }, [dataManagerRef]);
+
+  useEffect(() => {
+    const unsubscribe = subscribeToRoleChange((role) => {
+      setActiveRole(role);
+    }, { immediate: true });
+
+    return unsubscribe;
+  }, []);
+
+  useEffect(() => {
+    applyRoleRestrictions(activeRole);
+  }, [activeRole, applyRoleRestrictions]);
+
+  useEffect(() => {
+    if (typeof MutationObserver === 'undefined') return;
+    if (typeof document === 'undefined' || !document.body) return;
+
+    const observer = new MutationObserver(() => {
+      applyRoleRestrictions(roleRef.current ?? DEFAULT_ROLE);
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    return () => observer.disconnect();
+  }, [applyRoleRestrictions]);
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+
+    const styleId = 'ls-role-style';
+    let styleElement = document.getElementById(styleId);
+    let created = false;
+
+    if (!styleElement) {
+      styleElement = document.createElement('style');
+      styleElement.id = styleId;
+      styleElement.innerHTML = `
+        [data-role-disabled="true"] {
+          cursor: not-allowed !important;
+        }
+
+        [data-role-disabled="true"].lsf-button,
+        [data-role-disabled="true"].dm-button {
+          opacity: 0.5 !important;
+        }
+      `;
+      document.head.appendChild(styleElement);
+      created = true;
+    }
+
+    return () => {
+      if (created && styleElement?.parentNode) {
+        styleElement.parentNode.removeChild(styleElement);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+
+    const preventInteraction = (event) => {
+      const target = event.target instanceof Element ? event.target.closest('[data-role-disabled="true"]') : null;
+      if (target) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    };
+
+    const preventKeydown = (event) => {
+      if ((event.key === 'Enter' || event.key === ' ') && event.target instanceof Element) {
+        const target = event.target.closest('[data-role-disabled="true"]');
+        if (target) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      }
+    };
+
+    document.addEventListener('click', preventInteraction, true);
+    document.addEventListener('keydown', preventKeydown, true);
+
+    return () => {
+      document.removeEventListener('click', preventInteraction, true);
+      document.removeEventListener('keydown', preventKeydown, true);
+    };
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (typeof document !== 'undefined' && document.body) {
+        document.body.removeAttribute('data-user-role');
+      }
+    };
+  }, []);
 
   useEffect(() => {
     init();
