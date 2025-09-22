@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { generatePath, useHistory } from 'react-router';
 import { NavLink } from 'react-router-dom';
 import { Button } from '../../components/Button/Button';
@@ -461,7 +461,21 @@ DataManagerPage.context = ({dmRef}) => {
   const [currentReviewStatus, setCurrentReviewStatus] = useState('pending');
   const [pendingDecision, setPendingDecision] = useState(null);
 
-  const userRole = useMemo(() => detectUserRole(window.APP_SETTINGS?.user ?? {}), []);
+  const [userRole, setUserRole] = useState(() => {
+    const storedRole = getStoredRole();
+
+    if (storedRole) return storedRole;
+
+    return detectUserRole((typeof window !== 'undefined' ? window.APP_SETTINGS?.user : {}) ?? {});
+  });
+
+  useEffect(() => {
+    const unsubscribe = subscribeToRoleChange((role) => {
+      setUserRole((currentRole) => (currentRole === role ? currentRole : role));
+    }, { immediate: true });
+
+    return unsubscribe;
+  }, []);
   const isReviewer = userRole === 'reviewer';
   const isAdmin = userRole === 'admin';
   const canReview = isReviewer && !isAdmin;
