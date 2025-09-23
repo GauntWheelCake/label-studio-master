@@ -162,6 +162,7 @@ export const DataManagerPage = ({...props}) => {
   const dataManagerRef = useRef();
   const [activeRole, setActiveRole] = useState(getStoredRole());
   const roleRef = useRef(activeRole);
+  const rolePermissionsRef = useRef(ROLE_PERMISSIONS[activeRole] ?? ROLE_PERMISSIONS[DEFAULT_ROLE]);
   const labelButtonInitialState = useRef(null);
 
   const applyAnnotationControlState = useCallback((roleValue) => {
@@ -229,8 +230,10 @@ export const DataManagerPage = ({...props}) => {
 
   const applyRoleRestrictions = useCallback((roleValue) => {
     const resolvedRole = roleValue ?? roleRef.current ?? DEFAULT_ROLE;
+    const permissions = ROLE_PERMISSIONS[resolvedRole] ?? ROLE_PERMISSIONS[DEFAULT_ROLE];
 
     roleRef.current = resolvedRole;
+    rolePermissionsRef.current = permissions;
 
     if (typeof document !== 'undefined' && document.body) {
       document.body.setAttribute('data-user-role', resolvedRole);
@@ -408,7 +411,68 @@ export const DataManagerPage = ({...props}) => {
         if (target) {
           event.preventDefault();
           event.stopPropagation();
+          return;
         }
+      }
+
+      const permissions = rolePermissionsRef.current ?? ROLE_PERMISSIONS[DEFAULT_ROLE];
+      const annotateAllowed = !!permissions.annotate;
+      const reviewAllowed = !!permissions.review;
+
+      const isEnterKey = event.key === 'Enter';
+      const isSpaceKey = event.key === ' ' || event.key === 'Spacebar' || event.code === 'Space';
+      const isCtrlOrMeta = event.ctrlKey || event.metaKey;
+
+      if (!isEnterKey && !isSpaceKey && !(event.altKey && isEnterKey)) return;
+
+      const controlsRoot = document.querySelector('.lsf-controls');
+      const elements = controlsRoot
+        ? Array.from(controlsRoot.querySelectorAll('button.lsf-button, a.lsf-button'))
+        : [];
+
+      const findElement = (keywords) => {
+        return elements.find((element) => {
+          const text = normalizeText(element);
+          if (!text) return false;
+          return keywords.some((keyword) => text.includes(keyword));
+        });
+      };
+
+      const annotationElement = findElement(ANNOTATION_KEYWORDS);
+      const reviewAcceptElement = findElement(['accept']);
+      const reviewRejectElement = findElement(['reject']);
+
+      let shouldBlock = false;
+
+      if (isEnterKey && isCtrlOrMeta) {
+        if (reviewAcceptElement) {
+          const disabled = reviewAcceptElement.dataset.roleDisabled === 'true';
+          shouldBlock = disabled || !reviewAllowed;
+        } else if (annotationElement) {
+          const disabled = annotationElement.dataset.roleDisabled === 'true';
+          shouldBlock = disabled || !annotateAllowed;
+        } else {
+          shouldBlock = !annotateAllowed && !reviewAllowed;
+        }
+      } else if (event.altKey && isEnterKey) {
+        if (annotationElement) {
+          const disabled = annotationElement.dataset.roleDisabled === 'true';
+          shouldBlock = disabled || !annotateAllowed;
+        } else {
+          shouldBlock = !annotateAllowed;
+        }
+      } else if (isCtrlOrMeta && isSpaceKey) {
+        if (reviewRejectElement) {
+          const disabled = reviewRejectElement.dataset.roleDisabled === 'true';
+          shouldBlock = disabled || !reviewAllowed;
+        } else {
+          shouldBlock = !reviewAllowed && !annotateAllowed;
+        }
+      }
+
+      if (shouldBlock) {
+        event.preventDefault();
+        event.stopPropagation();
       }
     };
 
@@ -461,113 +525,6 @@ DataManagerPage.context = ({dmRef}) => {
   const [currentReviewStatus, setCurrentReviewStatus] = useState('pending');
   const [pendingDecision, setPendingDecision] = useState(null);
 
-  const showReviewError = useCallback((message) => {
-    let modalInstance;
-    const footer = (
-      <Space align="end">
-        <Button
-          size="compact"
-          look="primary"
-          onClick={() => modalInstance?.close()}
-        >
-          知道了
-        </Button>
-      </Space>
-    );
-
-    modalInstance = modal({
-      title: '审核失败',
-      body: () => (
-        <div>
-          {message ?? '提交审核结果时出现错误，请稍后重试。'}
-        </div>
-      ),
-      footer,
-    });
-
-    return modalInstance;
-  }, []);
-
-  const requestRejectComment = useCallback(() => {
-    return new Promise((resolve) => {
-      const commentRef = { current: '' };
-      const setErrorRef = { current: null };
-
-      const RejectCommentForm = () => {
-        const [value, setValue] = useState('');
-        const [error, setError] = useState('');
-
-        useEffect(() => {
-          setErrorRef.current = setError;
-          return () => {
-            setErrorRef.current = null;
-          };
-        }, []);
-
-        useEffect(() => {
-          commentRef.current = value;
-        }, [value]);
-
-        return (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            <textarea
-              autoFocus
-              rows={4}
-              value={value}
-              onChange={(event) => setValue(event.target.value)}
-              placeholder="请输入驳回原因"
-              style={{ width: '100%', resize: 'vertical', padding: '8px 10px' }}
-            />
-            {error ? (
-              <div style={{ color: '#d32029' }}>
-                {error}
-              </div>
-            ) : null}
-          </div>
-        );
-      };
-
-      let modalInstance;
-
-      const closeWithResult = (result) => {
-        resolve(result);
-        modalInstance?.close();
-      };
-
-      const footer = (
-        <Space align="end">
-          <Button
-            size="compact"
-            onClick={() => closeWithResult(null)}
-          >
-            取消
-          </Button>
-          <Button
-            size="compact"
-            look="primary"
-            onClick={() => {
-              const trimmed = commentRef.current.trim();
-              if (!trimmed) {
-                setErrorRef.current?.('请填写驳回原因');
-                return;
-              }
-              closeWithResult(trimmed);
-            }}
-          >
-            提交
-          </Button>
-        </Space>
-      );
-
-      modalInstance = modal({
-        title: '填写驳回原因',
-        body: RejectCommentForm,
-        allowClose: false,
-        width: 480,
-        footer,
-      });
-    });
-  }, []);
 
   const [userRole, setUserRole] = useState(() => {
     const storedRole = getStoredRole();
