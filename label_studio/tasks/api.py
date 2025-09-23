@@ -17,7 +17,7 @@ from rest_framework.response import Response
 from core.utils.common import get_object_with_check_and_log, DjangoFilterDescriptionInspector
 from core.permissions import all_permissions, ViewClassPermission
 
-from tasks.models import Task, Annotation, Prediction, AnnotationDraft
+from tasks.models import Task, Annotation, Prediction, AnnotationDraft, Q_finished_annotations
 from core.mixins import RequestDebugLogMixin
 from core.utils.common import bool_from_request
 from tasks.serializers import (
@@ -134,11 +134,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-from .models import Task, Annotation
-
 class TaskReviewDecisionAPI(APIView):
     """
     POST /api/tasks/<task_id>/review-decision
+    POST /api/tasks/<pk>/review-decision
     body: {"decision": "approved" | "rejected", "comment": "<可选；当 rejected 时必填>"}
 
     业务规则：
@@ -148,17 +147,23 @@ class TaskReviewDecisionAPI(APIView):
       - 写入 Task.review_status / review_comment
     """
 
-    def post(self, request, task_id: int):
+#    def post(self, request, task_id: int):
+    def post(self, request, pk, *args, **kwargs):
+        try:
+            task_id = int(pk)
+        except (TypeError, ValueError):
+            return Response({"detail": "未找到对应的任务"}, status=status.HTTP_404_NOT_FOUND)
         # 1) 取任务
         try:
             task = Task.objects.get(pk=task_id)
         except Task.DoesNotExist:
-            return Response({"detail": "Task not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"detail": "未找到对应的任务"}, status=status.HTTP_404_NOT_FOUND)
 
         # 2) 校验：必须已有有效标注
-        has_ann = Annotation.objects.filter(task=task, was_cancelled=False).exclude(result=None).exists()
+        #has_ann = Annotation.objects.filter(task=task, was_cancelled=False).exclude(result=None).exists()
+        has_ann = Annotation.objects.filter(Q_finished_annotations, task=task).exists()
         if not has_ann:
-            return Response({"detail": "Cannot review task without annotations"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "任务没有可用的标注结果，无法进行审核"}, status=status.HTTP_400_BAD_REQUEST)
 
         # 3) 解析输入
         decision = (request.data.get("decision") or "").strip().lower()
@@ -166,10 +171,10 @@ class TaskReviewDecisionAPI(APIView):
 
         ok = {Task.ReviewStatus.APPROVED, Task.ReviewStatus.REJECTED}
         if decision not in ok:
-            return Response({"detail": "Invalid decision"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "无效的审核结论"}, status=status.HTTP_400_BAD_REQUEST)
 
         if decision == Task.ReviewStatus.REJECTED and not comment:
-            return Response({"detail": "Comment is required when rejecting"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "拒绝时必须填写审核意见"}, status=status.HTTP_400_BAD_REQUEST)
 
         # 4) 写入任务审核结果
         task.review_status = decision

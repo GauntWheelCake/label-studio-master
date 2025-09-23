@@ -333,16 +333,6 @@
   display: flex;
   padding: 16px 0 0;
 }
-.ls-error-message__slack {
-  margin-right: auto;
-  display: flex;
-  align-items: center;
-}
-.ls-error-message__slack img {
-  height: 16px;
-  width: 16px;
-  margin-right: 8px;
-}
 
 .ls-modal {
   --transition-duration: 100ms;
@@ -1047,6 +1037,32 @@
   position: relative;
   align-items: center;
   justify-content: center;
+}
+.ls-menu-header__role-switcher {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: 16px;
+  font-size: 13px;
+  color: rgba(0,0,0,0.75);
+}
+.ls-menu-header__role-label {
+  white-space: nowrap;
+}
+.ls-menu-header__role-select {
+  border: 1px solid rgba(0,0,0,0.15);
+  border-radius: 4px;
+  padding: 4px 8px;
+  background-color: #fff;
+  font-size: 13px;
+  line-height: 18px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.ls-menu-header__role-select:focus {
+  outline: none;
+  border-color: rgba(0,0,0,0.4);
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.08);
 }
 
 .ls-content-wrapper {
@@ -1925,20 +1941,13 @@ input.ls-input[type=radio] {
 .cm-fat-cursor div.CodeMirror-cursors {
   z-index: 1;
 }
-.cm-fat-cursor-mark {
-  background-color: rgba(20, 255, 20, 0.5);
-  -webkit-animation: blink 1.06s steps(1) infinite;
-  -moz-animation: blink 1.06s steps(1) infinite;
-  animation: blink 1.06s steps(1) infinite;
-}
-.cm-animate-fat-cursor {
-  width: auto;
-  border: 0;
-  -webkit-animation: blink 1.06s steps(1) infinite;
-  -moz-animation: blink 1.06s steps(1) infinite;
-  animation: blink 1.06s steps(1) infinite;
-  background-color: #7e7;
-}
+.cm-fat-cursor .CodeMirror-line::selection,
+.cm-fat-cursor .CodeMirror-line > span::selection, 
+.cm-fat-cursor .CodeMirror-line > span > span::selection { background: transparent; }
+.cm-fat-cursor .CodeMirror-line::-moz-selection,
+.cm-fat-cursor .CodeMirror-line > span::-moz-selection,
+.cm-fat-cursor .CodeMirror-line > span > span::-moz-selection { background: transparent; }
+.cm-fat-cursor { caret-color: transparent; }
 @-moz-keyframes blink {
   0% {}
   50% { background-color: transparent; }
@@ -2036,6 +2045,7 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #a22;}
   height: 100%;
   outline: none; /* Prevent dragging from highlighting the element */
   position: relative;
+  z-index: 0;
 }
 .CodeMirror-sizer {
   position: relative;
@@ -3614,6 +3624,19 @@ body {
   background-color: var(--background);
   box-shadow: inset 0px 0px 0px 1px rgba(0,0,0,0.15);
 }
+
+:root {
+  --tag-pending:  #9aa0a6;
+  --tag-approved: #1a7f37;
+  --tag-rejected: #d93025;
+}
+.tag {
+  display:inline-flex; align-items:center; padding:.125rem .5rem;
+  border-radius:999px; font-size:12px; line-height:18px; color:#fff; font-weight:600;
+}
+.tag[data-status="pending"]  { background: var(--tag-pending);  }
+.tag[data-status="approved"] { background: var(--tag-approved); }
+.tag[data-status="rejected"] { background: var(--tag-rejected); }
 
 
 /*# sourceMappingURL=main.css.map*/
