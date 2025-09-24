@@ -4,7 +4,6 @@ import { useLibrary } from '../../../providers/LibraryProvider';
 import { cn } from '../../../utils/bem';
 import './Config.styl';
 import { EMPTY_CONFIG } from './Template';
-import { t } from '../../../i18n';
 
 const configClass = cn("configure");
 
@@ -48,7 +47,7 @@ export const Preview = ({ config, data, error }) => {
 
   return (
     <div className={configClass.elem("preview")}>
-      <h3>{t('createProject.preview.title')}</h3>
+      <h3>UI Preview</h3>
       {error && <div className={configClass.elem("preview-error")}>
         <h2>{error.detail} {error.id}</h2>
         {error.validation_errors?.non_field_errors?.map?.(err => <p key={err}>{err}</p>)}
