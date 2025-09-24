@@ -24,6 +24,9 @@ const downloadFile = (blob, filename) => {
 
 const {Block, Elem} = BemWithSpecifiContext();
 
+const APPROVED_EXPORT_MESSAGE = "Only tasks with an approved review status will be included in the exported file.";
+const NO_APPROVED_TASKS_MESSAGE = "There are no approved tasks available for export.";
+
 const wait = () => new Promise(resolve => setTimeout(resolve, 5000));
 
 export const ExportPage = () => {
@@ -61,11 +64,35 @@ export const ExportPage = () => {
       },
     });
 
-    if (response.ok) {
-      const blob = await response.blob();
-      downloadFile(blob, response.headers.get('filename'));
-    } else {
-      api.handleError(response);
+    if (response) {
+      if (response.ok) {
+        const notice = response.headers.get('x-review-export-notice');
+        const blob = await response.blob();
+        downloadFile(blob, response.headers.get('filename'));
+
+        Modal.info({
+          title: "Export ready",
+          body: notice ?? APPROVED_EXPORT_MESSAGE,
+          simple: true,
+        });
+      } else if (response.status === 400) {
+        let detail = NO_APPROVED_TASKS_MESSAGE;
+
+        try {
+          const payload = await response.clone().json();
+          detail = payload?.detail ?? detail;
+        } catch (e) {
+          /* ignore */
+        }
+
+        Modal.info({
+          title: "No data to export",
+          body: detail,
+          simple: true,
+        });
+      } else {
+        api.handleError(response);
+      }
     }
 
     setDownloading(false);
@@ -171,6 +198,10 @@ export const ExportPage = () => {
           {/*  <Toggle label="Include predictions" name="return_predictions" checked/>*/}
           {/*</Form.Row>*/}
         </Form>
+
+        <Elem name="notice">
+          {APPROVED_EXPORT_MESSAGE}
+        </Elem>
 
         <Elem name="footer">
           <Space style={{width: '100%'}} spread>
