@@ -9,6 +9,7 @@ import { useFixedLocation, useParams } from '../../providers/RoutesProvider';
 import { BemWithSpecifiContext } from '../../utils/bem';
 import { isDefined } from '../../utils/helpers';
 import "./ExportPage.styl";
+import { t } from '../../i18n';
 
 // const formats = {
 //   json: 'JSON',
@@ -173,7 +174,7 @@ export const ExportPage = () => {
         const search = location.search;
         history.replace(`${path}${search !== '?' ? search : ''}`);
       }}
-      title="Export data"
+      title={t('exportPage.title')}
       style={{width: 720}}
       closeOnClickOutside={false}
       allowClose={!downloading}
@@ -211,7 +212,7 @@ export const ExportPage = () => {
             <Elem name="actions">
               <Space>
                 {downloadingMessage && (
-                  "Files are being prepared. It might take some time."
+                  t('exportPage.status.preparing')
                 )}
                 <Elem
                   tag={Button}
@@ -220,7 +221,7 @@ export const ExportPage = () => {
                   onClick={proceedExport}
                   waiting={downloading}
                 >
-                  Export
+                  {t('exportPage.actions.export')}
                 </Elem>
               </Space>
             </Elem>
@@ -234,7 +235,7 @@ export const ExportPage = () => {
 const FormatInfo = ({availableFormats, selected, onClick}) => {
   return (
     <Block name="formats">
-      <Elem name="info">You can export dataset in one of the following formats:</Elem>
+      <Elem name="info">{t('exportPage.formatInfo.description')}</Elem>
       <Elem name="list">
         {availableFormats.map(format => (
           <Elem
@@ -261,9 +262,9 @@ const FormatInfo = ({availableFormats, selected, onClick}) => {
         ))}
       </Elem>
       <Elem name="feedback">
-        Can't find an export format?
+        {t('exportPage.formatInfo.missingFormat')}
         <br/>
-        Please contact your administrator for assistance.
+        {t('exportPage.formatInfo.contactAdmin')}
       </Elem>
     </Block>
   );
