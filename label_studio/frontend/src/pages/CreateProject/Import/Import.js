@@ -5,6 +5,7 @@ import { unique } from '../../../utils/helpers';
 import "./Import.styl";
 import { IconUpload, IconInfo, IconError } from '../../../assets/icons';
 import { useAPI } from '../../../providers/ApiProvider';
+import { t } from '../../../i18n';
 
 const importClass = cn("upload_page");
 const dropzoneClass = cn("dropzone");
@@ -55,8 +56,11 @@ const Footer = () => {
   return (
     <Modal.Footer>
       <IconInfo className={importClass.elem("info-icon")} width="20" height="20" />
-      See the&nbsp;documentation to <a target="_blank" href="https://labelstud.io/guide/predictions.html">import preannotated data</a>{" "}
-      or&nbsp;to <a target="_blank" href="https://labelstud.io/guide/storage.html">sync data from a&nbsp;database or&nbsp;cloud storage</a>.
+      {t('importPage.footer.docsPrefix')}{' '}
+      <a target="_blank" href="https://labelstud.io/guide/predictions.html">{t('importPage.footer.importLink')}</a>{' '}
+      {t('importPage.footer.connector')}{' '}
+      <a target="_blank" href="https://labelstud.io/guide/storage.html">{t('importPage.footer.syncLink')}</a>
+      {t('importPage.footer.suffix')}
     </Modal.Footer>
   );
 };
@@ -173,7 +177,7 @@ export const ImportPage = ({
     console.error(err);
     // @todo workaround for error about input size in a wrong html format
     if (typeof err === "string" && err.includes("RequestDataTooBig")) {
-      const message = "Imported file is too big";
+      const message = t('importPage.errors.fileTooBig');
       const extra = err.match(/"exception_value">(.*)<\/pre>/)?.[1];
       err = { message, extra };
     }
@@ -264,6 +268,10 @@ export const ImportPage = ({
     onChange: e => setCsvHandling(e.target.value),
   };
 
+  const uploadButtonLabel = files.uploaded.length
+    ? t('importPage.actions.uploadMoreFiles')
+    : t('importPage.actions.uploadFiles');
+
   return (
     <div className={importClass}>
       {highlightCsvHandling && <div className={importClass.elem("csv-splash")}/>}
@@ -271,23 +279,23 @@ export const ImportPage = ({
 
       <header>
         <form className={importClass.elem("url-form") + " inline"} method="POST" onSubmit={onLoadURL}>
-          <input placeholder="Dataset URL" name="url" ref={urlRef} />
-          <button type="submit">Add URL</button>
+          <input placeholder={t('importPage.form.datasetUrlPlaceholder')} name="url" ref={urlRef} />
+          <button type="submit">{t('importPage.actions.addUrl')}</button>
         </form>
-        <span>or</span>
+        <span>{t('importPage.actions.or')}</span>
         <button onClick={() => document.getElementById('file-input').click()} className={importClass.elem("upload-button")}>
           <IconUpload width="16" height="16" className={importClass.elem("upload-icon")} />
-          Upload {files.uploaded.length ? "More " : ""}Files
+          {uploadButtonLabel}
         </button>
         <div className={importClass.elem("csv-handling").mod({ highlighted: highlightCsvHandling, hidden: !csvHandling })}>
-          <span>Treat CSV/TSV as</span>
-          <label><input {...csvProps} value="tasks" checked={csvHandling === "tasks"}/> List of tasks</label>
-          <label><input {...csvProps} value="ts" checked={csvHandling === "ts"}/> Time Series</label>
+          <span>{t('importPage.csvHandling.label')}</span>
+          <label><input {...csvProps} value="tasks" checked={csvHandling === "tasks"}/> {t('importPage.csvHandling.tasks')}</label>
+          <label><input {...csvProps} value="ts" checked={csvHandling === "ts"}/> {t('importPage.csvHandling.timeSeries')}</label>
         </div>
         <div className={importClass.elem("status")}>
           {files.uploaded.length
-            ? `${files.uploaded.length} files uploaded`
-            : ""}
+            ? `${files.uploaded.length} ${t('importPage.status.filesUploadedLabel')}`
+            : ''}
         </div>
       </header>
 
@@ -298,15 +306,18 @@ export const ImportPage = ({
           {!showList && (
             <label htmlFor="file-input">
               <div className={dropzoneClass.elem("content")}>
-                <header>Drag & drop files here<br/>or click to browse</header>
+                <header>
+                  {t('importPage.dropzone.instructionsLine1')}<br/>
+                  {t('importPage.dropzone.instructionsLine2')}
+                </header>
                 <IconUpload height="64" className={dropzoneClass.elem("icon")} />
                 <dl>
-                  <dt>Text</dt><dd>txt</dd>
-                  <dt>Audio</dt><dd>wav, aiff, mp3, au, flac, m4a, ogg</dd>
-                  <dt>Images</dt><dd>jpg, png, gif, bmp, svg, webp</dd>
-                  <dt>HTML</dt><dd>html, htm, xml</dd>
-                  <dt>Time Series</dt><dd>csv, tsv</dd>
-                  <dt>Common Formats</dt><dd>csv, tsv, txt, json</dd>
+                  <dt>{t('importPage.dropzone.types.text')}</dt><dd>txt</dd>
+                  <dt>{t('importPage.dropzone.types.audio')}</dt><dd>wav, aiff, mp3, au, flac, m4a, ogg</dd>
+                  <dt>{t('importPage.dropzone.types.images')}</dt><dd>jpg, png, gif, bmp, svg, webp</dd>
+                  <dt>{t('importPage.dropzone.types.html')}</dt><dd>html, htm, xml</dd>
+                  <dt>{t('importPage.dropzone.types.timeSeries')}</dt><dd>csv, tsv</dd>
+                  <dt>{t('importPage.dropzone.types.commonFormats')}</dt><dd>csv, tsv, txt, json</dd>
                 </dl>
               </div>
             </label>
