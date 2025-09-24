@@ -1,4 +1,4 @@
-export const zhCN: Record<string, string> = {
+export const zhCN = {
   'dataManager.crash.info': '项目已被删除或尚未创建',
   'dataManager.crash.backToProjects': '返回项目列表',
   'dataManager.links.settings': '项目设置',
