@@ -87022,7 +87022,7 @@ const ROLE_TOOLTIPS = {
   review: '当前身份不可执行审核',
   start: '当前身份不可发起标注'
 };
-const ANNOTATION_KEYWORDS = ['submit', 'update'];
+const ANNOTATION_KEYWORDS = ['submit', 'update', '提交', '更新'];
 const REVIEW_KEYWORDS = ['accept', 'reject'];
 const normalizeText = node => {
   var _node$textContent;

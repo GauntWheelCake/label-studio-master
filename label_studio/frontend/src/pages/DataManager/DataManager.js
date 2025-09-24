@@ -27,7 +27,7 @@ const ROLE_TOOLTIPS = {
   start: '当前身份不可发起标注',
 };
 
-const ANNOTATION_KEYWORDS = ['submit', 'update'];
+const ANNOTATION_KEYWORDS = ['submit', 'update','提交', '更新'];
 const REVIEW_KEYWORDS = ['accept', 'reject'];
 
 const normalizeText = (node) => (node?.textContent ?? '').trim().toLowerCase();
