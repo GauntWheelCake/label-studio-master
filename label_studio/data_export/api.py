@@ -22,6 +22,9 @@ from .serializers import ExportDataSerializer
 
 logger = logging.getLogger(__name__)
 
+APPROVED_EXPORT_NOTICE = 'Only tasks with an approved review status will be included in the exported file.'
+NO_APPROVED_TASKS_MESSAGE = 'There are no approved tasks available for export.'
+
 
 @method_decorator(name='get', decorator=swagger_auto_schema(
     tags=['Export'],
@@ -93,9 +96,15 @@ class ExportAPI(generics.RetrieveAPIView):
         only_finished = not bool_from_request(request.GET, 'download_all_tasks', False)
 
         logger.debug('Get tasks')
-        query = Task.objects.filter(project=project).select_related('project').prefetch_related('annotations', 'predictions')
+        query = Task.objects.filter(
+            project=project,
+            review_status=Task.ReviewStatus.APPROVED
+        ).select_related('project').prefetch_related('annotations', 'predictions')
         if only_finished:
             query = query.filter(annotations__isnull=False)
+
+        if not query.exists():
+            return Response({'detail': NO_APPROVED_TASKS_MESSAGE}, status=status.HTTP_400_BAD_REQUEST)
 
         task_ids = query.values_list('id', flat=True)
 
@@ -110,6 +119,7 @@ class ExportAPI(generics.RetrieveAPIView):
         response = HttpResponse(File(export_stream), content_type=content_type)
         response['Content-Disposition'] = 'attachment; filename="%s"' % filename
         response['filename'] = filename
+        response['X-Review-Export-Notice'] = APPROVED_EXPORT_NOTICE
         return response
 
 
