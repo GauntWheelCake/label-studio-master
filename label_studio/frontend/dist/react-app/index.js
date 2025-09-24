@@ -83190,16 +83190,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../utils/bem */ "./src/utils/bem.tsx");
 /* harmony import */ var _utils_helpers__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../utils/helpers */ "./src/utils/helpers.js");
 /* harmony import */ var _utils_roles__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../utils/roles */ "./src/utils/roles.ts");
-/* harmony import */ var _Breadcrumbs_Breadcrumbs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../Breadcrumbs/Breadcrumbs */ "./src/components/Breadcrumbs/Breadcrumbs.js");
-/* harmony import */ var _Dropdown_Dropdown__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../Dropdown/Dropdown */ "./src/components/Dropdown/Dropdown.js");
-/* harmony import */ var _Hamburger_Hamburger__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../Hamburger/Hamburger */ "./src/components/Hamburger/Hamburger.js");
-/* harmony import */ var _Menu_Menu__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../Menu/Menu */ "./src/components/Menu/Menu.js");
-/* harmony import */ var _Userpic_Userpic__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../Userpic/Userpic */ "./src/components/Userpic/Userpic.js");
-/* harmony import */ var _VersionNotifier_VersionNotifier__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../VersionNotifier/VersionNotifier */ "./src/components/VersionNotifier/VersionNotifier.js");
-/* harmony import */ var _Menubar_styl__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./Menubar.styl */ "./src/components/Menubar/Menubar.styl");
-/* harmony import */ var _MenuContent_styl__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./MenuContent.styl */ "./src/components/Menubar/MenuContent.styl");
-/* harmony import */ var _MenuSidebar_styl__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./MenuSidebar.styl */ "./src/components/Menubar/MenuSidebar.styl");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var _i18n__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../i18n */ "./src/i18n/index.ts");
+/* harmony import */ var _Breadcrumbs_Breadcrumbs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../Breadcrumbs/Breadcrumbs */ "./src/components/Breadcrumbs/Breadcrumbs.js");
+/* harmony import */ var _Dropdown_Dropdown__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../Dropdown/Dropdown */ "./src/components/Dropdown/Dropdown.js");
+/* harmony import */ var _Hamburger_Hamburger__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../Hamburger/Hamburger */ "./src/components/Hamburger/Hamburger.js");
+/* harmony import */ var _Menu_Menu__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../Menu/Menu */ "./src/components/Menu/Menu.js");
+/* harmony import */ var _Userpic_Userpic__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../Userpic/Userpic */ "./src/components/Userpic/Userpic.js");
+/* harmony import */ var _VersionNotifier_VersionNotifier__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../VersionNotifier/VersionNotifier */ "./src/components/VersionNotifier/VersionNotifier.js");
+/* harmony import */ var _Menubar_styl__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./Menubar.styl */ "./src/components/Menubar/Menubar.styl");
+/* harmony import */ var _MenuContent_styl__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./MenuContent.styl */ "./src/components/Menubar/MenuContent.styl");
+/* harmony import */ var _MenuSidebar_styl__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./MenuSidebar.styl */ "./src/components/Menubar/MenuSidebar.styl");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
 
 
 
@@ -83221,10 +83223,10 @@ __webpack_require__.r(__webpack_exports__);
 const MenubarContext = /*#__PURE__*/(0,react__WEBPACK_IMPORTED_MODULE_0__.createContext)();
 const LeftContextMenu = ({
   className
-}) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_app_StaticContent_StaticContent__WEBPACK_IMPORTED_MODULE_1__.StaticContent, {
+}) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_app_StaticContent_StaticContent__WEBPACK_IMPORTED_MODULE_1__.StaticContent, {
   id: "context-menu-left",
   className: className,
-  children: template => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_Breadcrumbs_Breadcrumbs__WEBPACK_IMPORTED_MODULE_8__.Breadcrumbs, {
+  children: template => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_Breadcrumbs_Breadcrumbs__WEBPACK_IMPORTED_MODULE_9__.Breadcrumbs, {
     fromTemplate: template
   })
 });
@@ -83236,13 +83238,13 @@ const RightContextMenu = ({
     ContextComponent,
     contextProps
   } = (0,_providers_RoutesProvider__WEBPACK_IMPORTED_MODULE_4__.useContextComponent)();
-  return ContextComponent ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)("div", {
+  return ContextComponent ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)("div", {
     className: className,
-    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(ContextComponent, {
+    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(ContextComponent, {
       ...props,
       ...(contextProps !== null && contextProps !== void 0 ? contextProps : {})
     })
-  }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_app_StaticContent_StaticContent__WEBPACK_IMPORTED_MODULE_1__.StaticContent, {
+  }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_app_StaticContent_StaticContent__WEBPACK_IMPORTED_MODULE_1__.StaticContent, {
     id: "context-menu-right",
     className: className
   });
@@ -83336,78 +83338,76 @@ const Menubar = ({
     }
     useMenuRef === null || useMenuRef === void 0 ? void 0 : (_useMenuRef$current = useMenuRef.current) === null || _useMenuRef$current === void 0 ? void 0 : _useMenuRef$current.close();
   }, [location]);
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsxs)("div", {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsxs)("div", {
     className: contentClass,
-    children: [enabled && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsxs)("div", {
+    children: [enabled && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsxs)("div", {
       className: menubarClass,
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_Dropdown_Dropdown__WEBPACK_IMPORTED_MODULE_9__.Dropdown.Trigger, {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_Dropdown_Dropdown__WEBPACK_IMPORTED_MODULE_10__.Dropdown.Trigger, {
         dropdown: menuDropdownRef,
         closeOnClickOutside: !sidebarPinned,
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsxs)("div", {
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsxs)("div", {
           className: `${menubarClass.elem('trigger')} main-menu-trigger`,
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)("img", {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)("img", {
             src: (0,_utils_helpers__WEBPACK_IMPORTED_MODULE_6__.absoluteURL)("/static/icons/logo-black.svg"),
-            alt: "Label Studio Logo",
+            alt: (0,_i18n__WEBPACK_IMPORTED_MODULE_8__.t)('menubar.logoAlt'),
             height: "22"
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_Hamburger_Hamburger__WEBPACK_IMPORTED_MODULE_10__.Hamburger, {
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_Hamburger_Hamburger__WEBPACK_IMPORTED_MODULE_11__.Hamburger, {
             opened: sidebarOpened
           })]
         })
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsxs)("div", {
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsxs)("div", {
         className: menubarContext,
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(LeftContextMenu, {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(LeftContextMenu, {
           className: contextItem.mod({
             left: true
           })
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(RightContextMenu, {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(RightContextMenu, {
           className: contextItem.mod({
             right: true
           })
         })]
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsxs)("div", {
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsxs)("div", {
         className: roleSwitcherClass,
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)("label", {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)("label", {
           className: roleLabelClass,
           htmlFor: "ls-role-select",
           children: "\u5F53\u524D\u8EAB\u4EFD"
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)("select", {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)("select", {
           id: "ls-role-select",
           className: roleSelectClass,
           onChange: handleRoleChange,
           value: activeRole !== null && activeRole !== void 0 ? activeRole : _utils_roles__WEBPACK_IMPORTED_MODULE_7__.DEFAULT_ROLE,
           "aria-label": "\u5207\u6362\u5F53\u524D\u8EAB\u4EFD",
-          children: roleOptions.map(option => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)("option", {
+          children: roleOptions.map(option => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)("option", {
             value: option.value,
             children: option.label
           }, option.value))
         })]
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_Dropdown_Dropdown__WEBPACK_IMPORTED_MODULE_9__.Dropdown.Trigger, {
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_Dropdown_Dropdown__WEBPACK_IMPORTED_MODULE_10__.Dropdown.Trigger, {
         ref: useMenuRef,
         align: "right",
-        content: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsxs)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_11__.Menu, {
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_11__.Menu.Item, {
-            icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_assets_icons__WEBPACK_IMPORTED_MODULE_2__.LsSettings, {}),
-            label: "Account & Settings",
-            href: "/user/account",
-            "data-external": true
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_11__.Menu.Item, {
-            icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_assets_icons__WEBPACK_IMPORTED_MODULE_2__.LsDoor, {}),
-            label: "Log Out",
-            href: (0,_utils_helpers__WEBPACK_IMPORTED_MODULE_6__.absoluteURL)("/logout"),
-            "data-external": true
+        content: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsxs)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_12__.Menu, {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_12__.Menu.Item, {
+            icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_assets_icons__WEBPACK_IMPORTED_MODULE_2__.LsSettings, {}),
+            label: (0,_i18n__WEBPACK_IMPORTED_MODULE_8__.t)('menubar.menu.accountAndSettings'),
+            href: "/user/account"
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_12__.Menu.Item, {
+            icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_assets_icons__WEBPACK_IMPORTED_MODULE_2__.LsDoor, {}),
+            label: (0,_i18n__WEBPACK_IMPORTED_MODULE_8__.t)('menubar.menu.logout'),
+            href: (0,_utils_helpers__WEBPACK_IMPORTED_MODULE_6__.absoluteURL)("/logout")
           })]
         }),
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)("div", {
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)("div", {
           className: menubarClass.elem('user'),
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_Userpic_Userpic__WEBPACK_IMPORTED_MODULE_12__.Userpic, {
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_Userpic_Userpic__WEBPACK_IMPORTED_MODULE_13__.Userpic, {
             user: config.user
           })
         })
       })]
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_VersionNotifier_VersionNotifier__WEBPACK_IMPORTED_MODULE_13__.VersionProvider, {
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsxs)("div", {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_VersionNotifier_VersionNotifier__WEBPACK_IMPORTED_MODULE_14__.VersionProvider, {
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsxs)("div", {
         className: contentClass.elem('body'),
-        children: [enabled && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_Dropdown_Dropdown__WEBPACK_IMPORTED_MODULE_9__.Dropdown, {
+        children: [enabled && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_Dropdown_Dropdown__WEBPACK_IMPORTED_MODULE_10__.Dropdown, {
           ref: menuDropdownRef,
           onToggle: sidebarToggle,
           onVisibilityChanged: () => window.dispatchEvent(new Event('resize')),
@@ -83418,34 +83418,32 @@ const Menubar = ({
           style: {
             width: 240
           },
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsxs)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_11__.Menu, {
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_11__.Menu.Item, {
-              label: "Projects",
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsxs)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_12__.Menu, {
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_12__.Menu.Item, {
+              label: (0,_i18n__WEBPACK_IMPORTED_MODULE_8__.t)('menubar.menu.projects'),
               to: "/projects",
-              icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_assets_icons__WEBPACK_IMPORTED_MODULE_2__.IconFolder, {}),
-              "data-external": true,
+              icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_assets_icons__WEBPACK_IMPORTED_MODULE_2__.IconFolder, {}),
               exact: true
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_11__.Menu.Item, {
-              label: "Organization",
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_12__.Menu.Item, {
+              label: (0,_i18n__WEBPACK_IMPORTED_MODULE_8__.t)('menubar.menu.organization'),
               to: "/people",
-              icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_assets_icons__WEBPACK_IMPORTED_MODULE_2__.IconPersonInCircle, {}),
-              "data-external": true,
+              icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_assets_icons__WEBPACK_IMPORTED_MODULE_2__.IconPersonInCircle, {}),
               exact: true
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_11__.Menu.Spacer, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_VersionNotifier_VersionNotifier__WEBPACK_IMPORTED_MODULE_13__.VersionNotifier, {
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_12__.Menu.Spacer, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_VersionNotifier_VersionNotifier__WEBPACK_IMPORTED_MODULE_14__.VersionNotifier, {
               showNewVersion: true
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_VersionNotifier_VersionNotifier__WEBPACK_IMPORTED_MODULE_13__.VersionNotifier, {
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_VersionNotifier_VersionNotifier__WEBPACK_IMPORTED_MODULE_14__.VersionNotifier, {
               showCurrentVersion: true
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_11__.Menu.Divider, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_11__.Menu.Item, {
-              icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_assets_icons__WEBPACK_IMPORTED_MODULE_2__.IconPin, {}),
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_12__.Menu.Divider, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_12__.Menu.Item, {
+              icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_assets_icons__WEBPACK_IMPORTED_MODULE_2__.IconPin, {}),
               className: sidebarClass.elem('pin'),
               onClick: sidebarPin,
               active: sidebarPinned,
-              children: sidebarPinned ? "Unpin menu" : "Pin menu"
+              children: sidebarPinned ? (0,_i18n__WEBPACK_IMPORTED_MODULE_8__.t)('menubar.menu.unpin') : (0,_i18n__WEBPACK_IMPORTED_MODULE_8__.t)('menubar.menu.pin')
             })]
           })
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(MenubarContext.Provider, {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(MenubarContext.Provider, {
           value: providerValue,
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)("div", {
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)("div", {
             className: contentClass.elem('content').mod({
               withSidebar: sidebarPinned && sidebarOpened
             }),
@@ -84750,6 +84748,70 @@ const setTags = () => {
   _sentry_browser__WEBPACK_IMPORTED_MODULE_0__.setTags(tags);
 };
 const SentryRoute = _sentry_react__WEBPACK_IMPORTED_MODULE_2__.withSentryRouting(react_router_dom__WEBPACK_IMPORTED_MODULE_4__.Route);
+
+/***/ }),
+
+/***/ "./src/i18n/index.ts":
+/*!***************************!*\
+  !*** ./src/i18n/index.ts ***!
+  \***************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   getDictionary: () => (/* binding */ getDictionary),
+/* harmony export */   t: () => (/* binding */ t),
+/* harmony export */   zhCN: () => (/* reexport safe */ _zh_CN__WEBPACK_IMPORTED_MODULE_0__.zhCN)
+/* harmony export */ });
+/* harmony import */ var _zh_CN__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./zh-CN */ "./src/i18n/zh-CN.ts");
+
+const dictionaries = {
+  'zh-CN': _zh_CN__WEBPACK_IMPORTED_MODULE_0__.zhCN
+};
+const DEFAULT_LOCALE = 'zh-CN';
+const t = (key, locale = DEFAULT_LOCALE) => {
+  var _dictionaries$locale, _dictionary$key;
+  const dictionary = (_dictionaries$locale = dictionaries[locale]) !== null && _dictionaries$locale !== void 0 ? _dictionaries$locale : dictionaries[DEFAULT_LOCALE];
+  return (_dictionary$key = dictionary[key]) !== null && _dictionary$key !== void 0 ? _dictionary$key : key;
+};
+const getDictionary = (locale = DEFAULT_LOCALE) => {
+  var _dictionaries$locale2;
+  return (_dictionaries$locale2 = dictionaries[locale]) !== null && _dictionaries$locale2 !== void 0 ? _dictionaries$locale2 : dictionaries[DEFAULT_LOCALE];
+};
+
+
+/***/ }),
+
+/***/ "./src/i18n/zh-CN.ts":
+/*!***************************!*\
+  !*** ./src/i18n/zh-CN.ts ***!
+  \***************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   zhCN: () => (/* binding */ zhCN)
+/* harmony export */ });
+const zhCN = {
+  'dataManager.crash.info': '项目已被删除或尚未创建',
+  'dataManager.crash.backToProjects': '返回项目列表',
+  'dataManager.links.settings': '项目设置',
+  'dataManager.links.import': '数据导入',
+  'dataManager.links.export': '数据导出',
+  'dataManager.breadcrumb.labeling': '标注',
+  'dataManager.modal.labelingInstructionsTitle': '标注说明',
+  'dataManager.instructions.button': '查看说明',
+  'dataManager.instructions.modalTitle': '操作说明',
+  'menubar.menu.accountAndSettings': '账户与设置',
+  'menubar.menu.logout': '退出登录',
+  'menubar.menu.projects': '项目',
+  'menubar.menu.organization': '组织管理',
+  'menubar.menu.pin': '固定菜单',
+  'menubar.menu.unpin': '取消固定菜单',
+  'menubar.logoAlt': 'Label Studio 徽标'
+};
 
 /***/ }),
 
@@ -86980,12 +87042,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _providers_RoutesProvider__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../providers/RoutesProvider */ "./src/providers/RoutesProvider.js");
 /* harmony import */ var _services_breadrumbs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../services/breadrumbs */ "./src/services/breadrumbs.js");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../utils/bem */ "./src/utils/bem.tsx");
-/* harmony import */ var _utils_roles__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../utils/roles */ "./src/utils/roles.ts");
-/* harmony import */ var _CreateProject_Import_ImportModal__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../CreateProject/Import/ImportModal */ "./src/pages/CreateProject/Import/ImportModal.js");
-/* harmony import */ var _ExportPage_ExportPage__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../ExportPage/ExportPage */ "./src/pages/ExportPage/ExportPage.js");
-/* harmony import */ var _api_config__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./api-config */ "./src/pages/DataManager/api-config.js");
-/* harmony import */ var _DataManager_styl__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./DataManager.styl */ "./src/pages/DataManager/DataManager.styl");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var _i18n__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../i18n */ "./src/i18n/index.ts");
+/* harmony import */ var _utils_roles__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../utils/roles */ "./src/utils/roles.ts");
+/* harmony import */ var _CreateProject_Import_ImportModal__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../CreateProject/Import/ImportModal */ "./src/pages/CreateProject/Import/ImportModal.js");
+/* harmony import */ var _ExportPage_ExportPage__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../ExportPage/ExportPage */ "./src/pages/ExportPage/ExportPage.js");
+/* harmony import */ var _api_config__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./api-config */ "./src/pages/DataManager/api-config.js");
+/* harmony import */ var _DataManager_styl__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./DataManager.styl */ "./src/pages/DataManager/DataManager.styl");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
 
 
 
@@ -87004,15 +87068,15 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const ROLE_PERMISSIONS = {
-  [_utils_roles__WEBPACK_IMPORTED_MODULE_11__.UserRole.Admin]: {
+  [_utils_roles__WEBPACK_IMPORTED_MODULE_12__.UserRole.Admin]: {
     annotate: false,
     review: false
   },
-  [_utils_roles__WEBPACK_IMPORTED_MODULE_11__.UserRole.Annotator]: {
+  [_utils_roles__WEBPACK_IMPORTED_MODULE_12__.UserRole.Annotator]: {
     annotate: true,
     review: false
   },
-  [_utils_roles__WEBPACK_IMPORTED_MODULE_11__.UserRole.Reviewer]: {
+  [_utils_roles__WEBPACK_IMPORTED_MODULE_12__.UserRole.Reviewer]: {
     annotate: false,
     review: true
   }
@@ -87090,7 +87154,7 @@ const initializeDataManager = async (root, props, params) => {
     apiVersion: 2,
     polling: !window.APP_SETTINGS,
     showPreviews: false,
-    apiEndpoints: _api_config__WEBPACK_IMPORTED_MODULE_14__.APIConfig.endpoints,
+    apiEndpoints: _api_config__WEBPACK_IMPORTED_MODULE_15__.APIConfig.endpoints,
     interfaces: {
       import: false,
       export: false,
@@ -87130,14 +87194,14 @@ const DataManagerPage = ({
   const setContextProps = (0,_providers_RoutesProvider__WEBPACK_IMPORTED_MODULE_8__.useContextProps)();
   const [crashed, setCrashed] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
   const dataManagerRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)();
-  const [activeRole, setActiveRole] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)((0,_utils_roles__WEBPACK_IMPORTED_MODULE_11__.getStoredRole)());
+  const [activeRole, setActiveRole] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)((0,_utils_roles__WEBPACK_IMPORTED_MODULE_12__.getStoredRole)());
   const roleRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(activeRole);
   const labelButtonInitialState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
   const applyAnnotationControlState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(roleValue => {
     var _ROLE_PERMISSIONS$res;
     if (typeof document === 'undefined') return;
-    const resolvedRole = roleValue !== null && roleValue !== void 0 ? roleValue : _utils_roles__WEBPACK_IMPORTED_MODULE_11__.DEFAULT_ROLE;
-    const permissions = (_ROLE_PERMISSIONS$res = ROLE_PERMISSIONS[resolvedRole]) !== null && _ROLE_PERMISSIONS$res !== void 0 ? _ROLE_PERMISSIONS$res : ROLE_PERMISSIONS[_utils_roles__WEBPACK_IMPORTED_MODULE_11__.DEFAULT_ROLE];
+    const resolvedRole = roleValue !== null && roleValue !== void 0 ? roleValue : _utils_roles__WEBPACK_IMPORTED_MODULE_12__.DEFAULT_ROLE;
+    const permissions = (_ROLE_PERMISSIONS$res = ROLE_PERMISSIONS[resolvedRole]) !== null && _ROLE_PERMISSIONS$res !== void 0 ? _ROLE_PERMISSIONS$res : ROLE_PERMISSIONS[_utils_roles__WEBPACK_IMPORTED_MODULE_12__.DEFAULT_ROLE];
     const controlsRoot = document.querySelector('.lsf-controls');
     if (!controlsRoot) return;
     const interactiveElements = controlsRoot.querySelectorAll('button.lsf-button, a.lsf-button');
@@ -87154,8 +87218,8 @@ const DataManagerPage = ({
   const applyDataManagerInterface = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(roleValue => {
     var _ROLE_PERMISSIONS$res2, _dataManagerRef$curre;
     if (typeof document === 'undefined') return;
-    const resolvedRole = roleValue !== null && roleValue !== void 0 ? roleValue : _utils_roles__WEBPACK_IMPORTED_MODULE_11__.DEFAULT_ROLE;
-    const permissions = (_ROLE_PERMISSIONS$res2 = ROLE_PERMISSIONS[resolvedRole]) !== null && _ROLE_PERMISSIONS$res2 !== void 0 ? _ROLE_PERMISSIONS$res2 : ROLE_PERMISSIONS[_utils_roles__WEBPACK_IMPORTED_MODULE_11__.DEFAULT_ROLE];
+    const resolvedRole = roleValue !== null && roleValue !== void 0 ? roleValue : _utils_roles__WEBPACK_IMPORTED_MODULE_12__.DEFAULT_ROLE;
+    const permissions = (_ROLE_PERMISSIONS$res2 = ROLE_PERMISSIONS[resolvedRole]) !== null && _ROLE_PERMISSIONS$res2 !== void 0 ? _ROLE_PERMISSIONS$res2 : ROLE_PERMISSIONS[_utils_roles__WEBPACK_IMPORTED_MODULE_12__.DEFAULT_ROLE];
     const annotateAllowed = permissions.annotate;
     const store = (_dataManagerRef$curre = dataManagerRef.current) === null || _dataManagerRef$curre === void 0 ? void 0 : _dataManagerRef$curre.store;
     if (store !== null && store !== void 0 && store.interfaceEnabled && store !== null && store !== void 0 && store.disableInterface && store !== null && store !== void 0 && store.enableInterface) {
@@ -87188,7 +87252,7 @@ const DataManagerPage = ({
   }, [dataManagerRef, labelButtonInitialState]);
   const applyRoleRestrictions = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(roleValue => {
     var _ref;
-    const resolvedRole = (_ref = roleValue !== null && roleValue !== void 0 ? roleValue : roleRef.current) !== null && _ref !== void 0 ? _ref : _utils_roles__WEBPACK_IMPORTED_MODULE_11__.DEFAULT_ROLE;
+    const resolvedRole = (_ref = roleValue !== null && roleValue !== void 0 ? roleValue : roleRef.current) !== null && _ref !== void 0 ? _ref : _utils_roles__WEBPACK_IMPORTED_MODULE_12__.DEFAULT_ROLE;
     roleRef.current = resolvedRole;
     if (typeof document !== 'undefined' && document.body) {
       document.body.setAttribute('data-user-role', resolvedRole);
@@ -87285,7 +87349,7 @@ const DataManagerPage = ({
     setContextProps({
       dmRef: dataManager
     });
-    applyRoleRestrictions((_roleRef$current = roleRef.current) !== null && _roleRef$current !== void 0 ? _roleRef$current : _utils_roles__WEBPACK_IMPORTED_MODULE_11__.DEFAULT_ROLE);
+    applyRoleRestrictions((_roleRef$current = roleRef.current) !== null && _roleRef$current !== void 0 ? _roleRef$current : _utils_roles__WEBPACK_IMPORTED_MODULE_12__.DEFAULT_ROLE);
   }, [LabelStudio, DataManager, applyRoleRestrictions]);
   const destroyDM = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => {
     if (dataManagerRef.current) {
@@ -87295,7 +87359,7 @@ const DataManagerPage = ({
     labelButtonInitialState.current = null;
   }, [dataManagerRef]);
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
-    const unsubscribe = (0,_utils_roles__WEBPACK_IMPORTED_MODULE_11__.subscribeToRoleChange)(role => {
+    const unsubscribe = (0,_utils_roles__WEBPACK_IMPORTED_MODULE_12__.subscribeToRoleChange)(role => {
       setActiveRole(role);
     }, {
       immediate: true
@@ -87310,7 +87374,7 @@ const DataManagerPage = ({
     if (typeof document === 'undefined' || !document.body) return;
     const observer = new MutationObserver(() => {
       var _roleRef$current2;
-      applyRoleRestrictions((_roleRef$current2 = roleRef.current) !== null && _roleRef$current2 !== void 0 ? _roleRef$current2 : _utils_roles__WEBPACK_IMPORTED_MODULE_11__.DEFAULT_ROLE);
+      applyRoleRestrictions((_roleRef$current2 = roleRef.current) !== null && _roleRef$current2 !== void 0 ? _roleRef$current2 : _utils_roles__WEBPACK_IMPORTED_MODULE_12__.DEFAULT_ROLE);
     });
     observer.observe(document.body, {
       childList: true,
@@ -87382,24 +87446,24 @@ const DataManagerPage = ({
     init();
     return () => destroyDM();
   }, [root, init]);
-  return crashed ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsxs)(_utils_bem__WEBPACK_IMPORTED_MODULE_10__.Block, {
+  return crashed ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsxs)(_utils_bem__WEBPACK_IMPORTED_MODULE_10__.Block, {
     name: "crash",
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_10__.Elem, {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_10__.Elem, {
       name: "info",
-      children: "Project was deleted or not yet created"
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_components_Button_Button__WEBPACK_IMPORTED_MODULE_3__.Button, {
+      children: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('dataManager.crash.info')
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_components_Button_Button__WEBPACK_IMPORTED_MODULE_3__.Button, {
       to: "/projects",
-      children: "Back to projects"
+      children: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('dataManager.crash.backToProjects')
     })]
-  }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_10__.Block, {
+  }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_10__.Block, {
     ref: root,
     name: "datamanager"
   });
 };
 DataManagerPage.path = "/data";
 DataManagerPage.pages = {
-  ExportPage: _ExportPage_ExportPage__WEBPACK_IMPORTED_MODULE_13__.ExportPage,
-  ImportModal: _CreateProject_Import_ImportModal__WEBPACK_IMPORTED_MODULE_12__.ImportModal
+  ExportPage: _ExportPage_ExportPage__WEBPACK_IMPORTED_MODULE_14__.ExportPage,
+  ImportModal: _CreateProject_Import_ImportModal__WEBPACK_IMPORTED_MODULE_13__.ImportModal
 };
 DataManagerPage.context = ({
   dmRef
@@ -87415,9 +87479,9 @@ DataManagerPage.context = ({
   const [pendingDecision, setPendingDecision] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
   const showReviewError = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(message => {
     let modalInstance;
-    const footer = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_components_Space_Space__WEBPACK_IMPORTED_MODULE_5__.Space, {
+    const footer = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_components_Space_Space__WEBPACK_IMPORTED_MODULE_5__.Space, {
       align: "end",
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_components_Button_Button__WEBPACK_IMPORTED_MODULE_3__.Button, {
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_components_Button_Button__WEBPACK_IMPORTED_MODULE_3__.Button, {
         size: "compact",
         look: "primary",
         onClick: () => {
@@ -87429,7 +87493,7 @@ DataManagerPage.context = ({
     });
     modalInstance = (0,_components_Modal_Modal__WEBPACK_IMPORTED_MODULE_4__.modal)({
       title: '审核失败',
-      body: () => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("div", {
+      body: () => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)("div", {
         children: message !== null && message !== void 0 ? message : '提交审核结果时出现错误，请稍后重试。'
       }),
       footer
@@ -87456,13 +87520,13 @@ DataManagerPage.context = ({
         (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
           commentRef.current = value;
         }, [value]);
-        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsxs)("div", {
+        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsxs)("div", {
           style: {
             display: 'flex',
             flexDirection: 'column',
             gap: 8
           },
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("textarea", {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)("textarea", {
             autoFocus: true,
             rows: 4,
             value: value,
@@ -87473,7 +87537,7 @@ DataManagerPage.context = ({
               resize: 'vertical',
               padding: '8px 10px'
             }
-          }), error ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("div", {
+          }), error ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)("div", {
             style: {
               color: '#d32029'
             },
@@ -87487,13 +87551,13 @@ DataManagerPage.context = ({
         resolve(result);
         (_modalInstance2 = modalInstance) === null || _modalInstance2 === void 0 ? void 0 : _modalInstance2.close();
       };
-      const footer = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsxs)(_components_Space_Space__WEBPACK_IMPORTED_MODULE_5__.Space, {
+      const footer = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsxs)(_components_Space_Space__WEBPACK_IMPORTED_MODULE_5__.Space, {
         align: "end",
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_components_Button_Button__WEBPACK_IMPORTED_MODULE_3__.Button, {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_components_Button_Button__WEBPACK_IMPORTED_MODULE_3__.Button, {
           size: "compact",
           onClick: () => closeWithResult(null),
           children: "\u53D6\u6D88"
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_components_Button_Button__WEBPACK_IMPORTED_MODULE_3__.Button, {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_components_Button_Button__WEBPACK_IMPORTED_MODULE_3__.Button, {
           size: "compact",
           look: "primary",
           onClick: () => {
@@ -87519,12 +87583,12 @@ DataManagerPage.context = ({
   }, []);
   const [userRole, setUserRole] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(() => {
     var _ref4, _window$APP_SETTINGS;
-    const storedRole = (0,_utils_roles__WEBPACK_IMPORTED_MODULE_11__.getStoredRole)();
+    const storedRole = (0,_utils_roles__WEBPACK_IMPORTED_MODULE_12__.getStoredRole)();
     if (storedRole) return storedRole;
     return detectUserRole((_ref4 = typeof window !== 'undefined' ? (_window$APP_SETTINGS = window.APP_SETTINGS) === null || _window$APP_SETTINGS === void 0 ? void 0 : _window$APP_SETTINGS.user : {}) !== null && _ref4 !== void 0 ? _ref4 : {});
   });
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
-    const unsubscribe = (0,_utils_roles__WEBPACK_IMPORTED_MODULE_11__.subscribeToRoleChange)(role => {
+    const unsubscribe = (0,_utils_roles__WEBPACK_IMPORTED_MODULE_12__.subscribeToRoleChange)(role => {
       setUserRole(currentRole => currentRole === role ? currentRole : role);
     }, {
       immediate: true
@@ -87559,9 +87623,9 @@ DataManagerPage.context = ({
     setCurrentReviewStatus(status || 'pending');
   }, [dmRef, resolveReviewStatus, resolveTaskId]);
   const links = {
-    '/settings': 'Settings',
-    '/data/import': "Import",
-    '/data/export': 'Export'
+    '/settings': (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('dataManager.links.settings'),
+    '/data/import': (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('dataManager.links.import'),
+    '/data/export': (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('dataManager.links.export')
   };
   const updateCrumbs = currentMode => {
     const isExplorer = currentMode === 'explorer';
@@ -87578,7 +87642,7 @@ DataManagerPage.context = ({
       });
       (0,_services_breadrumbs__WEBPACK_IMPORTED_MODULE_9__.addCrumb)({
         key: "dm-crumb",
-        title: "Labeling"
+        title: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('dataManager.breadcrumb.labeling')
       });
     }
   };
@@ -87590,8 +87654,8 @@ DataManagerPage.context = ({
     } = project;
     if (isLabelStream && show_instruction && expert_instruction) {
       (0,_components_Modal_Modal__WEBPACK_IMPORTED_MODULE_4__.modal)({
-        title: "Labeling Instructions",
-        body: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("div", {
+        title: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('dataManager.modal.labelingInstructionsTitle'),
+        body: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)("div", {
           dangerouslySetInnerHTML: {
             __html: expert_instruction
           }
@@ -87699,18 +87763,18 @@ DataManagerPage.context = ({
   const approveDisabled = reviewDisabled || pendingDecision !== null;
   const rejectDisabled = reviewDisabled || pendingDecision !== null;
   const showReviewControls = mode !== 'explorer';
-  return project && project.id ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsxs)(_components_Space_Space__WEBPACK_IMPORTED_MODULE_5__.Space, {
+  return project && project.id ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsxs)(_components_Space_Space__WEBPACK_IMPORTED_MODULE_5__.Space, {
     size: "small",
-    children: [showReviewControls && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsxs)(_components_Space_Space__WEBPACK_IMPORTED_MODULE_5__.Space, {
+    children: [showReviewControls && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsxs)(_components_Space_Space__WEBPACK_IMPORTED_MODULE_5__.Space, {
       size: "small",
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsxs)("span", {
-        children: ["\u5BA1\u6838\u72B6\u6001\uFF1A", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("span", {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsxs)("span", {
+        children: ["\u5BA1\u6838\u72B6\u6001\uFF1A", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)("span", {
           style: {
             fontWeight: 600
           },
           children: statusText
         })]
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_components_Button_Button__WEBPACK_IMPORTED_MODULE_3__.Button, {
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_components_Button_Button__WEBPACK_IMPORTED_MODULE_3__.Button, {
         size: "compact",
         look: "primary",
         disabled: approveDisabled,
@@ -87718,7 +87782,7 @@ DataManagerPage.context = ({
         onClick: handleApprove,
         title: approveDisabled && disabledMessage ? disabledMessage : undefined,
         children: "\u901A\u8FC7"
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_components_Button_Button__WEBPACK_IMPORTED_MODULE_3__.Button, {
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_components_Button_Button__WEBPACK_IMPORTED_MODULE_3__.Button, {
         size: "compact",
         disabled: rejectDisabled,
         waiting: pendingDecision === 'rejected',
@@ -87726,24 +87790,23 @@ DataManagerPage.context = ({
         title: rejectDisabled && disabledMessage ? disabledMessage : undefined,
         children: "\u9A73\u56DE"
       })]
-    }), project.expert_instruction && mode !== 'explorer' && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_components_Button_Button__WEBPACK_IMPORTED_MODULE_3__.Button, {
+    }), project.expert_instruction && mode !== 'explorer' && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_components_Button_Button__WEBPACK_IMPORTED_MODULE_3__.Button, {
       size: "compact",
       onClick: () => {
         (0,_components_Modal_Modal__WEBPACK_IMPORTED_MODULE_4__.modal)({
-          title: "Instructions",
-          body: () => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("div", {
+          title: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('dataManager.instructions.modalTitle'),
+          body: () => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)("div", {
             dangerouslySetInnerHTML: {
               __html: project.expert_instruction
             }
           })
         });
       },
-      children: "Instructions"
-    }), Object.entries(links).map(([path, label]) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_components_Button_Button__WEBPACK_IMPORTED_MODULE_3__.Button, {
+      children: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('dataManager.instructions.button')
+    }), Object.entries(links).map(([path, label]) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_components_Button_Button__WEBPACK_IMPORTED_MODULE_3__.Button, {
       tag: react_router_dom__WEBPACK_IMPORTED_MODULE_2__.NavLink,
       size: "compact",
       to: `/projects/${project.id}${path}`,
-      "data-external": true,
       children: label
     }, path))]
   }) : null;
@@ -87941,7 +88004,7 @@ const ExportPage = () => {
           /* ignore */
         }
         _components_Modal_Modal__WEBPACK_IMPORTED_MODULE_4__.Modal.info({
-          title: "没有数据可以导出。",
+          title: "No data to export",
           body: detail,
           simple: true
         });
