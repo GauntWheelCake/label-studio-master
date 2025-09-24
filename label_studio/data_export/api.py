@@ -22,8 +22,8 @@ from .serializers import ExportDataSerializer
 
 logger = logging.getLogger(__name__)
 
-APPROVED_EXPORT_NOTICE = 'Only tasks with an approved review status will be included in the exported file.'
-NO_APPROVED_TASKS_MESSAGE = 'There are no approved tasks available for export.'
+APPROVED_EXPORT_NOTICE = '只有那些已得到批准审核状态的任务才会被包含在导出文件中。'
+NO_APPROVED_TASKS_MESSAGE = '没有可供输出的已批准任务。'
 
 
 @method_decorator(name='get', decorator=swagger_auto_schema(

@@ -87889,6 +87889,8 @@ const {
   Block,
   Elem
 } = (0,_utils_bem__WEBPACK_IMPORTED_MODULE_8__.BemWithSpecifiContext)();
+const APPROVED_EXPORT_MESSAGE = "Only tasks with an approved review status will be included in the exported file.";
+const NO_APPROVED_TASKS_MESSAGE = "There are no approved tasks available for export.";
 const wait = () => new Promise(resolve => setTimeout(resolve, 5000));
 const ExportPage = () => {
   const history = (0,react_router__WEBPACK_IMPORTED_MODULE_1__.useHistory)();
@@ -87919,11 +87921,33 @@ const ExportPage = () => {
         ...params
       }
     });
-    if (response.ok) {
-      const blob = await response.blob();
-      downloadFile(blob, response.headers.get('filename'));
-    } else {
-      api.handleError(response);
+    if (response) {
+      if (response.ok) {
+        const notice = response.headers.get('x-review-export-notice');
+        const blob = await response.blob();
+        downloadFile(blob, response.headers.get('filename'));
+        _components_Modal_Modal__WEBPACK_IMPORTED_MODULE_4__.Modal.info({
+          title: "Export ready",
+          body: notice !== null && notice !== void 0 ? notice : APPROVED_EXPORT_MESSAGE,
+          simple: true
+        });
+      } else if (response.status === 400) {
+        let detail = NO_APPROVED_TASKS_MESSAGE;
+        try {
+          var _payload$detail;
+          const payload = await response.clone().json();
+          detail = (_payload$detail = payload === null || payload === void 0 ? void 0 : payload.detail) !== null && _payload$detail !== void 0 ? _payload$detail : detail;
+        } catch (e) {
+          /* ignore */
+        }
+        _components_Modal_Modal__WEBPACK_IMPORTED_MODULE_4__.Modal.info({
+          title: "没有数据可以导出。",
+          body: detail,
+          simple: true
+        });
+      } else {
+        api.handleError(response);
+      }
     }
     setDownloading(false);
     setDownloadingMessage(false);
@@ -88026,6 +88050,9 @@ const ExportPage = () => {
           value: currentFormat
         })
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(Elem, {
+        name: "notice",
+        children: APPROVED_EXPORT_MESSAGE
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(Elem, {
         name: "footer",
         children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsxs)(_components_Space_Space__WEBPACK_IMPORTED_MODULE_5__.Space, {
           style: {
@@ -88111,7 +88138,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // extracted by mini-css-extract-plugin
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({"export-page__finish":"ls-export-page__finish","export-page__recent":"ls-export-page__recent","export-page__footer":"ls-export-page__footer","formats":"ls-formats","formats__list":"ls-formats__list","formats__item":"ls-formats__item","formats__item_active":"ls-formats__item_active","formats__item_selected":"ls-formats__item_selected","formats__name":"ls-formats__name","formats__tag":"ls-formats__tag","formats__description":"ls-formats__description"});
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({"export-page__finish":"ls-export-page__finish","export-page__recent":"ls-export-page__recent","export-page__footer":"ls-export-page__footer","export-page__notice":"ls-export-page__notice","formats":"ls-formats","formats__list":"ls-formats__list","formats__item":"ls-formats__item","formats__item_active":"ls-formats__item_active","formats__item_selected":"ls-formats__item_selected","formats__name":"ls-formats__name","formats__tag":"ls-formats__tag","formats__description":"ls-formats__description"});
 
 /***/ }),
 
