@@ -8,6 +8,7 @@ import { ProjectProvider, useProject } from '../../../providers/ProjectProvider'
 import { useFixedLocation } from '../../../providers/RoutesProvider';
 import { Elem } from '../../../utils/bem';
 import { useRefresh } from '../../../utils/hooks';
+import { t } from '../../../i18n';
 import { ImportPage } from './Import';
 import { useImportPage } from './useImportPage';
 
@@ -53,7 +54,7 @@ export const Inner = () => {
 
   return (
     <Modal
-      title="Import data"
+      title={t('importModal.title')}
       ref={modal}
       onHide={() => backToDM()}
       closeOnClickOutside={false}
@@ -62,12 +63,12 @@ export const Inner = () => {
       bare
     >
       <Modal.Header divided>
-        <Elem block="modal" name="title">Import Data</Elem>
+        <Elem block="modal" name="title">{t('importModal.title')}</Elem>
 
         <Space>
-          <Button waiting={waiting} onClick={onCancel}>Cancel</Button>
+          <Button waiting={waiting} onClick={onCancel}>{t('importModal.actions.cancel')}</Button>
           <Button look="primary" onClick={onFinish} waiting={waiting || uploading} disabled={uploadDisabled}>
-            Import
+            {t('importModal.actions.import')}
           </Button>
         </Space>
       </Modal.Header>
