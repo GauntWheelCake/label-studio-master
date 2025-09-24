@@ -6,6 +6,7 @@ import { useContextComponent, useFixedLocation } from '../../providers/RoutesPro
 import { cn } from '../../utils/bem';
 import { absoluteURL } from '../../utils/helpers';
 import { DEFAULT_ROLE, ensureRoleInitialized, setStoredRole, subscribeToRoleChange, UserRole } from '../../utils/roles';
+import { t } from '../../i18n';
 import { Breadcrumbs } from '../Breadcrumbs/Breadcrumbs';
 import { Dropdown } from "../Dropdown/Dropdown";
 import { Hamburger } from "../Hamburger/Hamburger";
@@ -146,7 +147,7 @@ export const Menubar = ({
             closeOnClickOutside={!sidebarPinned}
           >
             <div className={`${menubarClass.elem('trigger')} main-menu-trigger`}>
-              <img src={absoluteURL("/static/icons/logo-black.svg")} alt="Label Studio Logo" height="22"/>
+              <img src={absoluteURL("/static/icons/logo-black.svg")} alt={t('menubar.logoAlt')} height="22"/>
               <Hamburger opened={sidebarOpened}/>
             </div>
           </Dropdown.Trigger>
@@ -180,16 +181,14 @@ export const Menubar = ({
             <Menu>
               <Menu.Item
                 icon={<LsSettings/>}
-                label="Account & Settings"
+                label={t('menubar.menu.accountAndSettings')}
                 href="/user/account"
-                data-external
               />
               {/* <Menu.Item label="Dark Mode"/> */}
               <Menu.Item
                 icon={<LsDoor/>}
-                label="Log Out"
+                label={t('menubar.menu.logout')}
                 href={absoluteURL("/logout")}
-                data-external
               />
             </Menu>
           )}>
@@ -213,17 +212,15 @@ export const Menubar = ({
             >
               <Menu>
                 <Menu.Item
-                  label="Projects"
+                  label={t('menubar.menu.projects')}
                   to="/projects"
                   icon={<IconFolder/>}
-                  data-external
                   exact
                 />
                 <Menu.Item
-                  label="Organization"
+                  label={t('menubar.menu.organization')}
                   to="/people"
                   icon={<IconPersonInCircle/>}
-                  data-external
                   exact
                 />
 
@@ -241,7 +238,7 @@ export const Menubar = ({
                   onClick={sidebarPin}
                   active={sidebarPinned}
                 >
-                  {sidebarPinned ?  "Unpin menu" : "Pin menu"}
+                  {sidebarPinned ? t('menubar.menu.unpin') : t('menubar.menu.pin')}
                 </Menu.Item>
 
               </Menu>

@@ -9,6 +9,7 @@ import { useProject } from '../../providers/ProjectProvider';
 import { useContextProps, useFixedLocation, useParams } from '../../providers/RoutesProvider';
 import { addAction, addCrumb, deleteAction, deleteCrumb } from '../../services/breadrumbs';
 import { Block, Elem } from '../../utils/bem';
+import { t } from '../../i18n';
 import { DEFAULT_ROLE, getStoredRole, subscribeToRoleChange, UserRole } from '../../utils/roles';
 import { ImportModal } from '../CreateProject/Import/ImportModal';
 import { ExportPage } from '../ExportPage/ExportPage';
@@ -437,10 +438,10 @@ export const DataManagerPage = ({...props}) => {
 
   return crashed ? (
     <Block name="crash">
-      <Elem name="info">Project was deleted or not yet created</Elem>
+      <Elem name="info">{t('dataManager.crash.info')}</Elem>
 
       <Button to="/projects">
-        Back to projects
+        {t('dataManager.crash.backToProjects')}
       </Button>
     </Block>
   ) : (
@@ -615,9 +616,9 @@ DataManagerPage.context = ({dmRef}) => {
   }, [dmRef, resolveReviewStatus, resolveTaskId]);
 
   const links = {
-    '/settings': 'Settings',
-    '/data/import': "Import",
-    '/data/export': 'Export',
+    '/settings': t('dataManager.links.settings'),
+    '/data/import': t('dataManager.links.import'),
+    '/data/export': t('dataManager.links.export'),
   };
 
   const updateCrumbs = (currentMode) => {
@@ -635,7 +636,7 @@ DataManagerPage.context = ({dmRef}) => {
       });
       addCrumb({
         key: "dm-crumb",
-        title: "Labeling",
+        title: t('dataManager.breadcrumb.labeling'),
       });
     }
   };
@@ -646,7 +647,7 @@ DataManagerPage.context = ({dmRef}) => {
 
     if (isLabelStream && show_instruction && expert_instruction) {
       modal({
-        title: "Labeling Instructions",
+        title: t('dataManager.modal.labelingInstructionsTitle'),
         body: <div dangerouslySetInnerHTML={{__html: expert_instruction}}/>,
         style: { width: 680 },
       });
@@ -793,11 +794,11 @@ DataManagerPage.context = ({dmRef}) => {
       {(project.expert_instruction && mode !== 'explorer') && (
         <Button size="compact" onClick={() => {
           modal({
-            title: "Instructions",
+            title: t('dataManager.instructions.modalTitle'),
             body: () => <div dangerouslySetInnerHTML={{__html: project.expert_instruction}}/>,
           });
         }}>
-          Instructions
+          {t('dataManager.instructions.button')}
         </Button>
       )}
 
@@ -807,7 +808,6 @@ DataManagerPage.context = ({dmRef}) => {
           tag={NavLink}
           size="compact"
           to={`/projects/${project.id}${path}`}
-          data-external
         >
           {label}
         </Button>
