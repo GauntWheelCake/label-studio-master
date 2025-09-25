@@ -90,7 +90,7 @@ export const zhCN = {
   'createProject.templates.footer.suffix': '。',
   'createProject.preview.title': '界面预览',
   'projectsPage.context.createButton': '创建',
-
+  'projectsPage.card.createdAt': '创建于',
   'peoplePage.pageTitle': '组织成员',
   'peoplePage.controls.addPeople': '添加成员',
   'peoplePage.invite.title': '邀请成员',

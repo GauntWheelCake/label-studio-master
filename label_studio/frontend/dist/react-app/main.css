@@ -3321,60 +3321,6 @@ body {
   }
 }
 
-.ls-storage-settings {
-  max-width: 680px;
-}
-.ls-storage-settings__description {
-  font-size: 16px;
-  opacity: 0.6;
-  margin-bottom: 32px;
-}
-.ls-storage-settings__controls {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 32px;
-}
-.ls-storage-settings__empty {
-  height: 100px;
-  display: flex;
-  font-size: 16px;
-  font-weight: 500;
-  border-radius: 5px;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  color: rgba(0,0,0,0.6);
-}
-.ls-storage-settings__submit {
-  display: flex;
-  margin-top: 32px;
-  align-items: center;
-  justify-content: space-between;
-}
-.ls-storage-settings__submit + .ls-inline-error {
-  margin-top: 32px;
-}
-.ls-storage-settings__info {
-  display: flex;
-  align-items: center;
-  color: #d00;
-  font-size: 14px;
-  line-height: 22px;
-}
-.ls-storage-settings__info_valid {
-  color: rgba(0,0,0,0.4);
-}
-.ls-storage-settings__sync {
-  display: flex;
-  margin-top: 16px;
-  justify-content: flex-start;
-  align-items: center;
-}
-.ls-storage-settings__sync-count {
-  font-size: 14px;
-  opacity: 0.7;
-}
-
 .ls-projects-page {
   min-height: calc(100vh - var(--header-height));
   background-color: #fafafa;
