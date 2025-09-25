@@ -2,6 +2,7 @@ import { format } from "date-fns";
 import { NavLink } from "react-router-dom";
 import { LsCross } from "../../assets/icons";
 import { Button, Userpic } from "../../components";
+import { t } from "../../i18n";
 import { Block, Elem } from "../../utils/bem";
 import "./SelectedUser.styl";
 
@@ -45,7 +46,7 @@ export const SelectedUser = ({ user, onClose }) => {
 
       {!!user.created_projects.length && (
         <Elem name="section">
-          <Elem name="section-title">Created Projects</Elem>
+          <Elem name="section-title">{t('peoplePage.selected.createdProjects')}</Elem>
 
           <UserProjectsLinks projects={user.created_projects}/>
         </Elem>
@@ -53,14 +54,15 @@ export const SelectedUser = ({ user, onClose }) => {
 
       {!!user.contributed_to_projects.length && (
         <Elem name="section">
-          <Elem name="section-title">Contributed to</Elem>
+          <Elem name="section-title">{t('peoplePage.selected.contributedProjects')}</Elem>
 
           <UserProjectsLinks projects={user.contributed_to_projects}/>
         </Elem>
       )}
 
       <Elem tag="p" name="last-active">
-        Last activity on: {format(new Date(user.last_activity), 'dd MMM yyyy, KK:mm a')}
+        {t('peoplePage.selected.lastActivity')}
+        {format(new Date(user.last_activity), 'dd MMM yyyy, KK:mm a')}
       </Elem>
     </Block>
   );
