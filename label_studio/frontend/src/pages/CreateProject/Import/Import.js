@@ -58,7 +58,7 @@ const Footer = () => {
       <IconInfo className={importClass.elem("info-icon")} width="20" height="20" />
       
       {t('importPage.footer.connector')}{' '}
-      <a target="_blank" href="https://labelstud.io/guide/storage.html">{t('importPage.footer.syncLink')}</a>
+      {t('importPage.footer.syncLink')}
       {t('importPage.footer.suffix')}
     </Modal.Footer>
   );

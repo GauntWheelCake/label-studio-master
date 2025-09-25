@@ -117,9 +117,7 @@ export const MachineLearningSettings = () => {
       <Description style={{marginTop: 0, maxWidth: 680}}>
         {t('projectSettings.machineLearning.description.intro')}
         {t('projectSettings.machineLearning.description.hint')}
-        <a href="https://labelstud.io/guide/predictions.html" target="_blank">
-          {t('projectSettings.machineLearning.description.link')}
-        </a>
+        {t('projectSettings.machineLearning.description.link')}
         {t('projectSettings.machineLearning.description.suffix')}
       </Description>
       <Button onClick={() => showMLFormModal()}>

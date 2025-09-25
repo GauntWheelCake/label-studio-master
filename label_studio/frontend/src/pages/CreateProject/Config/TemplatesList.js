@@ -82,7 +82,7 @@ export const TemplatesList = ({ selectedGroup, selectedRecipe, onCustomTemplate,
       <footer>
         <IconInfo className={listClass.elem("info-icon")} width="20" height="20" />
         {t('createProject.templates.footer.docsPrefix')}{' '}
-        <a href="https://labelstud.io/guide" target="_blank">{t('createProject.templates.footer.linkText')}</a>
+        {t('createProject.templates.footer.linkText')}
         {t('createProject.templates.footer.suffix')}
       </footer>
     </div>

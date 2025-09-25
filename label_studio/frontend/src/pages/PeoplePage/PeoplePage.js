@@ -26,7 +26,7 @@ const InvitationModal = ({link}) => {
 
       <Description style={{width: '70%', marginTop: 16}}>
         {t('peoplePage.invite.description.prefix')}
-        <a href="https://labelstud.io/guide/signup.html">{t('peoplePage.invite.description.link')}</a>
+        {t('peoplePage.invite.description.link')}
         {t('peoplePage.invite.description.suffix')}
       </Description>
     </Block>
