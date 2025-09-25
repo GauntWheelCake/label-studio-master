@@ -56,8 +56,10 @@ const Footer = () => {
   return (
     <Modal.Footer>
       <IconInfo className={importClass.elem("info-icon")} width="20" height="20" />
-      {t('importPage.footer.docsPrefix')}
-      <a target="_blank" href="https://labelstud.io/guide/predictions.html">{t('importPage.footer.importLink')}</a>
+      {t('importPage.footer.docsPrefix')}{' '}
+      <a target="_blank" href="https://labelstud.io/guide/predictions.html">{t('importPage.footer.importLink')}</a>{' '}
+      {t('importPage.footer.connector')}{' '}
+      <a target="_blank" href="https://labelstud.io/guide/storage.html">{t('importPage.footer.syncLink')}</a>
       {t('importPage.footer.suffix')}
     </Modal.Footer>
   );
