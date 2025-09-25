@@ -10,27 +10,26 @@ import "./CreateProject.styl";
 import { ImportPage } from './Import/Import';
 import { useImportPage } from './Import/useImportPage';
 import { useDraftProject } from './utils/useDraftProject';
-import { t } from '../../i18n';
 
 
-  const ProjectName = ({ name, setName, onSaveName, onSubmit, error, description, setDescription, show = true }) => !show ? null :(
-    <form className={cn("project-name")} onSubmit={e => { e.preventDefault(); onSubmit(); }}>
-      <div className="field field--wide">
-        <label htmlFor="project_name">{t('createProject.projectName.label')}</label>
-        <input name="name" id="project_name" value={name} onChange={e => setName(e.target.value)} onBlur={onSaveName} />
-        {error && <span className="error">{error}</span>}
-      </div>
-      <div className="field field--wide">
-        <label htmlFor="project_description">{t('createProject.projectDescription.label')}</label>
-        <textarea
-          name="description"
-          id="project_description"
-          placeholder={t('createProject.projectDescription.placeholder')}
-          rows="4"
-          value={description}
-          onChange={e => setDescription(e.target.value)}
-        />
-      </div>
+const ProjectName = ({ name, setName, onSaveName, onSubmit, error, description, setDescription, show = true }) => !show ? null :(
+  <form className={cn("project-name")} onSubmit={e => { e.preventDefault(); onSubmit(); }}>
+    <div className="field field--wide">
+      <label htmlFor="project_name">项目名称</label>
+      <input name="name" id="project_name" value={name} onChange={e => setName(e.target.value)} onBlur={onSaveName} />
+      {error && <span className="error">{error}</span>}
+    </div>
+    <div className="field field--wide">
+      <label htmlFor="project_description">Description</label>
+      <textarea
+        name="description"
+        id="project_description"
+        placeholder="Optional description of your project"
+        rows="4"
+        value={description}
+        onChange={e => setDescription(e.target.value)}
+      />
+    </div>
   </form>
 );
 
@@ -54,9 +53,9 @@ export const CreateProject = ({ onClose }) => {
   const rootClass = cn("create-project");
   const tabClass = rootClass.elem("tab");
   const steps = {
-    name: <span className={tabClass.mod({ disabled: !!error })}>{t('createProject.steps.name')}</span>,
-    import: <span className={tabClass.mod({ disabled: uploadDisabled })}>{t('createProject.steps.import')}</span>,
-    config: <span className={tabClass}>{t('createProject.steps.config')}</span>,
+    name: <span className={tabClass.mod({ disabled: !!error })}>项目名称2</span>,
+    import: <span className={tabClass.mod({ disabled: uploadDisabled })}>数据导入</span>,
+    config: "Labeling Setup",
   };
 
   // name intentionally skipped from deps:
@@ -118,13 +117,13 @@ export const CreateProject = ({ onClose }) => {
     <Modal onHide={() => history.push("/projects")} fullscreen visible bare closeOnClickOutside={false}>
       <div className={rootClass}>
         <Modal.Header>
-          <h1>{t('createProject.header.title')}</h1>
+          <h1>Create Project</h1>
           <ToggleItems items={steps} active={step} onSelect={setStep} />
 
-            <Space>
-              <Button look="danger" size="compact" onClick={onDelete} waiting={waiting}>{t('createProject.actions.delete')}</Button>
-              <Button look="primary" size="compact" onClick={onCreate} waiting={waiting || uploading} disabled={!project || uploadDisabled || error}>{t('createProject.actions.save')}</Button>
-            </Space>
+          <Space>
+            <Button look="danger" size="compact" onClick={onDelete} waiting={waiting}>Delete</Button>
+            <Button look="primary" size="compact" onClick={onCreate} waiting={waiting || uploading} disabled={!project || uploadDisabled || error}>Save</Button>
+          </Space>
         </Modal.Header>
         <ProjectName
           name={name}

@@ -9,7 +9,6 @@ import { useFixedLocation, useParams } from '../../providers/RoutesProvider';
 import { BemWithSpecifiContext } from '../../utils/bem';
 import { isDefined } from '../../utils/helpers';
 import "./ExportPage.styl";
-import { t } from '../../i18n';
 
 // const formats = {
 //   json: 'JSON',
@@ -174,7 +173,7 @@ export const ExportPage = () => {
         const search = location.search;
         history.replace(`${path}${search !== '?' ? search : ''}`);
       }}
-      title={t('exportPage.title')}
+      title="Export data"
       style={{width: 720}}
       closeOnClickOutside={false}
       allowClose={!downloading}
@@ -212,7 +211,7 @@ export const ExportPage = () => {
             <Elem name="actions">
               <Space>
                 {downloadingMessage && (
-                  t('exportPage.status.preparing')
+                  "Files are being prepared. It might take some time."
                 )}
                 <Elem
                   tag={Button}
@@ -221,7 +220,7 @@ export const ExportPage = () => {
                   onClick={proceedExport}
                   waiting={downloading}
                 >
-                  {t('exportPage.actions.export')}
+                  Export
                 </Elem>
               </Space>
             </Elem>
@@ -235,7 +234,7 @@ export const ExportPage = () => {
 const FormatInfo = ({availableFormats, selected, onClick}) => {
   return (
     <Block name="formats">
-      <Elem name="info">{t('exportPage.formatInfo.description')}</Elem>
+      <Elem name="info">You can export dataset in one of the following formats:</Elem>
       <Elem name="list">
         {availableFormats.map(format => (
           <Elem
@@ -262,9 +261,9 @@ const FormatInfo = ({availableFormats, selected, onClick}) => {
         ))}
       </Elem>
       <Elem name="feedback">
-        {t('exportPage.formatInfo.missingFormat')}
+        Can't find an export format?
         <br/>
-        {t('exportPage.formatInfo.contactAdmin')}
+        Please contact your administrator for assistance.
       </Elem>
     </Block>
   );
