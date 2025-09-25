@@ -1,6 +1,7 @@
 import { formatDistance } from "date-fns";
 import { useCallback, useEffect, useState } from "react";
 import { Spinner, Userpic } from "../../components";
+import { t } from "../../i18n";
 import { useAPI } from "../../providers/ApiProvider";
 import { Block, Elem } from "../../utils/bem";
 import { isDefined } from "../../utils/helpers";
@@ -43,9 +44,9 @@ export const PeopleList = ({onSelect, selectedUser, defaultSelected}) => {
         <Elem name="users">
           <Elem name="header">
             <Elem name="column" mix="avatar"/>
-            <Elem name="column" mix="email">Email</Elem>
-            <Elem name="column" mix="name">Name</Elem>
-            <Elem name="column" mix="last-activity">Last Activity</Elem>
+            <Elem name="column" mix="email">{t('peoplePage.list.email')}</Elem>
+            <Elem name="column" mix="name">{t('peoplePage.list.name')}</Elem>
+            <Elem name="column" mix="last-activity">{t('peoplePage.list.lastActivity')}</Elem>
           </Elem>
           <Elem name="body">
             {usersList.map(({user}) => {

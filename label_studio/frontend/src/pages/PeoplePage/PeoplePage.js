@@ -5,6 +5,7 @@ import { Description } from "../../components/Description/Description";
 import { Input } from "../../components/Form";
 import { modal } from "../../components/Modal/Modal";
 import { Space } from "../../components/Space/Space";
+import { t } from "../../i18n";
 import { useAPI } from "../../providers/ApiProvider";
 import { useConfig } from "../../providers/ConfigProvider";
 import { Block, Elem } from "../../utils/bem";
@@ -24,7 +25,9 @@ const InvitationModal = ({link}) => {
       />
 
       <Description style={{width: '70%', marginTop: 16}}>
-        Invite people to join your Label Studio instance. People that you invite have full access to all of your projects. <a href="https://labelstud.io/guide/signup.html">Learn more</a>.
+        {t('peoplePage.invite.description.prefix')}
+        <a href="https://labelstud.io/guide/signup.html">{t('peoplePage.invite.description.link')}</a>
+        {t('peoplePage.invite.description.suffix')}
       </Description>
     </Block>
   );
@@ -56,7 +59,7 @@ export const PeoplePage = () => {
   }, [setInviteLink]);
 
   const inviteModalProps = useCallback((link) => ({
-    title: "Invite people",
+    title: t('peoplePage.invite.title'),
     style: { width: 640, height: 472 },
     body: () => (
       <InvitationModal link={link}/>
@@ -74,19 +77,19 @@ export const PeoplePage = () => {
         <Space spread>
           <Space>
             <Button style={{width: 170}} onClick={() => updateLink()}>
-              Reset Link
+              {t('peoplePage.invite.resetLink')}
             </Button>
           </Space>
           <Space>
             <Button primary style={{width: 170}} onClick={copyLink}>
-              {copied ? "Copied!" : "Copy link"}
+              {copied ? t('peoplePage.invite.copied') : t('peoplePage.invite.copyLink')}
             </Button>
           </Space>
         </Space>
       );
     },
     bareFooter: true,
-  }), []);
+  }), [updateLink]);
 
   const showInvitationModal = useCallback(() => {
     inviteModal.current = modal(inviteModalProps(link));
@@ -104,7 +107,7 @@ export const PeoplePage = () => {
 
   useEffect(() => {
     inviteModal.current?.update(inviteModalProps(link));
-  }, [link]);
+  }, [inviteModalProps, link]);
 
   return (
     <Block name="people">
@@ -114,7 +117,7 @@ export const PeoplePage = () => {
 
           <Space>
             <Button icon={<LsPlus/>} primary onClick={showInvitationModal}>
-              Add People
+              {t('peoplePage.controls.addPeople')}
             </Button>
           </Space>
         </Space>
@@ -137,5 +140,5 @@ export const PeoplePage = () => {
   );
 };
 
-PeoplePage.title = "People";
+PeoplePage.title = t('peoplePage.pageTitle');
 PeoplePage.path = "/people";
