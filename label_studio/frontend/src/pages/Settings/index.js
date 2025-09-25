@@ -5,6 +5,7 @@ import { GeneralSettings } from './GeneralSettings';
 import { InstructionsSettings } from './InstructionsSettings';
 import { LabelingSettings } from './LabelingSettings';
 import { MachineLearningSettings } from './MachineLearningSettings/MachineLearningSettings';
+import { StorageSettings } from './StorageSettings/StorageSettings';
 
 export const MenuLayout = ({children, ...routeProps}) => {
   return (
@@ -14,6 +15,7 @@ export const MenuLayout = ({children, ...routeProps}) => {
         LabelingSettings,
         InstructionsSettings,
         MachineLearningSettings,
+        StorageSettings,
         DangerZone,
       ]}
       path={routeProps.match.url}
@@ -32,6 +34,7 @@ export const SettingsPage = {
     InstructionsSettings,
     LabelingSettings,
     MachineLearningSettings,
+    StorageSettings,
     DangerZone,
   },
 };

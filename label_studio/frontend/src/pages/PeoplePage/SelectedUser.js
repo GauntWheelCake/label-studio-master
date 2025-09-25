@@ -1,5 +1,4 @@
 import { format } from "date-fns";
-import { zhCN } from "date-fns/locale";
 import { NavLink } from "react-router-dom";
 import { LsCross } from "../../assets/icons";
 import { Button, Userpic } from "../../components";
@@ -21,9 +20,6 @@ const UserProjectsLinks = ({projects}) => {
 
 export const SelectedUser = ({ user, onClose }) => {
   const fullName = [user.first_name, user.last_name].filter(n => !!n).join(" ").trim();
-  const lastActivity = user.last_activity
-    ? format(new Date(user.last_activity), 'yyyy年MM月dd日 HH:mm', { locale: zhCN })
-    : t('peoplePage.selected.lastActivityEmpty');
 
   return (
     <Block name="user-info">
@@ -66,9 +62,7 @@ export const SelectedUser = ({ user, onClose }) => {
 
       <Elem tag="p" name="last-active">
         {t('peoplePage.selected.lastActivity')}
-        {lastActivity}
-
-
+        {format(new Date(user.last_activity), 'dd MMM yyyy, KK:mm a')}
       </Elem>
     </Block>
   );

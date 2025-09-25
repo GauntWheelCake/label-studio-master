@@ -1,5 +1,4 @@
 import { formatDistance } from "date-fns";
-import { zhCN } from "date-fns/locale";
 import { useCallback, useEffect, useState } from "react";
 import { Spinner, Userpic } from "../../components";
 import { t } from "../../i18n";
@@ -52,9 +51,6 @@ export const PeopleList = ({onSelect, selectedUser, defaultSelected}) => {
           <Elem name="body">
             {usersList.map(({user}) => {
               const active = user.id === selectedUser?.id;
-              const lastActivity = user.last_activity
-                ? formatDistance(new Date(user.last_activity), new Date(), {addSuffix: true, locale: zhCN})
-                : t('peoplePage.list.lastActivityEmpty');
 
               return (
                 <Elem key={`user-${user.id}`} name="user" mod={{active}} onClick={() => selectUser(user)}>
@@ -68,7 +64,7 @@ export const PeopleList = ({onSelect, selectedUser, defaultSelected}) => {
                     {user.first_name} {user.last_name}
                   </Elem>
                   <Elem name="field" mix="last-activity">
-                    {lastActivity}
+                    {formatDistance(new Date(user.last_activity), new Date(), {addSuffix: true})}
                   </Elem>
                 </Elem>
               );

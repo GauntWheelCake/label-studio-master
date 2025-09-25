@@ -25,6 +25,11 @@ const downloadFile = (blob, filename) => {
 
 const {Block, Elem} = BemWithSpecifiContext();
 
+const APPROVED_EXPORT_MESSAGE = "Only tasks with an approved review status will be included in the exported file.";
+const NO_APPROVED_TASKS_MESSAGE = "There are no approved tasks available for export.";
+
+const wait = () => new Promise(resolve => setTimeout(resolve, 5000));
+
 export const ExportPage = () => {
   const history = useHistory();
   const location = useFixedLocation();
@@ -67,12 +72,12 @@ export const ExportPage = () => {
         downloadFile(blob, response.headers.get('filename'));
 
         Modal.info({
-          title: t('exportPage.modal.readyTitle'),
-          body: notice ?? t('exportPage.notice.approvedOnly'),
+          title: "Export ready",
+          body: notice ?? APPROVED_EXPORT_MESSAGE,
           simple: true,
         });
       } else if (response.status === 400) {
-        let detail = t('exportPage.notice.noApproved');
+        let detail = NO_APPROVED_TASKS_MESSAGE;
 
         try {
           const payload = await response.clone().json();
@@ -82,7 +87,7 @@ export const ExportPage = () => {
         }
 
         Modal.info({
-          title: t('exportPage.modal.emptyTitle'),
+          title: "No data to export",
           body: detail,
           simple: true,
         });
@@ -196,7 +201,7 @@ export const ExportPage = () => {
         </Form>
 
         <Elem name="notice">
-          {t('exportPage.notice.approvedOnly')}
+          {APPROVED_EXPORT_MESSAGE}
         </Elem>
 
         <Elem name="footer">
