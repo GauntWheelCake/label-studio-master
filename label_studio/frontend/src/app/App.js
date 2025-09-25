@@ -13,6 +13,7 @@ import { MultiProvider } from '../providers/MultiProvider';
 import { ProjectProvider } from '../providers/ProjectProvider';
 import { RoutesProvider } from '../providers/RoutesProvider';
 import './App.styl';
+import { initializeI18n } from '../i18n';
 import { AsyncPage } from './AsyncPage/AsyncPage';
 import ErrorBoundary from './ErrorBoundary';
 import { RootPage } from './RootPage';
@@ -29,6 +30,8 @@ const browserHistory = createBrowserHistory({
 window.LSH = browserHistory;
 
 initSentry(browserHistory);
+
+initializeI18n();
 
 const App = ({content}) => {
   const libraries = {
