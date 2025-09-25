@@ -8,7 +8,15 @@ const parseContent = (id, source, children, parse) => {
   let setInnerHTML = false;
 
   if (!children || children.length === 0 || children instanceof Function) {
-    const template = source.querySelector(`template#${id}`);
+    // const template = source.querySelector(`template#${id}`);
+    const template = source?.querySelector?.(`template#${id}`);
+    if(!template) {
+      return{
+        children: children instanceof Function ? children(null) : children ?? null,
+        setInnerHTML: false,
+      };
+    }
+
     const templateHTML = template.innerHTML ?? "";
 
     if (parse) {
