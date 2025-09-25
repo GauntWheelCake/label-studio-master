@@ -6,6 +6,7 @@ import { useAPI } from '../../../providers/ApiProvider';
 import { cn } from '../../../utils/bem';
 import './Config.styl';
 import { IconInfo } from '../../../assets/icons';
+import { t } from '../../../i18n';
 
 
 const listClass = cn("templates-list");
@@ -70,7 +71,9 @@ export const TemplatesList = ({ selectedGroup, selectedRecipe, onCustomTemplate,
             </li>
           ))}
         </ul>
-        <button type="button" onClick={onCustomTemplate} className={listClass.elem("custom-template")}>Custom template</button>
+        <button type="button" onClick={onCustomTemplate} className={listClass.elem("custom-template")}>
+          {t('createProject.templates.customTemplate')}
+        </button>
       </aside>
       <main>
         {!templates && <Spinner style={{ width: "100%", height: 200 }} />}
@@ -78,7 +81,9 @@ export const TemplatesList = ({ selectedGroup, selectedRecipe, onCustomTemplate,
       </main>
       <footer>
         <IconInfo className={listClass.elem("info-icon")} width="20" height="20" />
-        See the documentation to <a href="https://labelstud.io/guide" target="_blank">contribute a template</a>.
+        {t('createProject.templates.footer.docsPrefix')}{' '}
+        <a href="https://labelstud.io/guide" target="_blank">{t('createProject.templates.footer.linkText')}</a>
+        {t('createProject.templates.footer.suffix')}
       </footer>
     </div>
   );
