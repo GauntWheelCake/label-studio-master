@@ -20,6 +20,8 @@ export const zhCN = {
   'importModal.actions.import': '导入',
   'importPage.footer.docsPrefix': '请参阅文档以',
   'importPage.footer.importLink': '导入预标注数据',
+  'importPage.footer.connector': '或者',
+  'importPage.footer.syncLink': '同步云存储以自动导入数据',
   'importPage.footer.suffix': '。',
   'importPage.errors.fileTooBig': '导入的文件过大',
   'importPage.form.datasetUrlPlaceholder': '数据集 URL',

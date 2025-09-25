@@ -43,7 +43,7 @@ const configClass = cn("configure");
       <p>
         {t('createProject.config.empty.description')}{' '}
         {t('createProject.config.empty.docsPrefix')}
-        <a href="https://labelstud.io/tags/" target="_blank">{t('createProject.config.empty.docsLink')}</a>
+        {t('createProject.config.empty.docsLink')}
         {t('createProject.config.empty.docsSuffix')}
       </p>
     </div>
@@ -313,7 +313,7 @@ const Configurator = ({ columns, config, project, template, setTemplate, onBrows
     <p className={configClass.elem('tags-link')}>
       {t('createProject.config.extra.configureWithTags')}
       <br/>
-      <a href="https://labelstud.io/tags/" target="_blank">{t('createProject.config.extra.linkText')}</a>
+      {t('createProject.config.extra.linkText')}
       {t('createProject.config.extra.suffix')}
     </p>
   );
