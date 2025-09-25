@@ -9,6 +9,7 @@ import { modal } from '../../../components/Modal/Modal';
 import { useAPI } from '../../../providers/ApiProvider';
 import { ProjectContext } from '../../../providers/ProjectProvider';
 import { MachineLearningList } from './MachineLearningList';
+import { t } from '../../../i18n';
 import './MachineLearningSettings.styl';
 
 export const MachineLearningSettings = () => {
@@ -51,7 +52,7 @@ export const MachineLearningSettings = () => {
   const showMLFormModal = useCallback((backend) => {
     const action = backend ? "updateMLBackend" : "addMLBackend";
     const modalProps = {
-      title: `${backend ? 'Edit' : 'Add'} model`,
+      title: backend ? t('projectSettings.machineLearning.form.editTitle') : t('projectSettings.machineLearning.form.addTitle'),
       style: { width: 760 },
       closeOnClickOutside: false,
       body: (
@@ -69,17 +70,17 @@ export const MachineLearningSettings = () => {
           <Input type="hidden" name="project" value={project.id}/>
 
           <Form.Row columnCount={2}>
-            <Input name="title" label="Title" placeholder="ML Model"/>
-            <Input name="url" label="URL" required/>
+            <Input name="title" label={t('projectSettings.machineLearning.form.name')} placeholder={t('projectSettings.machineLearning.form.namePlaceholder')}/>
+            <Input name="url" label={t('projectSettings.machineLearning.form.url')} required/>
           </Form.Row>
 
           <Form.Row columnCount={1}>
-            <TextArea name="description" label="Description" style={{minHeight: 120}}/>
+            <TextArea name="description" label={t('projectSettings.machineLearning.form.description')} style={{minHeight: 120}}/>
           </Form.Row>
 
           <Form.Actions>
             <Button type="submit" look="primary" onClick={() => setMLError(null)}>
-              Validate and Save
+              {t('projectSettings.machineLearning.form.submit')}
             </Button>
           </Form.Actions>
 
@@ -88,7 +89,7 @@ export const MachineLearningSettings = () => {
               {response.error_message && (
                 <ErrorWrapper error={{
                   response: {
-                    detail: `Failed to ${backend ? 'save' : 'add new'} ML backend.`,
+                    detail: backend ? t('projectSettings.machineLearning.form.saveError') : t('projectSettings.machineLearning.form.addError'),
                     exc_info: response.error_message,
                   },
                 }}/>
@@ -114,15 +115,15 @@ export const MachineLearningSettings = () => {
   return (
     <>
       <Description style={{marginTop: 0, maxWidth: 680}}>
-        Add one or more machine learning models to predict labels for your data.
-        To import predictions without connecting a model,
-        {" "}
+        {t('projectSettings.machineLearning.description.intro')}
+        {t('projectSettings.machineLearning.description.hint')}
         <a href="https://labelstud.io/guide/predictions.html" target="_blank">
-          see the documentation
-        </a>.
+          {t('projectSettings.machineLearning.description.link')}
+        </a>
+        {t('projectSettings.machineLearning.description.suffix')}
       </Description>
       <Button onClick={() => showMLFormModal()}>
-        Add Model
+        {t('projectSettings.machineLearning.actions.addModel')}
       </Button>
 
       <Divider height={32}/>
@@ -134,25 +135,25 @@ export const MachineLearningSettings = () => {
         autosubmit
       >
         <Form.Row columnCount={1}>
-          <Label text="ML-Assisted Labeling" large/>
+          <Label text={t('projectSettings.machineLearning.section.assistedLabeling')} large/>
 
           <div style={{paddingLeft: 16}}>
             <Toggle
-              label="Start model training after any annotations are submitted or updated"
+              label={t('projectSettings.machineLearning.section.startTraining')}
               name="start_training_on_annotation_update"
             />
           </div>
 
           <div style={{paddingLeft: 16}}>
             <Toggle
-              label="Retrieve predictions when loading a task automatically"
+              label={t('projectSettings.machineLearning.section.retrievePredictions')}
               name="evaluate_predictions_automatically"
             />
           </div>
 
           <div style={{paddingLeft: 16}}>
             <Toggle
-              label="Show predictions to annotators in the Label Stream and Quick View"
+              label={t('projectSettings.machineLearning.section.showPredictions')}
               name="show_collab_predictions"
             />
           </div>
@@ -161,8 +162,8 @@ export const MachineLearningSettings = () => {
         {versions.length > 1 && (
           <Form.Row columnCount={1}>
             <Label
-              text="Model Version"
-              description="Model version allows you to specify which prediction will be shown to the annotators."
+              text={t('projectSettings.machineLearning.section.modelVersion')}
+              description={t('projectSettings.machineLearning.section.modelVersionDescription')}
               style={{marginTop: 16}}
               large
             />
@@ -175,12 +176,12 @@ export const MachineLearningSettings = () => {
                   options={[
                     ...versions,
                   ]}
-                  placeholder="No model version selected"
+                  placeholder={t('projectSettings.machineLearning.section.modelVersionPlaceholder')}
                 />
               </div>
 
               <Button onClick={resetMLVersion}>
-                Reset
+                {t('projectSettings.machineLearning.actions.reset')}
               </Button>
             </div>
 
@@ -197,5 +198,5 @@ export const MachineLearningSettings = () => {
   );
 };
 
-MachineLearningSettings.title = "Machine Learning";
+MachineLearningSettings.title = t('projectSettings.menu.machineLearning');
 MachineLearningSettings.path = "/ml";

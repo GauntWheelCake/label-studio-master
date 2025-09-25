@@ -5,6 +5,7 @@ import { useAPI } from '../../providers/ApiProvider';
 import { useProject } from '../../providers/ProjectProvider';
 import { isEmptyString } from '../../utils/helpers';
 import { ConfigPage } from '../CreateProject/Config/Config';
+import { t } from '../../i18n';
 
 export const LabelingSettings = () => {
   const history = useHistory();
@@ -39,7 +40,6 @@ export const LabelingSettings = () => {
       const configIsEmpty = project.label_config.replace(/\s/g, '') === '<View></View>';
       const hasTasks = project.task_number > 0;
 
-      console.log({hasConfig, configIsEmpty, hasTasks, project});
       return (hasConfig && !configIsEmpty) && hasTasks;
     }
     return false;
@@ -48,11 +48,11 @@ export const LabelingSettings = () => {
   const onSave = useCallback(async () => {
     if (essentialDataChanged && projectAlreadySetUp) {
       confirm({
-        title: "Config data changed",
-        body: "Labeling config has essential changes that affect data displaying. Saving the config may lead to deleting all tabs previously created in the Data Manager.",
+        title: t('projectSettings.labeling.confirm.title'),
+        body: t('projectSettings.labeling.confirm.body'),
         buttonLook: "destructive",
         onOk: () => saveConfig(),
-        okText: "Save",
+        okText: t('projectSettings.form.save'),
       });
     } else {
       saveConfig();
@@ -81,5 +81,5 @@ export const LabelingSettings = () => {
   );
 };
 
-LabelingSettings.title = "Labeling Interface";
+LabelingSettings.title = t('projectSettings.menu.labeling');
 LabelingSettings.path = "/labeling";

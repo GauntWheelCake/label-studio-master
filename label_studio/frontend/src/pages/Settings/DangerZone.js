@@ -7,6 +7,7 @@ import { Space } from "../../components/Space/Space";
 import { Spinner } from "../../components/Spinner/Spinner";
 import { useAPI } from "../../providers/ApiProvider";
 import { useProject } from "../../providers/ProjectProvider";
+import { t } from "../../i18n";
 
 export const DangerZone = () => {
   const {project} = useProject();
@@ -16,9 +17,9 @@ export const DangerZone = () => {
 
   const handleOnClick = (type) => () => {
     confirm({
-      title: "Action confirmation",
-      body: "You're about to delete all things. This action cannot be undone.",
-      okText: "Proceed",
+      title: t('projectSettings.dangerZone.confirm.title'),
+      body: t('projectSettings.dangerZone.confirm.body'),
+      okText: t('projectSettings.dangerZone.confirm.ok'),
       buttonLook: "destructive",
       onOk: async () => {
         setProcessing(type);
@@ -47,31 +48,38 @@ export const DangerZone = () => {
     });
   };
 
+  const formatCountLabel = (key, count) => {
+    const template = t(key);
+    const value = count ?? 0;
+
+    return template.includes('{count}') ? template.replace('{count}', value) : template;
+  };
+
   const buttons = useMemo(() => [{
     type: 'annotations',
     disabled: true, //&& !project.total_annotations_number,
-    label: `Delete ${project.total_annotations_number} Annotations`,
+    label: formatCountLabel('projectSettings.dangerZone.actions.deleteAnnotations', project.total_annotations_number),
   }, {
     type: 'tasks',
     disabled: true, //&& !project.task_number,
-    label: `Delete ${project.task_number} Tasks`,
+    label: formatCountLabel('projectSettings.dangerZone.actions.deleteTasks', project.task_number),
   }, {
     type: 'predictions',
     disabled: true, //&& !project.total_predictions_number,
-    label: `Delete ${project.total_predictions_number} Predictions`,
+    label: formatCountLabel('projectSettings.dangerZone.actions.deletePredictions', project.total_predictions_number),
   }, {
     type: 'tabs',
-    label: `Drop All Tabs`,
+    label: t('projectSettings.dangerZone.actions.dropTabs'),
   }, {
     type: 'project',
-    label: 'Delete Project',
+    label: t('projectSettings.dangerZone.actions.deleteProject'),
   }], [project]);
 
   return (
     <div style={{width: 480}}>
       <Label
-        text="Delete Annotations, Tasks, or Project"
-        description="Perform these actions at your own risk. Actions you take on this page can't be reverted. Make sure your data is backed up."
+        text={t('projectSettings.dangerZone.heading')}
+        description={t('projectSettings.dangerZone.description')}
         style={{display: 'block', width: 415}}
       />
 
@@ -96,5 +104,5 @@ export const DangerZone = () => {
   );
 };
 
-DangerZone.title = "Danger Zone";
+DangerZone.title = t('projectSettings.menu.dangerZone');
 DangerZone.path = "/danger-zone";

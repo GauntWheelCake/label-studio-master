@@ -92,7 +92,7 @@ const ProjectCard = ({project}) => {
         <Elem name="info">
           {project.created_at && (
             <Elem name="created-date">
-              {t('projectsPage.card.createdAt', { date: format(new Date(project.created_at), 'yyyy年MM月dd日 HH:mm') })}
+              {t('projectsPage.card.createdAt')} {format(new Date(project.created_at), 'yyyy年MM月dd日 HH:mm')}
             </Elem>
           )}
           <Elem name="created-by">
