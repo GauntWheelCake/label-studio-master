@@ -262,7 +262,7 @@ export const DataManagerPage = ({...props}) => {
     // 2) 定义一个列配置（尽量对齐 DataManager 的“列对象”约定）
     const reviewStatusColumn = {
       id: 'review_status',               // 唯一键
-      title: '审核状态',                   // 表头
+      title: t('dataManager.review.columnTitle'),                   // 表头
       // DataManager 内部每条 Task 的原始数据通常会被放到 item 或 task
       // 尝试从常见位置读取（缺省给 pending）
       getValue: (row) => {
@@ -277,9 +277,9 @@ export const DataManagerPage = ({...props}) => {
       // 渲染到单元格里的内容（用我们全局的 .tag 样式）
       render: (value/*, row*/) => {
         const map = {
-          pending:  '未审核',
-          approved: '已通过',
-          rejected: '已驳回',
+          pending:  t('dataManager.review.pending'),
+          approved: t('dataManager.review.approved'),
+          rejected: t('dataManager.review.rejected'),
         };
         const v = (value || 'pending').toLowerCase();
         const text = map[v] || map.pending;

@@ -1,19 +1,18 @@
 import chr from 'chroma-js';
 import { format } from 'date-fns';
 import React, { useMemo } from 'react';
-import { useHistory } from 'react-router';
 import { NavLink } from 'react-router-dom';
 import { LsBulb, LsCheck, LsEllipsis, LsMinus } from '../../assets/icons';
 import { Button, Dropdown, Menu, Userpic } from '../../components';
 import { Block, Elem } from '../../utils/bem';
 import { absoluteURL } from '../../utils/helpers';
+import { t } from '../../i18n';
 
 export const ProjectsList = ({projects}) => {
-  const history = useHistory();
   return (
     <Elem name="list">
       {projects.map(project => (
-        <ProjectCard key={project.id} project={project} history={history}/>
+        <ProjectCard key={project.id} project={project}/>
       ))}
     </Elem>
   );
@@ -23,14 +22,14 @@ export const EmptyProjectsList = ({ openModal }) => {
   return (
     <Block name="empty-projects-page">
       <Elem name="heidi" tag="img" src={absoluteURL("/static/images/opossum_looking.png")} />
-      <Elem name="header" tag="h1">Heidi 在这里没有看到任何项目</Elem>
-      <p>创建一个项目并开始标记数据</p>
-      <Elem name="action" tag={Button} onClick={openModal} look="primary">创建项目</Elem>
+      <Elem name="header" tag="h1">{t('projectsPage.empty.title')}</Elem>
+      <p>{t('projectsPage.empty.description')}</p>
+      <Elem name="action" tag={Button} onClick={openModal} look="primary">{t('projectsPage.empty.action')}</Elem>
     </Block>
   );
 };
 
-const ProjectCard = ({project, history}) => {
+const ProjectCard = ({project}) => {
   const color = useMemo(() => {
     return project.color === '#FFFFFF' ? null : project.color;
   }, [project]);
@@ -48,7 +47,7 @@ const ProjectCard = ({project, history}) => {
         <Elem name="header">
           <Elem name="title">
             <Elem name="title-text">
-              {project.title ?? "New project"}
+              {project.title ?? t('projectsPage.card.untitled')}
             </Elem>
 
             <Elem name="menu" onClick={(e) => {
@@ -57,8 +56,8 @@ const ProjectCard = ({project, history}) => {
             }}>
               <Dropdown.Trigger content={(
                 <Menu>
-                  <Menu.Item href={`/projects/${project.id}/settings`}>Settings</Menu.Item>
-                  <Menu.Item href={`/projects/${project.id}/data?labeling=1`}>Label</Menu.Item>
+                  <Menu.Item href={`/projects/${project.id}/settings`}>{t('projectsPage.card.menu.settings')}</Menu.Item>
+                  <Menu.Item href={`/projects/${project.id}/data?labeling=1`}>{t('projectsPage.card.menu.label')}</Menu.Item>
                 </Menu>
               )}>
                 <Button size="small" type="text" icon={<LsEllipsis/>}/>
@@ -91,9 +90,11 @@ const ProjectCard = ({project, history}) => {
           {project.description}
         </Elem>
         <Elem name="info">
-          <Elem name="created-date">
-            {format(new Date(project.created_at), "dd MMM ’yy, HH:mm")}
-          </Elem>
+          {project.created_at && (
+            <Elem name="created-date">
+              {t('projectsPage.card.createdAt', { date: format(new Date(project.created_at), 'yyyy年MM月dd日 HH:mm') })}
+            </Elem>
+          )}
           <Elem name="created-by">
             <Userpic src="#" user={project.created_by} showUsername/>
           </Elem>

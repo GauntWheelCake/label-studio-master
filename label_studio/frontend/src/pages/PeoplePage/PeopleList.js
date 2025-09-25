@@ -1,6 +1,8 @@
 import { formatDistance } from "date-fns";
+import { zhCN } from "date-fns/locale";
 import { useCallback, useEffect, useState } from "react";
 import { Spinner, Userpic } from "../../components";
+import { t } from "../../i18n";
 import { useAPI } from "../../providers/ApiProvider";
 import { Block, Elem } from "../../utils/bem";
 import { isDefined } from "../../utils/helpers";
@@ -43,13 +45,16 @@ export const PeopleList = ({onSelect, selectedUser, defaultSelected}) => {
         <Elem name="users">
           <Elem name="header">
             <Elem name="column" mix="avatar"/>
-            <Elem name="column" mix="email">Email</Elem>
-            <Elem name="column" mix="name">Name</Elem>
-            <Elem name="column" mix="last-activity">Last Activity</Elem>
+            <Elem name="column" mix="email">{t('peoplePage.list.email')}</Elem>
+            <Elem name="column" mix="name">{t('peoplePage.list.name')}</Elem>
+            <Elem name="column" mix="last-activity">{t('peoplePage.list.lastActivity')}</Elem>
           </Elem>
           <Elem name="body">
             {usersList.map(({user}) => {
               const active = user.id === selectedUser?.id;
+              const lastActivity = user.last_activity
+                ? formatDistance(new Date(user.last_activity), new Date(), {addSuffix: true, locale: zhCN})
+                : t('peoplePage.list.lastActivityEmpty');
 
               return (
                 <Elem key={`user-${user.id}`} name="user" mod={{active}} onClick={() => selectUser(user)}>
@@ -63,7 +68,7 @@ export const PeopleList = ({onSelect, selectedUser, defaultSelected}) => {
                     {user.first_name} {user.last_name}
                   </Elem>
                   <Elem name="field" mix="last-activity">
-                    {formatDistance(new Date(user.last_activity), new Date(), {addSuffix: true})}
+                    {lastActivity}
                   </Elem>
                 </Elem>
               );
