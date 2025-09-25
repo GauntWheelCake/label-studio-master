@@ -47,6 +47,10 @@ export const zhCN = {
   'exportPage.formatInfo.description': '您可以从以下格式中选择一种导出数据集：',
   'exportPage.formatInfo.missingFormat': '找不到需要的导出格式？',
   'exportPage.formatInfo.contactAdmin': '请联系管理员获取帮助。',
+  'exportPage.notice.approvedOnly': '仅审核通过的任务会包含在导出文件中。',
+  'exportPage.notice.noApproved': '没有可导出的审核通过任务。',
+  'exportPage.modal.readyTitle': '导出就绪',
+  'exportPage.modal.emptyTitle': '没有可导出的数据',
   'createProject.projectName.label': '项目名称',
   'createProject.projectDescription.label': '项目描述',
   'createProject.projectDescription.placeholder': '可选：填写项目描述',
@@ -88,6 +92,7 @@ export const zhCN = {
   'createProject.templates.footer.suffix': '。',
   'createProject.preview.title': '界面预览',
   'projectsPage.context.createButton': '创建',
+
   'peoplePage.pageTitle': '组织成员',
   'peoplePage.controls.addPeople': '添加成员',
   'peoplePage.invite.title': '邀请成员',
@@ -100,7 +105,15 @@ export const zhCN = {
   'peoplePage.list.email': '邮箱',
   'peoplePage.list.name': '姓名',
   'peoplePage.list.lastActivity': '最近活动',
+
+  'peoplePage.list.lastActivityEmpty': '暂无记录',
   'peoplePage.selected.createdProjects': '创建的项目',
   'peoplePage.selected.contributedProjects': '参与的项目',
   'peoplePage.selected.lastActivity': '最后活跃时间：',
+  'peoplePage.selected.lastActivityEmpty': '暂无记录',
+  'dataManager.review.columnTitle': '审核状态',
+  'dataManager.review.pending': '未审核',
+  'dataManager.review.approved': '已通过',
+  'dataManager.review.rejected': '已驳回',
+
 };
