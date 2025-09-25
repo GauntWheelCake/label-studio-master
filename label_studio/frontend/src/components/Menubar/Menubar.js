@@ -189,6 +189,7 @@ export const Menubar = ({
                 icon={<LsDoor/>}
                 label={t('menubar.menu.logout')}
                 href={absoluteURL("/logout")}
+                forceReload
               />
             </Menu>
           )}>

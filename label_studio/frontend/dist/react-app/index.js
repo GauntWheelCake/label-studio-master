@@ -78858,8 +78858,15 @@ const parseContent = (id, source, children, parse) => {
   let result;
   let setInnerHTML = false;
   if (!children || children.length === 0 || children instanceof Function) {
-    var _template$innerHTML;
-    const template = source.querySelector(`template#${id}`);
+    var _source$querySelector, _template$innerHTML;
+    // const template = source.querySelector(`template#${id}`);
+    const template = source === null || source === void 0 ? void 0 : (_source$querySelector = source.querySelector) === null || _source$querySelector === void 0 ? void 0 : _source$querySelector.call(source, `template#${id}`);
+    if (!template) {
+      return {
+        children: children instanceof Function ? children(null) : children !== null && children !== void 0 ? children : null,
+        setInnerHTML: false
+      };
+    }
     const templateHTML = (_template$innerHTML = template.innerHTML) !== null && _template$innerHTML !== void 0 ? _template$innerHTML : "";
     if (parse) {
       const parsed = (0,html_react_parser__WEBPACK_IMPORTED_MODULE_0__["default"])(templateHTML);
@@ -83397,7 +83404,8 @@ const Menubar = ({
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_12__.Menu.Item, {
             icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_assets_icons__WEBPACK_IMPORTED_MODULE_2__.LsDoor, {}),
             label: (0,_i18n__WEBPACK_IMPORTED_MODULE_8__.t)('menubar.menu.logout'),
-            href: (0,_utils_helpers__WEBPACK_IMPORTED_MODULE_6__.absoluteURL)("/logout")
+            href: (0,_utils_helpers__WEBPACK_IMPORTED_MODULE_6__.absoluteURL)("/logout"),
+            forceReload: true
           })]
         }),
         children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)("div", {

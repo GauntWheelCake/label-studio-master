@@ -67,6 +67,8 @@ export const SelectedUser = ({ user, onClose }) => {
       <Elem tag="p" name="last-active">
         {t('peoplePage.selected.lastActivity')}
         {lastActivity}
+
+
       </Elem>
     </Block>
   );

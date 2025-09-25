@@ -92,13 +92,7 @@ export const zhCN = {
   'createProject.templates.footer.suffix': '。',
   'createProject.preview.title': '界面预览',
   'projectsPage.context.createButton': '创建',
-  'projectsPage.card.untitled': '新项目',
-  'projectsPage.card.menu.settings': '项目设置',
-  'projectsPage.card.menu.label': '开始标注',
-  'projectsPage.card.createdAt': '创建于 {date}',
-  'projectsPage.empty.title': 'Heidi 在这里没有看到任何项目',
-  'projectsPage.empty.description': '创建一个项目并开始标注数据',
-  'projectsPage.empty.action': '创建项目',
+
   'peoplePage.pageTitle': '组织成员',
   'peoplePage.controls.addPeople': '添加成员',
   'peoplePage.invite.title': '邀请成员',
@@ -111,6 +105,7 @@ export const zhCN = {
   'peoplePage.list.email': '邮箱',
   'peoplePage.list.name': '姓名',
   'peoplePage.list.lastActivity': '最近活动',
+
   'peoplePage.list.lastActivityEmpty': '暂无记录',
   'peoplePage.selected.createdProjects': '创建的项目',
   'peoplePage.selected.contributedProjects': '参与的项目',
@@ -120,4 +115,5 @@ export const zhCN = {
   'dataManager.review.pending': '未审核',
   'dataManager.review.approved': '已通过',
   'dataManager.review.rejected': '已驳回',
+
 };
