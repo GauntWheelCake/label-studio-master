@@ -4,6 +4,7 @@ import { Form, Input, TextArea } from '../../components/Form';
 import { RadioGroup } from '../../components/Form/Elements/RadioGroup/RadioGroup';
 import { ProjectContext } from '../../providers/ProjectProvider';
 import { Block } from '../../utils/bem';
+import { t } from '../../i18n';
 
 export const GeneralSettings = () => {
   const {project, fetchProject} = useContext(ProjectContext);
@@ -24,8 +25,16 @@ export const GeneralSettings = () => {
   ];
 
   const samplings = [
-    {value: "Sequential", label: "Sequential", description: "Tasks are ordered by Data manager ordering"},
-    {value: "Uniform", label: "Random", description: "Tasks are chosen with uniform random"},
+    {
+      value: "Sequential",
+      label: t('projectSettings.general.sampling.sequential.label'),
+      description: t('projectSettings.general.sampling.sequential.description'),
+    },
+    {
+      value: "Uniform",
+      label: t('projectSettings.general.sampling.uniform.label'),
+      description: t('projectSettings.general.sampling.uniform.description'),
+    },
   ];
 
   return (
@@ -39,18 +48,18 @@ export const GeneralSettings = () => {
         <Form.Row columnCount={1} rowGap="32px">
           <Input
             name="title"
-            label="Project Name"
+            label={t('projectSettings.general.projectName.label')}
             labelProps={{large: true}}
           />
 
           <TextArea
             name="description"
-            label="Description"
+            label={t('projectSettings.general.description.label')}
             labelProps={{large: true}}
             style={{minHeight: 128}}
           />
 
-          <RadioGroup name="color" label="Color" size="large" labelProps={{size: "large"}}>
+          <RadioGroup name="color" label={t('projectSettings.general.color.label')} size="large" labelProps={{size: "large"}}>
             {colors.map(color => (
               <RadioGroup.Button key={color} value={color}>
                 <Block name="color" style={{'--background': color}}/>
@@ -58,12 +67,12 @@ export const GeneralSettings = () => {
             ))}
           </RadioGroup>
 
-          <RadioGroup label="Task Sampling" labelProps={{size: "large"}} name="sampling" simple>
+          <RadioGroup label={t('projectSettings.general.sampling.label')} labelProps={{size: "large"}} name="sampling" simple>
             {samplings.map(({value, label, description}) => (
               <RadioGroup.Button
                 key={value}
                 value={`${value} sampling`}
-                label={`${label} sampling`}
+                label={label}
                 description={description}
               />
             ))}
@@ -72,15 +81,15 @@ export const GeneralSettings = () => {
 
         <Form.Actions>
           <Form.Indicator>
-            <span case="success">Saved!</span>
+            <span case="success">{t('projectSettings.form.saved')}</span>
           </Form.Indicator>
-          <Button type="submit" look="primary" style={{width: 120}}>Save</Button>
+          <Button type="submit" look="primary" style={{width: 120}}>{t('projectSettings.form.save')}</Button>
         </Form.Actions>
       </Form>
     </div>
   );
 };
 
-GeneralSettings.menuItem = "General";
+GeneralSettings.menuItem = t('projectSettings.menu.general');
 GeneralSettings.path = "/";
 GeneralSettings.exact = true;
