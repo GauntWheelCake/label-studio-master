@@ -85404,6 +85404,8 @@ const zhCN = {
   'importModal.actions.import': '导入',
   'importPage.footer.docsPrefix': '请参阅文档以',
   'importPage.footer.importLink': '导入预标注数据',
+  'importPage.footer.connector': '或者',
+  'importPage.footer.syncLink': '同步云存储以自动导入数据',
   'importPage.footer.suffix': '。',
   'importPage.errors.fileTooBig': '导入的文件过大',
   'importPage.form.datasetUrlPlaceholder': '数据集 URL',
@@ -85474,7 +85476,79 @@ const zhCN = {
   'createProject.templates.footer.suffix': '。',
   'createProject.preview.title': '界面预览',
   'projectsPage.context.createButton': '创建',
+  'projectsPage.empty.title': '您还没有任何项目',
+  'projectsPage.empty.description': '创建一个新项目来开始标注工作。',
+  'projectsPage.empty.action': '创建项目',
+  'projectsPage.card.untitled': '未命名项目',
+  'projectsPage.card.menu.settings': '项目设置',
+  'projectsPage.card.menu.label': '开始标注',
   'projectsPage.card.createdAt': '创建于',
+  'projectSettings.menu.general': '通用',
+  'projectSettings.menu.labeling': '标注界面',
+  'projectSettings.menu.instructions': '标注说明',
+  'projectSettings.menu.machineLearning': '机器学习',
+  'projectSettings.menu.dangerZone': '危险区域',
+  'projectSettings.form.save': '保存',
+  'projectSettings.form.saved': '已保存！',
+  'projectSettings.general.projectName.label': '项目名称',
+  'projectSettings.general.description.label': '项目描述',
+  'projectSettings.general.color.label': '项目颜色',
+  'projectSettings.general.sampling.label': '任务分配',
+  'projectSettings.general.sampling.sequential.label': '顺序分配',
+  'projectSettings.general.sampling.sequential.description': '按照数据管理器中的顺序分配任务',
+  'projectSettings.general.sampling.uniform.label': '随机分配',
+  'projectSettings.general.sampling.uniform.description': '均匀随机选择任务',
+  'projectSettings.labeling.confirm.title': '配置数据已变更',
+  'projectSettings.labeling.confirm.body': '标注配置进行了影响数据展示的重要修改。保存配置可能会删除数据管理器中已创建的所有标签页。',
+  'projectSettings.instructions.label': '标注说明',
+  'projectSettings.instructions.toggle': '在开始标注前显示',
+  'projectSettings.instructions.hint': '编写说明以帮助用户完成标注任务。',
+  'projectSettings.dangerZone.confirm.title': '操作确认',
+  'projectSettings.dangerZone.confirm.body': '您即将删除所有内容，此操作无法撤销。',
+  'projectSettings.dangerZone.confirm.ok': '继续',
+  'projectSettings.dangerZone.actions.deleteAnnotations': '删除 {count} 条标注',
+  'projectSettings.dangerZone.actions.deleteTasks': '删除 {count} 个任务',
+  'projectSettings.dangerZone.actions.deletePredictions': '删除 {count} 条预测',
+  'projectSettings.dangerZone.actions.dropTabs': '清除所有标签页',
+  'projectSettings.dangerZone.actions.deleteProject': '删除项目',
+  'projectSettings.dangerZone.heading': '删除标注、任务或项目',
+  'projectSettings.dangerZone.description': '请谨慎执行此处的操作。该页面的操作无法撤销，请确保已备份数据。',
+  'projectSettings.machineLearning.form.editTitle': '编辑模型',
+  'projectSettings.machineLearning.form.addTitle': '添加模型',
+  'projectSettings.machineLearning.form.name': '标题',
+  'projectSettings.machineLearning.form.namePlaceholder': '机器学习模型',
+  'projectSettings.machineLearning.form.url': 'URL',
+  'projectSettings.machineLearning.form.description': '描述',
+  'projectSettings.machineLearning.form.submit': '验证并保存',
+  'projectSettings.machineLearning.form.saveError': '保存机器学习后端失败。',
+  'projectSettings.machineLearning.form.addError': '添加机器学习后端失败。',
+  'projectSettings.machineLearning.description.intro': '添加一个或多个机器学习模型，以便为您的数据生成标签预测。',
+  'projectSettings.machineLearning.description.hint': ' 若要在不连接模型的情况下导入预测，请 ',
+  'projectSettings.machineLearning.description.link': '查看文档',
+  'projectSettings.machineLearning.description.suffix': '。',
+  'projectSettings.machineLearning.actions.addModel': '添加模型',
+  'projectSettings.machineLearning.actions.reset': '重置',
+  'projectSettings.machineLearning.section.assistedLabeling': '机器学习辅助标注',
+  'projectSettings.machineLearning.section.startTraining': '在提交或更新标注后启动模型训练',
+  'projectSettings.machineLearning.section.retrievePredictions': '在加载任务时自动获取预测结果',
+  'projectSettings.machineLearning.section.showPredictions': '在标注流和快速查看中向标注者显示预测结果',
+  'projectSettings.machineLearning.section.modelVersion': '模型版本',
+  'projectSettings.machineLearning.section.modelVersionDescription': '模型版本用于指定向标注者展示哪一个预测结果。',
+  'projectSettings.machineLearning.section.modelVersionPlaceholder': '未选择模型版本',
+  'projectSettings.machineLearning.list.confirm.title': '删除机器学习后端',
+  'projectSettings.machineLearning.list.confirm.body': '此操作无法撤销，确定继续吗？',
+  'projectSettings.machineLearning.list.actions.edit': '编辑',
+  'projectSettings.machineLearning.list.actions.delete': '删除',
+  'projectSettings.machineLearning.list.actions.startTraining': '开始训练',
+  'projectSettings.machineLearning.list.fields.url': 'URL',
+  'projectSettings.machineLearning.list.fields.description': '描述',
+  'projectSettings.machineLearning.list.fields.version': '版本',
+  'projectSettings.machineLearning.list.fields.unknown': '未知',
+  'projectSettings.machineLearning.list.status.disconnected': '未连接',
+  'projectSettings.machineLearning.list.status.connected': '已连接',
+  'projectSettings.machineLearning.list.status.error': '错误',
+  'projectSettings.machineLearning.list.status.training': '训练中',
+  'projectSettings.machineLearning.list.status.predicting': '预测中',
   'peoplePage.pageTitle': '组织成员',
   'peoplePage.controls.addPeople': '添加成员',
   'peoplePage.invite.title': '邀请成员',
@@ -85572,11 +85646,7 @@ const EmptyConfigPlaceholder = () => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_
   children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("p", {
     children: (0,_i18n__WEBPACK_IMPORTED_MODULE_15__.t)('createProject.config.empty.title')
   }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsxs)("p", {
-    children: [(0,_i18n__WEBPACK_IMPORTED_MODULE_15__.t)('createProject.config.empty.description'), ' ', (0,_i18n__WEBPACK_IMPORTED_MODULE_15__.t)('createProject.config.empty.docsPrefix'), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("a", {
-      href: "https://labelstud.io/tags/",
-      target: "_blank",
-      children: (0,_i18n__WEBPACK_IMPORTED_MODULE_15__.t)('createProject.config.empty.docsLink')
-    }), (0,_i18n__WEBPACK_IMPORTED_MODULE_15__.t)('createProject.config.empty.docsSuffix')]
+    children: [(0,_i18n__WEBPACK_IMPORTED_MODULE_15__.t)('createProject.config.empty.description'), ' ', (0,_i18n__WEBPACK_IMPORTED_MODULE_15__.t)('createProject.config.empty.docsPrefix'), (0,_i18n__WEBPACK_IMPORTED_MODULE_15__.t)('createProject.config.empty.docsLink'), (0,_i18n__WEBPACK_IMPORTED_MODULE_15__.t)('createProject.config.empty.docsSuffix')]
   })]
 });
 const Label = ({
@@ -85896,11 +85966,7 @@ const Configurator = ({
   };
   const extra = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsxs)("p", {
     className: configClass.elem('tags-link'),
-    children: [(0,_i18n__WEBPACK_IMPORTED_MODULE_15__.t)('createProject.config.extra.configureWithTags'), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("br", {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("a", {
-      href: "https://labelstud.io/tags/",
-      target: "_blank",
-      children: (0,_i18n__WEBPACK_IMPORTED_MODULE_15__.t)('createProject.config.extra.linkText')
-    }), (0,_i18n__WEBPACK_IMPORTED_MODULE_15__.t)('createProject.config.extra.suffix')]
+    children: [(0,_i18n__WEBPACK_IMPORTED_MODULE_15__.t)('createProject.config.extra.configureWithTags'), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("br", {}), (0,_i18n__WEBPACK_IMPORTED_MODULE_15__.t)('createProject.config.extra.linkText'), (0,_i18n__WEBPACK_IMPORTED_MODULE_15__.t)('createProject.config.extra.suffix')]
   });
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsxs)("div", {
     className: configClass,
@@ -86439,11 +86505,7 @@ const TemplatesList = ({
         className: listClass.elem("info-icon"),
         width: "20",
         height: "20"
-      }), (0,_i18n__WEBPACK_IMPORTED_MODULE_8__.t)('createProject.templates.footer.docsPrefix'), ' ', /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("a", {
-        href: "https://labelstud.io/guide",
-        target: "_blank",
-        children: (0,_i18n__WEBPACK_IMPORTED_MODULE_8__.t)('createProject.templates.footer.linkText')
-      }), (0,_i18n__WEBPACK_IMPORTED_MODULE_8__.t)('createProject.templates.footer.suffix')]
+      }), (0,_i18n__WEBPACK_IMPORTED_MODULE_8__.t)('createProject.templates.footer.docsPrefix'), ' ', (0,_i18n__WEBPACK_IMPORTED_MODULE_8__.t)('createProject.templates.footer.linkText'), (0,_i18n__WEBPACK_IMPORTED_MODULE_8__.t)('createProject.templates.footer.suffix')]
     })]
   });
 };
@@ -87084,11 +87146,7 @@ const Footer = () => {
       className: importClass.elem("info-icon"),
       width: "20",
       height: "20"
-    }), (0,_i18n__WEBPACK_IMPORTED_MODULE_7__.t)('importPage.footer.connector'), ' ', /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("a", {
-      target: "_blank",
-      href: "https://labelstud.io/guide/storage.html",
-      children: (0,_i18n__WEBPACK_IMPORTED_MODULE_7__.t)('importPage.footer.syncLink')
-    }), (0,_i18n__WEBPACK_IMPORTED_MODULE_7__.t)('importPage.footer.suffix')]
+    }), (0,_i18n__WEBPACK_IMPORTED_MODULE_7__.t)('importPage.footer.connector'), ' ', (0,_i18n__WEBPACK_IMPORTED_MODULE_7__.t)('importPage.footer.syncLink'), (0,_i18n__WEBPACK_IMPORTED_MODULE_7__.t)('importPage.footer.suffix')]
   });
 };
 const Upload = ({
@@ -89135,10 +89193,7 @@ const InvitationModal = ({
         width: '70%',
         marginTop: 16
       },
-      children: [(0,_i18n__WEBPACK_IMPORTED_MODULE_7__.t)('peoplePage.invite.description.prefix'), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("a", {
-        href: "https://labelstud.io/guide/signup.html",
-        children: (0,_i18n__WEBPACK_IMPORTED_MODULE_7__.t)('peoplePage.invite.description.link')
-      }), (0,_i18n__WEBPACK_IMPORTED_MODULE_7__.t)('peoplePage.invite.description.suffix')]
+      children: [(0,_i18n__WEBPACK_IMPORTED_MODULE_7__.t)('peoplePage.invite.description.prefix'), (0,_i18n__WEBPACK_IMPORTED_MODULE_7__.t)('peoplePage.invite.description.link'), (0,_i18n__WEBPACK_IMPORTED_MODULE_7__.t)('peoplePage.invite.description.suffix')]
     })]
   });
 };
@@ -89703,11 +89758,9 @@ const ProjectCard = ({
         children: project.description
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)(_utils_bem__WEBPACK_IMPORTED_MODULE_6__.Elem, {
         name: "info",
-        children: [project.created_at && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_6__.Elem, {
+        children: [project.created_at && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)(_utils_bem__WEBPACK_IMPORTED_MODULE_6__.Elem, {
           name: "created-date",
-          children: (0,_i18n__WEBPACK_IMPORTED_MODULE_8__.t)('projectsPage.card.createdAt', {
-            date: (0,date_fns__WEBPACK_IMPORTED_MODULE_1__["default"])(new Date(project.created_at), 'yyyy年MM月dd日 HH:mm')
-          })
+          children: [(0,_i18n__WEBPACK_IMPORTED_MODULE_8__.t)('projectsPage.card.createdAt'), " ", (0,date_fns__WEBPACK_IMPORTED_MODULE_1__["default"])(new Date(project.created_at), 'yyyy年MM月dd日 HH:mm')]
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_6__.Elem, {
           name: "created-by",
           children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_components__WEBPACK_IMPORTED_MODULE_5__.Userpic, {
@@ -89743,7 +89796,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_Spinner_Spinner__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../components/Spinner/Spinner */ "./src/components/Spinner/Spinner.js");
 /* harmony import */ var _providers_ApiProvider__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../providers/ApiProvider */ "./src/providers/ApiProvider.js");
 /* harmony import */ var _providers_ProjectProvider__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../providers/ProjectProvider */ "./src/providers/ProjectProvider.tsx");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var _i18n__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../i18n */ "./src/i18n/index.js");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
 
 
 
@@ -89763,9 +89818,9 @@ const DangerZone = () => {
   const [processing, setProcessing] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
   const handleOnClick = type => () => {
     (0,_components_Modal_Modal__WEBPACK_IMPORTED_MODULE_4__.confirm)({
-      title: "Action confirmation",
-      body: "You're about to delete all things. This action cannot be undone.",
-      okText: "Proceed",
+      title: (0,_i18n__WEBPACK_IMPORTED_MODULE_9__.t)('projectSettings.dangerZone.confirm.title'),
+      body: (0,_i18n__WEBPACK_IMPORTED_MODULE_9__.t)('projectSettings.dangerZone.confirm.body'),
+      okText: (0,_i18n__WEBPACK_IMPORTED_MODULE_9__.t)('projectSettings.dangerZone.confirm.ok'),
       buttonLook: "destructive",
       onOk: async () => {
         setProcessing(type);
@@ -89793,40 +89848,45 @@ const DangerZone = () => {
       }
     });
   };
+  const formatCountLabel = (key, count) => {
+    const template = (0,_i18n__WEBPACK_IMPORTED_MODULE_9__.t)(key);
+    const value = count !== null && count !== void 0 ? count : 0;
+    return template.includes('{count}') ? template.replace('{count}', value) : template;
+  };
   const buttons = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => [{
     type: 'annotations',
     disabled: true,
     //&& !project.total_annotations_number,
-    label: `Delete ${project.total_annotations_number} Annotations`
+    label: formatCountLabel('projectSettings.dangerZone.actions.deleteAnnotations', project.total_annotations_number)
   }, {
     type: 'tasks',
     disabled: true,
     //&& !project.task_number,
-    label: `Delete ${project.task_number} Tasks`
+    label: formatCountLabel('projectSettings.dangerZone.actions.deleteTasks', project.task_number)
   }, {
     type: 'predictions',
     disabled: true,
     //&& !project.total_predictions_number,
-    label: `Delete ${project.total_predictions_number} Predictions`
+    label: formatCountLabel('projectSettings.dangerZone.actions.deletePredictions', project.total_predictions_number)
   }, {
     type: 'tabs',
-    label: `Drop All Tabs`
+    label: (0,_i18n__WEBPACK_IMPORTED_MODULE_9__.t)('projectSettings.dangerZone.actions.dropTabs')
   }, {
     type: 'project',
-    label: 'Delete Project'
+    label: (0,_i18n__WEBPACK_IMPORTED_MODULE_9__.t)('projectSettings.dangerZone.actions.deleteProject')
   }], [project]);
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)("div", {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsxs)("div", {
     style: {
       width: 480
     },
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_3__.Label, {
-      text: "Delete Annotations, Tasks, or\xA0Project",
-      description: "Perform these actions at your own risk. Actions you take on this page can't be reverted. Make sure your data is backed up.",
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_3__.Label, {
+      text: (0,_i18n__WEBPACK_IMPORTED_MODULE_9__.t)('projectSettings.dangerZone.heading'),
+      description: (0,_i18n__WEBPACK_IMPORTED_MODULE_9__.t)('projectSettings.dangerZone.description'),
       style: {
         display: 'block',
         width: 415
       }
-    }), project.id ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_components_Space_Space__WEBPACK_IMPORTED_MODULE_5__.Space, {
+    }), project.id ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_components_Space_Space__WEBPACK_IMPORTED_MODULE_5__.Space, {
       direction: "vertical",
       spread: true,
       style: {
@@ -89835,7 +89895,7 @@ const DangerZone = () => {
       children: buttons.map(btn => {
         const waiting = processing === btn.type;
         const disabled = btn.disabled || processing && !waiting;
-        return btn.disabled !== true && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
+        return btn.disabled !== true && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
           look: "danger",
           disabled: disabled,
           waiting: waiting,
@@ -89843,19 +89903,19 @@ const DangerZone = () => {
           children: btn.label
         }, btn.type);
       })
-    }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("div", {
+    }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)("div", {
       style: {
         display: "flex",
         justifyContent: "center",
         marginTop: 32
       },
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_components_Spinner_Spinner__WEBPACK_IMPORTED_MODULE_6__.Spinner, {
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_components_Spinner_Spinner__WEBPACK_IMPORTED_MODULE_6__.Spinner, {
         size: 32
       })
     })]
   });
 };
-DangerZone.title = "Danger Zone";
+DangerZone.title = (0,_i18n__WEBPACK_IMPORTED_MODULE_9__.t)('projectSettings.menu.dangerZone');
 DangerZone.path = "/danger-zone";
 
 /***/ }),
@@ -89877,7 +89937,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_Form_Elements_RadioGroup_RadioGroup__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../components/Form/Elements/RadioGroup/RadioGroup */ "./src/components/Form/Elements/RadioGroup/RadioGroup.js");
 /* harmony import */ var _providers_ProjectProvider__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../providers/ProjectProvider */ "./src/providers/ProjectProvider.tsx");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../utils/bem */ "./src/utils/bem.tsx");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var _i18n__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../i18n */ "./src/i18n/index.js");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
 
 
 
@@ -89896,18 +89958,18 @@ const GeneralSettings = () => {
   const colors = ['#FFFFFF', '#F52B4F', '#FA8C16', '#F6C549', '#9ACA4F', '#51AAFD', '#7F64FF', '#D55C9D'];
   const samplings = [{
     value: "Sequential",
-    label: "Sequential",
-    description: "Tasks are ordered by Data manager ordering"
+    label: (0,_i18n__WEBPACK_IMPORTED_MODULE_6__.t)('projectSettings.general.sampling.sequential.label'),
+    description: (0,_i18n__WEBPACK_IMPORTED_MODULE_6__.t)('projectSettings.general.sampling.sequential.description')
   }, {
     value: "Uniform",
-    label: "Random",
-    description: "Tasks are chosen with uniform random"
+    label: (0,_i18n__WEBPACK_IMPORTED_MODULE_6__.t)('projectSettings.general.sampling.uniform.label'),
+    description: (0,_i18n__WEBPACK_IMPORTED_MODULE_6__.t)('projectSettings.general.sampling.uniform.description')
   }];
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
     style: {
       width: 480
     },
-    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(_components_Form__WEBPACK_IMPORTED_MODULE_2__.Form, {
+    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)(_components_Form__WEBPACK_IMPORTED_MODULE_2__.Form, {
       action: "updateProject",
       formData: {
         ...project
@@ -89916,42 +89978,42 @@ const GeneralSettings = () => {
         pk: project.id
       },
       onSubmit: updateProject,
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(_components_Form__WEBPACK_IMPORTED_MODULE_2__.Form.Row, {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)(_components_Form__WEBPACK_IMPORTED_MODULE_2__.Form.Row, {
         columnCount: 1,
         rowGap: "32px",
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_2__.Input, {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_2__.Input, {
           name: "title",
-          label: "Project Name",
+          label: (0,_i18n__WEBPACK_IMPORTED_MODULE_6__.t)('projectSettings.general.projectName.label'),
           labelProps: {
             large: true
           }
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_2__.TextArea, {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_2__.TextArea, {
           name: "description",
-          label: "Description",
+          label: (0,_i18n__WEBPACK_IMPORTED_MODULE_6__.t)('projectSettings.general.description.label'),
           labelProps: {
             large: true
           },
           style: {
             minHeight: 128
           }
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_components_Form_Elements_RadioGroup_RadioGroup__WEBPACK_IMPORTED_MODULE_3__.RadioGroup, {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_components_Form_Elements_RadioGroup_RadioGroup__WEBPACK_IMPORTED_MODULE_3__.RadioGroup, {
           name: "color",
-          label: "Color",
+          label: (0,_i18n__WEBPACK_IMPORTED_MODULE_6__.t)('projectSettings.general.color.label'),
           size: "large",
           labelProps: {
             size: "large"
           },
-          children: colors.map(color => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_components_Form_Elements_RadioGroup_RadioGroup__WEBPACK_IMPORTED_MODULE_3__.RadioGroup.Button, {
+          children: colors.map(color => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_components_Form_Elements_RadioGroup_RadioGroup__WEBPACK_IMPORTED_MODULE_3__.RadioGroup.Button, {
             value: color,
-            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_5__.Block, {
+            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_5__.Block, {
               name: "color",
               style: {
                 '--background': color
               }
             })
           }, color))
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_components_Form_Elements_RadioGroup_RadioGroup__WEBPACK_IMPORTED_MODULE_3__.RadioGroup, {
-          label: "Task Sampling",
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_components_Form_Elements_RadioGroup_RadioGroup__WEBPACK_IMPORTED_MODULE_3__.RadioGroup, {
+          label: (0,_i18n__WEBPACK_IMPORTED_MODULE_6__.t)('projectSettings.general.sampling.label'),
           labelProps: {
             size: "large"
           },
@@ -89961,31 +90023,31 @@ const GeneralSettings = () => {
             value,
             label,
             description
-          }) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_components_Form_Elements_RadioGroup_RadioGroup__WEBPACK_IMPORTED_MODULE_3__.RadioGroup.Button, {
+          }) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_components_Form_Elements_RadioGroup_RadioGroup__WEBPACK_IMPORTED_MODULE_3__.RadioGroup.Button, {
             value: `${value} sampling`,
-            label: `${label} sampling`,
+            label: label,
             description: description
           }, value))
         })]
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(_components_Form__WEBPACK_IMPORTED_MODULE_2__.Form.Actions, {
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_2__.Form.Indicator, {
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("span", {
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)(_components_Form__WEBPACK_IMPORTED_MODULE_2__.Form.Actions, {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_2__.Form.Indicator, {
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("span", {
             case: "success",
-            children: "Saved!"
+            children: (0,_i18n__WEBPACK_IMPORTED_MODULE_6__.t)('projectSettings.form.saved')
           })
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
           type: "submit",
           look: "primary",
           style: {
             width: 120
           },
-          children: "Save"
+          children: (0,_i18n__WEBPACK_IMPORTED_MODULE_6__.t)('projectSettings.form.save')
         })]
       })]
     })
   });
 };
-GeneralSettings.menuItem = "General";
+GeneralSettings.menuItem = (0,_i18n__WEBPACK_IMPORTED_MODULE_6__.t)('projectSettings.menu.general');
 GeneralSettings.path = "/";
 GeneralSettings.exact = true;
 
@@ -90007,7 +90069,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_Form__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../components/Form */ "./src/components/Form/index.js");
 /* harmony import */ var _components_Menubar_Menubar__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../components/Menubar/Menubar */ "./src/components/Menubar/Menubar.js");
 /* harmony import */ var _providers_ProjectProvider__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../providers/ProjectProvider */ "./src/providers/ProjectProvider.tsx");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var _i18n__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../i18n */ "./src/i18n/index.js");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
 
 
 
@@ -90029,11 +90093,11 @@ const InstructionsSettings = () => {
   const updateProject = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => {
     fetchProject(project.id, true);
   }, [project]);
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
     style: {
       width: 480
     },
-    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)(_components_Form__WEBPACK_IMPORTED_MODULE_2__.Form, {
+    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(_components_Form__WEBPACK_IMPORTED_MODULE_2__.Form, {
       ref: formRef,
       action: "updateProject",
       formData: {
@@ -90043,53 +90107,53 @@ const InstructionsSettings = () => {
         pk: project.id
       },
       onSubmit: updateProject,
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)(_components_Form__WEBPACK_IMPORTED_MODULE_2__.Form.Row, {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(_components_Form__WEBPACK_IMPORTED_MODULE_2__.Form.Row, {
         columnCount: 1,
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_2__.Label, {
-          text: "Labeling Instructions",
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_2__.Label, {
+          text: (0,_i18n__WEBPACK_IMPORTED_MODULE_5__.t)('projectSettings.instructions.label'),
           large: true
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
           style: {
             paddingLeft: 16
           },
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_2__.Toggle, {
-            label: "Show before labeling",
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_2__.Toggle, {
+            label: (0,_i18n__WEBPACK_IMPORTED_MODULE_5__.t)('projectSettings.instructions.toggle'),
             name: "show_instruction"
           })
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
           style: {
             color: "rgba(0,0,0,0.4)",
             paddingLeft: 16
           },
-          children: "Write instructions to help users complete labeling tasks."
+          children: (0,_i18n__WEBPACK_IMPORTED_MODULE_5__.t)('projectSettings.instructions.hint')
         })]
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_2__.Form.Row, {
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_2__.Form.Row, {
         columnCount: 1,
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_2__.TextArea, {
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_2__.TextArea, {
           name: "expert_instruction",
           style: {
             minHeight: 128
           }
         })
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)(_components_Form__WEBPACK_IMPORTED_MODULE_2__.Form.Actions, {
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_2__.Form.Indicator, {
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("span", {
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(_components_Form__WEBPACK_IMPORTED_MODULE_2__.Form.Actions, {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_2__.Form.Indicator, {
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("span", {
             case: "success",
-            children: "Saved!"
+            children: (0,_i18n__WEBPACK_IMPORTED_MODULE_5__.t)('projectSettings.form.saved')
           })
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
           type: "submit",
           look: "primary",
           style: {
             width: 120
           },
-          children: "Save"
+          children: (0,_i18n__WEBPACK_IMPORTED_MODULE_5__.t)('projectSettings.form.save')
         })]
       })]
     })
   });
 };
-InstructionsSettings.title = "Instructions";
+InstructionsSettings.title = (0,_i18n__WEBPACK_IMPORTED_MODULE_5__.t)('projectSettings.menu.instructions');
 InstructionsSettings.path = "/instruction";
 
 /***/ }),
@@ -90112,7 +90176,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _providers_ProjectProvider__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../providers/ProjectProvider */ "./src/providers/ProjectProvider.tsx");
 /* harmony import */ var _utils_helpers__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../utils/helpers */ "./src/utils/helpers.js");
 /* harmony import */ var _CreateProject_Config_Config__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../CreateProject/Config/Config */ "./src/pages/CreateProject/Config/Config.js");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var _i18n__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../i18n */ "./src/i18n/index.js");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
 
 
 
@@ -90152,12 +90218,6 @@ const LabelingSettings = () => {
       const hasConfig = !(0,_utils_helpers__WEBPACK_IMPORTED_MODULE_5__.isEmptyString)(project.label_config);
       const configIsEmpty = project.label_config.replace(/\s/g, '') === '<View></View>';
       const hasTasks = project.task_number > 0;
-      console.log({
-        hasConfig,
-        configIsEmpty,
-        hasTasks,
-        project
-      });
       return hasConfig && !configIsEmpty && hasTasks;
     }
     return false;
@@ -90165,11 +90225,11 @@ const LabelingSettings = () => {
   const onSave = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async () => {
     if (essentialDataChanged && projectAlreadySetUp) {
       (0,_components_Modal_Modal__WEBPACK_IMPORTED_MODULE_2__.confirm)({
-        title: "Config data changed",
-        body: "Labeling config has essential changes that affect data displaying. Saving the config may lead to deleting all tabs previously created in the Data Manager.",
+        title: (0,_i18n__WEBPACK_IMPORTED_MODULE_7__.t)('projectSettings.labeling.confirm.title'),
+        body: (0,_i18n__WEBPACK_IMPORTED_MODULE_7__.t)('projectSettings.labeling.confirm.body'),
         buttonLook: "destructive",
         onOk: () => saveConfig(),
-        okText: "Save"
+        okText: (0,_i18n__WEBPACK_IMPORTED_MODULE_7__.t)('projectSettings.form.save')
       });
     } else {
       saveConfig();
@@ -90183,7 +90243,7 @@ const LabelingSettings = () => {
     setEssentialDataChanged(validation.config_essential_data_has_changed);
   }, []);
   if (!project.id) return null;
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_CreateProject_Config_Config__WEBPACK_IMPORTED_MODULE_6__.ConfigPage, {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_CreateProject_Config_Config__WEBPACK_IMPORTED_MODULE_6__.ConfigPage, {
     config: project.label_config,
     project: project,
     onUpdate: onUpdate,
@@ -90191,7 +90251,7 @@ const LabelingSettings = () => {
     onValidate: onValidate
   });
 };
-LabelingSettings.title = "Labeling Interface";
+LabelingSettings.title = (0,_i18n__WEBPACK_IMPORTED_MODULE_7__.t)('projectSettings.menu.labeling');
 LabelingSettings.path = "/labeling";
 
 /***/ }),
@@ -90218,7 +90278,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_Oneof_Oneof__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../components/Oneof/Oneof */ "./src/components/Oneof/Oneof.js");
 /* harmony import */ var _providers_ApiProvider__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../providers/ApiProvider */ "./src/providers/ApiProvider.js");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../utils/bem */ "./src/utils/bem.tsx");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var _i18n__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../i18n */ "./src/i18n/index.js");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
 
 
 
@@ -90253,9 +90315,9 @@ const MachineLearningList = ({
     });
     await fetchBackends();
   }, [fetchBackends, api]);
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)("div", {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)("div", {
     className: rootClass,
-    children: backends.map(backend => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(BackendCard, {
+    children: backends.map(backend => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(BackendCard, {
       backend: backend,
       onStartTrain: onStartTraining,
       onDelete: onDeleteModel,
@@ -90271,60 +90333,60 @@ const BackendCard = ({
 }) => {
   const confirmDelete = (0,react__WEBPACK_IMPORTED_MODULE_1__.useCallback)(backend => {
     (0,_components_Modal_Modal__WEBPACK_IMPORTED_MODULE_6__.confirm)({
-      title: "Delete ML Backend",
-      body: "This action cannot be undone. Are you sure?",
+      title: (0,_i18n__WEBPACK_IMPORTED_MODULE_10__.t)('projectSettings.machineLearning.list.confirm.title'),
+      body: (0,_i18n__WEBPACK_IMPORTED_MODULE_10__.t)('projectSettings.machineLearning.list.confirm.body'),
       buttonLook: "destructive",
       onOk() {
         onDelete === null || onDelete === void 0 ? void 0 : onDelete(backend);
       }
     });
   }, [backend, onDelete]);
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsxs)(_components__WEBPACK_IMPORTED_MODULE_4__.Card, {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsxs)(_components__WEBPACK_IMPORTED_MODULE_4__.Card, {
     style: {
       marginTop: 0
     },
     header: backend.title,
-    extra: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsxs)("div", {
+    extra: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsxs)("div", {
       className: (0,_utils_bem__WEBPACK_IMPORTED_MODULE_9__.cn)('ml').elem('info'),
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(BackendState, {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(BackendState, {
         backend: backend
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_components__WEBPACK_IMPORTED_MODULE_4__.Dropdown.Trigger, {
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(_components__WEBPACK_IMPORTED_MODULE_4__.Dropdown.Trigger, {
         align: "right",
-        content: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsxs)(_components__WEBPACK_IMPORTED_MODULE_4__.Menu, {
+        content: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsxs)(_components__WEBPACK_IMPORTED_MODULE_4__.Menu, {
           size: "small",
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_components__WEBPACK_IMPORTED_MODULE_4__.Menu.Item, {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(_components__WEBPACK_IMPORTED_MODULE_4__.Menu.Item, {
             onClick: () => onEdit(backend),
-            children: "Edit"
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_components__WEBPACK_IMPORTED_MODULE_4__.Menu.Item, {
+            children: (0,_i18n__WEBPACK_IMPORTED_MODULE_10__.t)('projectSettings.machineLearning.list.actions.edit')
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(_components__WEBPACK_IMPORTED_MODULE_4__.Menu.Item, {
             onClick: () => confirmDelete(backend),
-            children: "Delete"
+            children: (0,_i18n__WEBPACK_IMPORTED_MODULE_10__.t)('projectSettings.machineLearning.list.actions.delete')
           })]
         }),
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_components__WEBPACK_IMPORTED_MODULE_4__.Button, {
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(_components__WEBPACK_IMPORTED_MODULE_4__.Button, {
           type: "link",
-          icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(react_icons_fa__WEBPACK_IMPORTED_MODULE_2__.FaEllipsisV, {})
+          icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(react_icons_fa__WEBPACK_IMPORTED_MODULE_2__.FaEllipsisV, {})
         })
       })]
     }),
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsxs)(_components_DescriptionList_DescriptionList__WEBPACK_IMPORTED_MODULE_5__.DescriptionList, {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsxs)(_components_DescriptionList_DescriptionList__WEBPACK_IMPORTED_MODULE_5__.DescriptionList, {
       className: (0,_utils_bem__WEBPACK_IMPORTED_MODULE_9__.cn)('ml').elem('summary'),
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_components_DescriptionList_DescriptionList__WEBPACK_IMPORTED_MODULE_5__.DescriptionList.Item, {
-        term: "URL",
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(_components_DescriptionList_DescriptionList__WEBPACK_IMPORTED_MODULE_5__.DescriptionList.Item, {
+        term: (0,_i18n__WEBPACK_IMPORTED_MODULE_10__.t)('projectSettings.machineLearning.list.fields.url'),
         termStyle: {
           whiteSpace: 'nowrap'
         },
         children: truncate_middle__WEBPACK_IMPORTED_MODULE_3___default()(backend.url, 20, 10, '...')
-      }), backend.description && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_components_DescriptionList_DescriptionList__WEBPACK_IMPORTED_MODULE_5__.DescriptionList.Item, {
-        term: "Description",
+      }), backend.description && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(_components_DescriptionList_DescriptionList__WEBPACK_IMPORTED_MODULE_5__.DescriptionList.Item, {
+        term: (0,_i18n__WEBPACK_IMPORTED_MODULE_10__.t)('projectSettings.machineLearning.list.fields.description'),
         children: backend.description
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_components_DescriptionList_DescriptionList__WEBPACK_IMPORTED_MODULE_5__.DescriptionList.Item, {
-        term: "Version",
-        children: backend.version ? (0,date_fns__WEBPACK_IMPORTED_MODULE_0__["default"])(new Date(backend.version), 'MMMM dd, yyyy ∙ HH:mm:ss') : 'unknown'
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(_components_DescriptionList_DescriptionList__WEBPACK_IMPORTED_MODULE_5__.DescriptionList.Item, {
+        term: (0,_i18n__WEBPACK_IMPORTED_MODULE_10__.t)('projectSettings.machineLearning.list.fields.version'),
+        children: backend.version ? (0,date_fns__WEBPACK_IMPORTED_MODULE_0__["default"])(new Date(backend.version), 'yyyy年MM月dd日 HH:mm:ss') : (0,_i18n__WEBPACK_IMPORTED_MODULE_10__.t)('projectSettings.machineLearning.list.fields.unknown')
       })]
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_components__WEBPACK_IMPORTED_MODULE_4__.Button, {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(_components__WEBPACK_IMPORTED_MODULE_4__.Button, {
       disabled: backend.state !== "CO",
       onClick: () => onStartTrain(backend),
-      children: "Start Training"
+      children: (0,_i18n__WEBPACK_IMPORTED_MODULE_10__.t)('projectSettings.machineLearning.list.actions.startTraining')
     })]
   });
 };
@@ -90334,30 +90396,30 @@ const BackendState = ({
   const {
     state
   } = backend;
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsxs)("div", {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsxs)("div", {
     className: (0,_utils_bem__WEBPACK_IMPORTED_MODULE_9__.cn)('ml').elem('status'),
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)("span", {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)("span", {
       className: (0,_utils_bem__WEBPACK_IMPORTED_MODULE_9__.cn)('ml').elem('indicator').mod({
         state
       })
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsxs)(_components_Oneof_Oneof__WEBPACK_IMPORTED_MODULE_7__.Oneof, {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsxs)(_components_Oneof_Oneof__WEBPACK_IMPORTED_MODULE_7__.Oneof, {
       value: state,
       className: (0,_utils_bem__WEBPACK_IMPORTED_MODULE_9__.cn)('ml').elem('status-label'),
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)("span", {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)("span", {
         case: "DI",
-        children: "Disconnected"
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)("span", {
+        children: (0,_i18n__WEBPACK_IMPORTED_MODULE_10__.t)('projectSettings.machineLearning.list.status.disconnected')
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)("span", {
         case: "CO",
-        children: "Connected"
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)("span", {
+        children: (0,_i18n__WEBPACK_IMPORTED_MODULE_10__.t)('projectSettings.machineLearning.list.status.connected')
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)("span", {
         case: "ER",
-        children: "Error"
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)("span", {
+        children: (0,_i18n__WEBPACK_IMPORTED_MODULE_10__.t)('projectSettings.machineLearning.list.status.error')
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)("span", {
         case: "TR",
-        children: "Training"
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)("span", {
+        children: (0,_i18n__WEBPACK_IMPORTED_MODULE_10__.t)('projectSettings.machineLearning.list.status.training')
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)("span", {
         case: "PR",
-        children: "Predicting"
+        children: (0,_i18n__WEBPACK_IMPORTED_MODULE_10__.t)('projectSettings.machineLearning.list.status.predicting')
       })]
     })]
   });
@@ -90387,8 +90449,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _providers_ApiProvider__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../providers/ApiProvider */ "./src/providers/ApiProvider.js");
 /* harmony import */ var _providers_ProjectProvider__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../providers/ProjectProvider */ "./src/providers/ProjectProvider.tsx");
 /* harmony import */ var _MachineLearningList__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./MachineLearningList */ "./src/pages/Settings/MachineLearningSettings/MachineLearningList.js");
-/* harmony import */ var _MachineLearningSettings_styl__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./MachineLearningSettings.styl */ "./src/pages/Settings/MachineLearningSettings/MachineLearningSettings.styl");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var _i18n__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../../i18n */ "./src/i18n/index.js");
+/* harmony import */ var _MachineLearningSettings_styl__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./MachineLearningSettings.styl */ "./src/pages/Settings/MachineLearningSettings/MachineLearningSettings.styl");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
 
 
 
@@ -90438,12 +90502,12 @@ const MachineLearningSettings = () => {
   const showMLFormModal = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(backend => {
     const action = backend ? "updateMLBackend" : "addMLBackend";
     const modalProps = {
-      title: `${backend ? 'Edit' : 'Add'} model`,
+      title: backend ? (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.form.editTitle') : (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.form.addTitle'),
       style: {
         width: 760
       },
       closeOnClickOutside: false,
-      body: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Form, {
+      body: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Form, {
         action: action,
         formData: {
           ...(backend !== null && backend !== void 0 ? backend : {})
@@ -90457,49 +90521,49 @@ const MachineLearningSettings = () => {
             modalRef.close();
           }
         },
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Input, {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Input, {
           type: "hidden",
           name: "project",
           value: project.id
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Form.Row, {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Form.Row, {
           columnCount: 2,
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Input, {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Input, {
             name: "title",
-            label: "Title",
-            placeholder: "ML Model"
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Input, {
+            label: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.form.name'),
+            placeholder: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.form.namePlaceholder')
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Input, {
             name: "url",
-            label: "URL",
+            label: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.form.url'),
             required: true
           })]
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Form.Row, {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Form.Row, {
           columnCount: 1,
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.TextArea, {
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.TextArea, {
             name: "description",
-            label: "Description",
+            label: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.form.description'),
             style: {
               minHeight: 120
             }
           })
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Form.Actions, {
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Form.Actions, {
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
             type: "submit",
             look: "primary",
             onClick: () => setMLError(null),
-            children: "Validate and Save"
+            children: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.form.submit')
           })
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Form.ResponseParser, {
-          children: response => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.Fragment, {
-            children: response.error_message && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Error_Error__WEBPACK_IMPORTED_MODULE_4__.ErrorWrapper, {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Form.ResponseParser, {
+          children: response => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.Fragment, {
+            children: response.error_message && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Error_Error__WEBPACK_IMPORTED_MODULE_4__.ErrorWrapper, {
               error: {
                 response: {
-                  detail: `Failed to ${backend ? 'save' : 'add new'} ML backend.`,
+                  detail: backend ? (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.form.saveError') : (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.form.addError'),
                   exc_info: response.error_message
                 }
               }
             })
           })
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Error_InlineError__WEBPACK_IMPORTED_MODULE_5__.InlineError, {})]
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Error_InlineError__WEBPACK_IMPORTED_MODULE_5__.InlineError, {})]
       })
     };
     const modalRef = (0,_components_Modal_Modal__WEBPACK_IMPORTED_MODULE_7__.modal)(modalProps);
@@ -90510,23 +90574,19 @@ const MachineLearningSettings = () => {
       fetchMLVersions();
     }
   }, [project]);
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.Fragment, {
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(_components_Description_Description__WEBPACK_IMPORTED_MODULE_2__.Description, {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.Fragment, {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(_components_Description_Description__WEBPACK_IMPORTED_MODULE_2__.Description, {
       style: {
         marginTop: 0,
         maxWidth: 680
       },
-      children: ["Add one or more machine learning models to predict labels for your data. To import predictions without connecting a model,", " ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)("a", {
-        href: "https://labelstud.io/guide/predictions.html",
-        target: "_blank",
-        children: "see the documentation"
-      }), "."]
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
+      children: [(0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.description.intro'), (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.description.hint'), (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.description.link'), (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.description.suffix')]
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
       onClick: () => showMLFormModal(),
-      children: "Add Model"
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Divider_Divider__WEBPACK_IMPORTED_MODULE_3__.Divider, {
+      children: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.actions.addModel')
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Divider_Divider__WEBPACK_IMPORTED_MODULE_3__.Divider, {
       height: 32
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Form, {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Form, {
       action: "updateProject",
       formData: {
         ...project
@@ -90536,77 +90596,77 @@ const MachineLearningSettings = () => {
       },
       onSubmit: () => fetchProject(),
       autosubmit: true,
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Form.Row, {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Form.Row, {
         columnCount: 1,
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Label, {
-          text: "ML-Assisted Labeling",
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Label, {
+          text: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.section.assistedLabeling'),
           large: true
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)("div", {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)("div", {
           style: {
             paddingLeft: 16
           },
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Toggle, {
-            label: "Start model training after any annotations are submitted or updated",
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Toggle, {
+            label: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.section.startTraining'),
             name: "start_training_on_annotation_update"
           })
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)("div", {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)("div", {
           style: {
             paddingLeft: 16
           },
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Toggle, {
-            label: "Retrieve predictions when loading a task automatically",
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Toggle, {
+            label: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.section.retrievePredictions'),
             name: "evaluate_predictions_automatically"
           })
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)("div", {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)("div", {
           style: {
             paddingLeft: 16
           },
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Toggle, {
-            label: "Show predictions to annotators in the Label Stream and Quick View",
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Toggle, {
+            label: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.section.showPredictions'),
             name: "show_collab_predictions"
           })
         })]
-      }), versions.length > 1 && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Form.Row, {
+      }), versions.length > 1 && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Form.Row, {
         columnCount: 1,
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Label, {
-          text: "Model Version",
-          description: "Model version allows you to specify which prediction will be shown to the annotators.",
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Label, {
+          text: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.section.modelVersion'),
+          description: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.section.modelVersionDescription'),
           style: {
             marginTop: 16
           },
           large: true
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)("div", {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)("div", {
           style: {
             display: 'flex',
             alignItems: 'center',
             width: 400,
             paddingLeft: 16
           },
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)("div", {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)("div", {
             style: {
               flex: 1,
               paddingRight: 16
             },
-            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Select, {
+            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Select, {
               name: "model_version",
               defaultValue: null,
               options: [...versions],
-              placeholder: "No model version selected"
+              placeholder: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.section.modelVersionPlaceholder')
             })
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
             onClick: resetMLVersion,
-            children: "Reset"
+            children: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.actions.reset')
           })]
         })]
       })]
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_MachineLearningList__WEBPACK_IMPORTED_MODULE_10__.MachineLearningList, {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_MachineLearningList__WEBPACK_IMPORTED_MODULE_10__.MachineLearningList, {
       onEdit: backend => showMLFormModal(backend),
       fetchBackends: fetchBackends,
       backends: backends
     })]
   });
 };
-MachineLearningSettings.title = "Machine Learning";
+MachineLearningSettings.title = (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.menu.machineLearning');
 MachineLearningSettings.path = "/ml";
 
 /***/ }),
