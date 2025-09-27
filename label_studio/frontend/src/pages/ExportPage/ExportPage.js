@@ -11,37 +11,6 @@ import { isDefined } from '../../utils/helpers';
 import "./ExportPage.styl";
 import { t } from '../../i18n';
 
-const localizeWithFallback = (key, fallback) => {
-  const translated = t(key);
-
-  if (translated == null || translated === key) return fallback;
-
-  return translated;
-};
-
-const localizeFormat = (format) => {
-  if (!format?.name) return format;
-
-  const titleKey = `exportPage.formats.${format.name}.title`;
-  const descriptionKey = `exportPage.formats.${format.name}.description`;
-
-  const localizedFormat = {
-    ...format,
-    title: localizeWithFallback(titleKey, format.title),
-    description: localizeWithFallback(descriptionKey, format.description),
-  };
-
-  if (Array.isArray(format.tags)) {
-    localizedFormat.tags = format.tags.map(tag => {
-      const tagKey = `exportPage.formats.${format.name}.tags.${tag}`;
-
-      return localizeWithFallback(tagKey, tag);
-    });
-  }
-
-  return localizedFormat;
-};
-
 // const formats = {
 //   json: 'JSON',
 //   csv: 'CSV',
@@ -142,10 +111,8 @@ export const ExportPage = () => {
           pk: pageParams.id,
         },
       }).then(formats => {
-        const localizedFormats = (formats ?? []).map(localizeFormat);
-
-        setAvailableFormats(localizedFormats);
-        setCurrentFormat(localizedFormats[0]?.name);
+        setAvailableFormats(formats);
+        setCurrentFormat(formats[0]?.name);
       });
     }
   }, [pageParams]);
