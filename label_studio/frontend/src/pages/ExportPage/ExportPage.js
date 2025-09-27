@@ -11,6 +11,57 @@ import { isDefined } from '../../utils/helpers';
 import "./ExportPage.styl";
 import { t } from '../../i18n';
 
+const formatNameAliases = {
+  BRUSH: {
+    'Brush labels to NumPy': 'BRUSH_TO_NUMPY',
+    'Brush labels to PNG': 'BRUSH_TO_PNG',
+  },
+};
+
+const localizeWithFallback = (key, fallback) => {
+  const translated = t(key);
+
+  if (translated == null || translated === key) return fallback;
+
+  return translated;
+};
+
+const getFormatLocalizationKey = (format, fallbackKey) => {
+  if (!format) return fallbackKey;
+
+  const aliases = formatNameAliases[format.name];
+  const aliasedName = aliases?.[format.title];
+
+  if (aliasedName) return aliasedName;
+
+  return fallbackKey;
+};
+
+const localizeFormat = (format) => {
+  if (!format?.name) return format;
+
+  const localizationKey = getFormatLocalizationKey(format, format.name);
+  const titleKey = `exportPage.formats.${localizationKey}.title`;
+  const descriptionKey = `exportPage.formats.${localizationKey}.description`;
+
+  const localizedFormat = {
+    ...format,
+    title: localizeWithFallback(titleKey, format.title),
+    description: localizeWithFallback(descriptionKey, format.description),
+  };
+
+  if (Array.isArray(format.tags)) {
+    localizedFormat.tags = format.tags.map(tag => {
+      const tagLocalizationKey = getFormatLocalizationKey(format, format.name);
+      const tagKey = `exportPage.formats.${tagLocalizationKey}.tags.${tag}`;
+
+      return localizeWithFallback(tagKey, tag);
+    });
+  }
+
+  return localizedFormat;
+};
+
 // const formats = {
 //   json: 'JSON',
 //   csv: 'CSV',
@@ -111,8 +162,10 @@ export const ExportPage = () => {
           pk: pageParams.id,
         },
       }).then(formats => {
-        setAvailableFormats(formats);
-        setCurrentFormat(formats[0]?.name);
+        const localizedFormats = (formats ?? []).map(localizeFormat);
+
+        setAvailableFormats(localizedFormats);
+        setCurrentFormat(localizedFormats[0]?.name);
       });
     }
   }, [pageParams]);
