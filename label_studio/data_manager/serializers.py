@@ -169,7 +169,6 @@ class DataManagerTaskSerializer(TaskSerializer):
     total_predictions = serializers.SerializerMethodField()
     file_upload = serializers.ReadOnlyField(source='file_upload_name')
     annotators = serializers.SerializerMethodField()
-    review_status_display = serializers.SerializerMethodField()
 
     class Meta:
         model = Task
@@ -194,28 +193,8 @@ class DataManagerTaskSerializer(TaskSerializer):
             "project",
             # 审核状态
             "review_status",
-            "review_status_display",
-
+        
         ]
-
-    @staticmethod
-    def get_review_status_display(obj):
-        try:
-            return obj.get_review_status_display()
-        except AttributeError:
-            pass
-
-        value = getattr(obj, 'review_status', None)
-        if value is None:
-            return None
-
-        try:
-            return Task.ReviewStatus(value).label
-        except Exception:
-            pass
-
-        choices = dict(getattr(Task.ReviewStatus, 'choices', []) or [])
-        return choices.get(value, value)
 
     @staticmethod
     def get_cancelled_annotations(obj):
