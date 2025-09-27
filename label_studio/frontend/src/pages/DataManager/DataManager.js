@@ -266,8 +266,18 @@ export const DataManagerPage = ({...props}) => {
       // DataManager 内部每条 Task 的原始数据通常会被放到 item 或 task
       // 尝试从常见位置读取（缺省给 pending）
       getValue: (row) => {
+        const display = row?.review_status_display ?? row?.task?.review_status_display;
+        if (display != null && display !== '') return String(display);
+
         const val = row?.review_status ?? row?.task?.review_status ?? 'pending';
-        return String(val || 'pending');
+        const normalized = String(val || 'pending').toLowerCase();
+        const map = {
+          pending:  t('dataManager.review.pending'),
+          approved: t('dataManager.review.approved'),
+          rejected: t('dataManager.review.rejected'),
+        };
+
+        return map[normalized] || map.pending;
       },
       // 可选：用于排序/筛选用的原始值
       accessor: (row) => {
@@ -275,16 +285,19 @@ export const DataManagerPage = ({...props}) => {
         return String(v || 'pending');
       },
       // 渲染到单元格里的内容（用我们全局的 .tag 样式）
-      render: (value/*, row*/) => {
+      render: (value, row) => {
+        const raw = row?.review_status ?? row?.task?.review_status ?? 'pending';
+        const normalized = String(raw || 'pending').toLowerCase();
+        const display = row?.review_status_display ?? row?.task?.review_status_display;
         const map = {
           pending:  t('dataManager.review.pending'),
           approved: t('dataManager.review.approved'),
           rejected: t('dataManager.review.rejected'),
         };
-        const v = (value || 'pending').toLowerCase();
-        const text = map[v] || map.pending;
+        const fallback = map[normalized] || map.pending;
+        const text = String(display ?? value ?? fallback ?? map.pending);
         // 用最通用的字符串/HTML 渲染（不同版本可能也支持 ReactNode）
-        return `<span class="tag" data-status="${v}">${text}</span>`;
+        return `<span class="tag" data-status="${normalized}">${text}</span>`;
       },
       // UI 细节
       width: 110,
