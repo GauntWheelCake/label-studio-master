@@ -461,6 +461,7 @@ DataManagerPage.context = ({dmRef}) => {
   const [currentTaskId, setCurrentTaskId] = useState(null);
   const [currentReviewStatus, setCurrentReviewStatus] = useState('pending');
   const [pendingDecision, setPendingDecision] = useState(null);
+  const isSwitchingTaskRef = useRef(false);
 
   const showReviewError = useCallback((message) => {
     let modalInstance;
@@ -615,6 +616,78 @@ DataManagerPage.context = ({dmRef}) => {
     setCurrentReviewStatus(status || 'pending');
   }, [dmRef, resolveReviewStatus, resolveTaskId]);
 
+  const selectNextTask = useCallback(async () => {
+    if (!dmRef?.store) return;
+
+    const taskStore = dmRef.store.taskStore;
+
+    if (!taskStore) return;
+
+    try {
+      let nextTaskResult;
+
+      if (typeof taskStore.nextTask === 'function') {
+        nextTaskResult = await taskStore.nextTask();
+      } else {
+        const view = dmRef.store?.currentView ?? dmRef.store?.viewsStore?.selected;
+        const hasSelectedItems = view?.selected?.hasSelected;
+        const selectedItems = hasSelectedItems && view?.selected?.snapshot
+          ? view.selected.snapshot
+          : { all: true, excluded: [] };
+        const filters = {
+          conjunction: view?.conjunction ?? 'and',
+          items: view?.serializedFilters ?? [],
+        };
+
+        const requestBody = {
+          ...(view?.ordering ? { ordering: view.ordering } : {}),
+          selectedItems,
+          filters,
+        };
+
+        const requestParams = {};
+
+        const viewId = view?.id;
+        if (viewId !== null && viewId !== undefined) {
+          requestParams.tabID = viewId;
+        }
+
+        const apiResult = await dmRef.apiCall?.('nextTask', requestParams, { body: requestBody });
+
+        if (!apiResult || apiResult?.error) {
+          if (apiResult?.status === 404 || apiResult?.$meta?.status === 404) {
+            dmRef.store?.SDK?.invoke?.('labelStreamFinished');
+          }
+          return;
+        }
+
+        if (apiResult?.status === 404 || apiResult?.$meta?.status === 404) {
+          dmRef.store?.SDK?.invoke?.('labelStreamFinished');
+          return;
+        }
+
+        if (typeof taskStore.applyTaskSnapshot === 'function') {
+          nextTaskResult = taskStore.applyTaskSnapshot(apiResult);
+        }
+
+        if (!nextTaskResult && apiResult?.id && typeof taskStore.loadTask === 'function') {
+          nextTaskResult = await taskStore.loadTask(apiResult.id, { select: true });
+        }
+
+        if (nextTaskResult && typeof taskStore.setSelected === 'function') {
+          taskStore.setSelected(nextTaskResult);
+        } else if (apiResult?.id) {
+          taskStore?.setSelected?.(apiResult.id);
+        }
+      }
+
+    } catch (error) {
+      console.error('[datamanager] Failed to load next task after annotation', error);
+    } finally {
+      extractTaskInfo();
+    }
+  }, [dmRef, extractTaskInfo]);
+
   const links = {
     '/settings': t('dataManager.links.settings'),
     '/data/import': t('dataManager.links.import'),
@@ -687,6 +760,31 @@ DataManagerPage.context = ({dmRef}) => {
       dmRef?.off?.('lsf:taskLoad', update);
     };
   }, [dmRef, extractTaskInfo]);
+
+  useEffect(() => {
+    if (!dmRef) return;
+
+    const handleNextTask = async () => {
+      if (mode === 'explorer') return;
+      if (isSwitchingTaskRef.current) return;
+
+      isSwitchingTaskRef.current = true;
+
+      try {
+        await selectNextTask();
+      } finally {
+        isSwitchingTaskRef.current = false;
+      }
+    };
+
+    const events = ['lsf:submitAnnotation', 'annotations:completed'];
+
+    events.forEach((event) => dmRef.on?.(event, handleNextTask));
+
+    return () => {
+      events.forEach((event) => dmRef?.off?.(event, handleNextTask));
+    };
+  }, [dmRef, mode, selectNextTask]);
 
   const sendReviewDecision = useCallback(async (decision, options = {}) => {
     if (!dmRef) return;
