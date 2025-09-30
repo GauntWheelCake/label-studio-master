@@ -33,6 +33,162 @@ const ROLE_TOOLTIPS = {
 const ANNOTATION_KEYWORDS = ['submit', 'update','提交', '更新'];
 const REVIEW_KEYWORDS = ['accept', 'reject'];
 
+const ACTION_TRANSLATIONS = [
+  {
+    matchers: ['retrieve predictions'],
+    titleKey: 'dataManager.actions.retrievePredictions.title',
+    dialogKey: 'dataManager.actions.retrievePredictions.dialog',
+  },
+  {
+    matchers: ['delete tasks'],
+    titleKey: 'dataManager.actions.deleteTasks.title',
+    dialogKey: 'dataManager.actions.deleteTasks.dialog',
+  },
+  {
+    matchers: ['delete annotations'],
+    titleKey: 'dataManager.actions.deleteAnnotations.title',
+    dialogKey: 'dataManager.actions.deleteAnnotations.dialog',
+  },
+  {
+    matchers: ['delete predictions'],
+    titleKey: 'dataManager.actions.deletePredictions.title',
+    dialogKey: 'dataManager.actions.deletePredictions.dialog',
+  },
+];
+
+const normalizeActionTitle = (value) => {
+  if (!value) return '';
+  return String(value).trim().toLowerCase();
+};
+
+const findActionTranslation = (action) => {
+  if (!action || typeof action !== 'object') return null;
+
+  const candidates = [
+    normalizeActionTitle(action.title),
+    normalizeActionTitle(action.label),
+    normalizeActionTitle(action.name),
+  ].filter(Boolean);
+
+  if (!candidates.length) return null;
+
+  return ACTION_TRANSLATIONS.find((translation) => {
+    return translation.matchers.some((matcher) => candidates.includes(matcher));
+  });
+};
+
+const applyActionTranslation = (action) => {
+  const translation = findActionTranslation(action);
+
+  if (!translation) return false;
+
+  const title = t(translation.titleKey);
+  const dialogText = t(translation.dialogKey);
+
+  if (title) {
+    if (typeof action.title === 'string') action.title = title;
+    if (typeof action.label === 'string' && translation.matchers.includes(normalizeActionTitle(action.label))) action.label = title;
+    if (typeof action.name === 'string' && translation.matchers.includes(normalizeActionTitle(action.name))) action.name = title;
+  }
+
+  if (dialogText) {
+    if (typeof action.dialog === 'string') {
+      action.dialog = dialogText;
+    } else if (action.dialog && typeof action.dialog === 'object') {
+      if (typeof action.dialog.text === 'string') action.dialog.text = dialogText;
+      if (typeof action.dialog.description === 'string') action.dialog.description = dialogText;
+      if (typeof action.dialog.body === 'string') action.dialog.body = dialogText;
+      if (typeof action.dialog.content === 'string') action.dialog.content = dialogText;
+    }
+
+    if (action.confirmation && typeof action.confirmation === 'object') {
+      if (typeof action.confirmation.text === 'string') action.confirmation.text = dialogText;
+      if (typeof action.confirmation.description === 'string') action.confirmation.description = dialogText;
+    }
+  }
+
+  return true;
+};
+
+const localizeDataManagerActions = (dataManager) => {
+  if (!dataManager) return;
+
+  const visited = new WeakSet();
+
+  function processAction(action) {
+    if (!action || typeof action !== 'object') return;
+    if (visited.has(action)) return;
+    visited.add(action);
+
+    applyActionTranslation(action);
+
+    if (action.children) processCollection(action.children);
+
+    Object.keys(action).forEach((key) => {
+      const value = action[key];
+
+      if (!value) return;
+      if (key === 'children') return;
+
+      if (Array.isArray(value) || (typeof value === 'object' && /action/i.test(key))) {
+        processCollection(value);
+      }
+    });
+  }
+
+  function processCollection(collection) {
+    if (!collection) return;
+    if (typeof collection !== 'object') return;
+    if (visited.has(collection)) return;
+    visited.add(collection);
+
+    if (Array.isArray(collection)) {
+      collection.forEach((item) => processAction(item));
+      return;
+    }
+
+    if (typeof collection.values === 'function') {
+      try {
+        Array.from(collection.values()).forEach((item) => processAction(item));
+      } catch (err) {
+        // ignore failures when iterating unknown collection types
+      }
+    }
+
+    if (collection && typeof collection === 'object') {
+      Object.keys(collection).forEach((key) => {
+        const value = collection[key];
+
+        if (!value) return;
+
+        if (/action/i.test(key) || key === 'children' || Array.isArray(value)) {
+          processCollection(value);
+        }
+      });
+    }
+  }
+
+  function inspectContainer(container) {
+    if (!container || typeof container !== 'object') return;
+
+    Object.keys(container).forEach((key) => {
+      if (/action/i.test(key)) {
+        processCollection(container[key]);
+      }
+    });
+  }
+
+  processCollection(dataManager.actions);
+  processCollection(dataManager.actionsList);
+  inspectContainer(dataManager);
+
+  if (dataManager.store) {
+    processCollection(dataManager.store.actions);
+    processCollection(dataManager.store.actionsList);
+    inspectContainer(dataManager.store);
+  }
+};
+
 const normalizeText = (node) => (node?.textContent ?? '').trim().toLowerCase();
 
 const setElementRoleState = (element, allowed, message) => {
@@ -256,6 +412,8 @@ export const DataManagerPage = ({...props}) => {
     );
 
     const {current: dataManager} = dataManagerRef;
+
+    localizeDataManagerActions(dataManager);
     // === 自定义列：审核状态（最小侵入式注入） =========================
     try {
       // 1) 容错：不同版本的 DataManager Store 命名略有差异

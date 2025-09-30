@@ -1,8 +1,10 @@
+import { defaultLocale } from './default';
 import { zhCN } from './zh-CN';
 
 const DEFAULT_LOCALE = 'zh-CN';
 
 const builtinDictionaries = {
+  default: defaultLocale,
   [DEFAULT_LOCALE]: zhCN,
 };
 
@@ -23,7 +25,10 @@ const normalizeLocale = (locale) => {
 
 const resolveDictionaries = (locale) => {
   const normalizedLocale = normalizeLocale(locale);
-  const baseDictionary = builtinDictionaries[DEFAULT_LOCALE] ?? {};
+  const baseDictionary = {
+    ...(builtinDictionaries.default ?? {}),
+    ...(builtinDictionaries[DEFAULT_LOCALE] ?? {}),
+  };
   const builtin = builtinDictionaries[normalizedLocale] ?? {};
   const runtimeDefault = runtimeDictionaries[DEFAULT_LOCALE] ?? {};
   const runtimeLocale = runtimeDictionaries[normalizedLocale] ?? {};
