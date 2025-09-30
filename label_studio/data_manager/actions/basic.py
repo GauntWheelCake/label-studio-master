@@ -15,7 +15,10 @@ def retrieve_tasks_predictions(project, queryset, **kwargs):
     :param queryset: filtered tasks db queryset
     """
     evaluate_predictions(queryset)
-    return {'processed_items': queryset.count(), 'detail': 'Retrieved ' + str(queryset.count()) + ' predictions'}
+    return {
+        'processed_items': queryset.count(),
+        'detail': '已拉取 ' + str(queryset.count()) + ' 条预测结果'
+    }
 
 
 def delete_tasks(project, queryset, **kwargs):
@@ -50,8 +53,11 @@ def delete_tasks(project, queryset, **kwargs):
         project.views.all().delete()
         reload = True
 
-    return {'processed_items': count, 'reload': reload,
-            'detail': 'Deleted ' + str(count) + ' tasks'}
+    return {
+        'processed_items': count,
+        'reload': reload,
+        'detail': '已删除 ' + str(count) + ' 个任务'
+    }
 
 
 def delete_tasks_annotations(project, queryset, **kwargs):
@@ -64,8 +70,10 @@ def delete_tasks_annotations(project, queryset, **kwargs):
     annotations = Annotation.objects.filter(task__id__in=task_ids)
     count = annotations.count()
     annotations.delete()
-    return {'processed_items': count,
-            'detail': 'Deleted ' + str(count) + ' annotations'}
+    return {
+        'processed_items': count,
+        'detail': '已删除 ' + str(count) + ' 条标注'
+    }
 
 
 def delete_tasks_predictions(project, queryset, **kwargs):
@@ -78,51 +86,54 @@ def delete_tasks_predictions(project, queryset, **kwargs):
     predictions = Prediction.objects.filter(task__id__in=task_ids)
     count = predictions.count()
     predictions.delete()
-    return {'processed_items': count, 'detail': 'Deleted ' + str(count) + ' predictions'}
+    return {
+        'processed_items': count,
+        'detail': '已删除 ' + str(count) + ' 条预测结果'
+    }
 
 
 actions = [
     {
         'entry_point': retrieve_tasks_predictions,
-        'title': 'Retrieve predictions',
+        'title': '拉取预测结果',
         'order': 90,
         'permissions': 'can_manage_annotations',
         'dialog': {
-            'text': 'Send the selected tasks to all ML backends connected to the project.'
-                    'This operation migth be abruptly interrupted due to a timeout. ' 
-                    'The recommended way to get predictions is to update tasks using the Label Studio API.'
-                    '<a href="https://labelstud.io/guide/ml.html>See more in the documentation</a>.'
-                    'Please confirm your action.',
+            'text': '将所选任务发送至项目已连接的全部机器学习后端。'
+                    '此操作可能因超时而被中断。'
+                    '建议通过 Label Studio API 更新任务以获取预测结果。'
+                    '<a href="https://labelstud.io/guide/ml.html>查看文档了解更多</a>。'
+                    '请确认您的操作。',
             'type': 'confirm'
         }
     },
     {
         'entry_point': delete_tasks,
-        'title': 'Delete tasks', 'order': 100,
+        'title': '删除任务', 'order': 100,
         'permissions': 'can_delete_tasks',
         'reload': True,
         'dialog': {
-            'text': 'You are going to delete the selected tasks. Please confirm your action.',
+            'text': '将删除所选任务，请确认您的操作。',
             'type': 'confirm'
         }
     },
     {
         'entry_point': delete_tasks_annotations,
-        'title': 'Delete annotations',
+        'title': '删除标注',
         'order': 101,
         'permissions': 'can_manage_annotations',
         'dialog': {
-            'text': 'You are going to delete all annotations from the selected tasks. Please confirm your action.',
+            'text': '将删除所选任务的全部标注，请确认您的操作。',
             'type': 'confirm'
         }
     },
     {
         'entry_point': delete_tasks_predictions,
-        'title': 'Delete predictions',
+        'title': '删除预测结果',
         'order': 102,
         'permissions': 'can_manage_annotations',
         'dialog': {
-            'text': 'You are going to delete all predictions from the selected tasks. Please confirm your action.',
+            'text': '将删除所选任务的全部预测结果，请确认您的操作。',
             'type': 'confirm'
         }
     }

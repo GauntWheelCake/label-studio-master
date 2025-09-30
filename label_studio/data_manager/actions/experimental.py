@@ -13,14 +13,15 @@ def propagate_annotations(project, queryset, **kwargs):
     items = queryset.value_list('id', flat=True)
 
     if len(items) < 2:
-        raise DataManagerException('Select more than two tasks, the first task annotation will be picked as source')
+        raise DataManagerException('请至少选择两个任务，系统将使用第一个任务的标注作为来源。')
 
     # check first annotation
     completed_task = items[0]
     task = project.target_storage.get(completed_task)
     if task is None or len(task.get('annotations', [])) == 0:
-        raise DataManagerException('The first selected task with ID = ' + str(completed_task) +
-                                   ' should have at least one annotation to propagate')
+        raise DataManagerException(
+            '首个选中的任务（ID = ' + str(completed_task) + '）需要至少包含一个标注才能进行传播。'
+        )
 
     # get first annotation
     source_annotation = task['annotations'][0]
@@ -79,33 +80,32 @@ def predictions_to_annotations(project, items, **kwargs):
 actions = [
     {
         'entry_point': propagate_annotations,
-        'title': 'Propagate annotations',
+        'title': '传播标注',
         'order': 1,
         'experimental': True,
         'dialog': {
-            'text': 'This action will pick the first annotation from the first selected task, '
-                    'create new annotations for all selected tasks, '
-                    'and propagate the first annotation to others. ' +
+            'text': '该操作会选取首个选中任务的第一条标注，'
+                    '为所有选中任务创建新的标注，'
+                    '并将该标注传播到其他任务。' +
                     '.' * 80 +
-                    '1. Create the first annotation for task A. '
-                    '2. Select task A with checkbox as first selected item. '
-                    '3. Select other tasks where you want to copy the first annotation from task A. '
-                    '4. Click Propagate annotations. ' +
+                    '1. 为任务 A 创建第一条标注。'
+                    '2. 使用复选框将任务 A 设为首个选中项。'
+                    '3. 选择希望复制任务 A 首条标注的其他任务。'
+                    '4. 点击“传播标注”。' +
                     '.' * 80 +
-                    '! Warning: it is an experimental feature! It could work well with Choices, '
-                    'but other annotation types (RectangleLabels, Text Labels, etc) '
-                    'will have a lot of issues.',
+                    '！警告：这是实验性功能！它在 Choices 等选择型标注上表现较好，'
+                    '但在 RectangleLabels、Text Labels 等其他标注类型上可能会出现诸多问题。',
             'type': 'confirm'
         }
     },
 
     {
         'entry_point': predictions_to_annotations,
-        'title': 'Predictions => annotations',
+        'title': '预测结果 => 标注',
         'order': 1,
         'experimental': True,
         'dialog': {
-            'text': 'This action will create a new annotation from the last task prediction for each selected task.',
+            'text': '该操作会基于每个选中任务的最新预测创建新的标注。',
             'type': 'confirm'
         }
     }
