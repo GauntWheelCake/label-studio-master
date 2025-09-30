@@ -13,14 +13,13 @@ def propagate_annotations(project, queryset, **kwargs):
     items = queryset.value_list('id', flat=True)
 
     if len(items) < 2:
-        raise DataManagerException('Select more than two tasks, the first task annotation will be picked as source')
+        raise DataManagerException('请至少选择两个任务，系统会将第一个任务的标注作为来源')
 
     # check first annotation
     completed_task = items[0]
     task = project.target_storage.get(completed_task)
     if task is None or len(task.get('annotations', [])) == 0:
-        raise DataManagerException('The first selected task with ID = ' + str(completed_task) +
-                                   ' should have at least one annotation to propagate')
+        raise DataManagerException('ID 为 ' + str(completed_task) + ' 的首个选中任务至少需要有一个可传播的标注')
 
     # get first annotation
     source_annotation = task['annotations'][0]

@@ -288,15 +288,15 @@ class SelectedItemsSerializer(serializers.Serializer):
 
     def validate(self, data):
         if data["all"] is True and data.get("included"):
-            raise serializers.ValidationError("included not allowed with all==true")
+            raise serializers.ValidationError("当 all 为 true 时不能同时提供 included")
         if data["all"] is False and data.get("excluded"):
-            raise serializers.ValidationError("excluded not allowed with all==false")
+            raise serializers.ValidationError("当 all 为 false 时不能同时提供 excluded")
 
         view = self.context.get("view")
         request = self.context.get("request")
         if view and request and request.method in ("PATCH", "DELETE"):
             all_value = view.selected_items.get("all")
             if all_value and all_value != data["all"]:
-                raise serializers.ValidationError("changing all value possible only with POST method")
+                raise serializers.ValidationError("只能通过 POST 请求修改 all 的值")
 
         return data
