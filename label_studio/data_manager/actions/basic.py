@@ -2,7 +2,7 @@
 """
 from django.db.models import signals
 
-from tasks.models import Annotation, Prediction, update_is_labeled_after_removing_annotation
+from tasks.models import Annotation, Prediction, Task, update_is_labeled_after_removing_annotation
 from core.utils.common import temporary_disconnect_signal, temporary_disconnect_all_signals
 
 from data_manager.functions import evaluate_predictions
@@ -66,10 +66,15 @@ def delete_tasks_annotations(project, queryset, **kwargs):
     :param project: project instance
     :param queryset: filtered tasks db queryset
     """
-    task_ids = queryset.values_list('id', flat=True)
+    task_ids = list(queryset.values_list('id', flat=True))
     annotations = Annotation.objects.filter(task__id__in=task_ids)
     count = annotations.count()
     annotations.delete()
+    if task_ids:
+        Task.objects.filter(id__in=task_ids).update(
+            review_status=Task.ReviewStatus.PENDING,
+            review_comment='',
+        )
     return {
         'processed_items': count,
         'detail': '已删除 ' + str(count) + ' 条标注'

@@ -17,7 +17,7 @@ from rest_framework.response import Response
 from core.utils.common import get_object_with_check_and_log, DjangoFilterDescriptionInspector
 from core.permissions import all_permissions, ViewClassPermission
 
-from tasks.models import Task, Annotation, Prediction, AnnotationDraft, Q_finished_annotations
+from tasks.models import Task, Annotation, Prediction, AnnotationDraft, Q_finished_annotations, reset_task_review_state
 from core.mixins import RequestDebugLogMixin
 from core.utils.common import bool_from_request
 from tasks.serializers import (
@@ -217,7 +217,9 @@ class AnnotationAPI(RequestDebugLogMixin, generics.RetrieveUpdateDestroyAPIView)
     queryset = Annotation.objects.all()
 
     def perform_destroy(self, annotation):
+        task = annotation.task
         annotation.delete()
+        reset_task_review_state(task)
 
     def update(self, request, *args, **kwargs):
         # save user history with annotator_id, time & annotation result

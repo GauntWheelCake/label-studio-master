@@ -9,6 +9,7 @@ from django.apps import apps
 from django.urls import reverse
 from tasks.models import Task, Annotation
 from projects.models import Project
+from data_manager.actions.basic import delete_tasks_annotations
 from .utils import invite_client_to_project, _client_is_annotator
 
 
@@ -96,9 +97,35 @@ def test_delete_annotation(business_client, configured_project):
     task = Task.objects.first()
     annotation = Annotation.objects.create(task=task, result=[])
     assert task.annotations.count() == 1
+    task.review_status = Task.ReviewStatus.APPROVED
+    task.review_comment = 'Looks good'
+    task.save(update_fields=['review_status', 'review_comment'])
     r = business_client.delete('/api/annotations/{}/'.format(annotation.id))
     assert r.status_code == 204
     assert task.annotations.count() == 0
+    task.refresh_from_db()
+    assert task.review_status == Task.ReviewStatus.PENDING
+    assert task.review_comment == ''
+
+
+@pytest.mark.django_db
+def test_delete_tasks_annotations_resets_review_state(configured_project):
+    project = configured_project
+    tasks = list(project.tasks.all())
+
+    for task in tasks:
+        Annotation.objects.create(task=task, result=[])
+        task.review_status = Task.ReviewStatus.REJECTED
+        task.review_comment = 'Needs work'
+        task.save(update_fields=['review_status', 'review_comment'])
+
+    delete_tasks_annotations(project, project.tasks.all())
+
+    for task in tasks:
+        task.refresh_from_db()
+        assert task.annotations.count() == 0
+        assert task.review_status == Task.ReviewStatus.PENDING
+        assert task.review_comment == ''
 
 
 @pytest.fixture

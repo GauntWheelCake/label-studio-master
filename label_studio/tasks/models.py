@@ -32,6 +32,25 @@ logger = logging.getLogger(__name__)
 TaskMixin = load_func(settings.TASK_MIXIN)
 
 
+def reset_task_review_state(task, save=True):
+    """Reset review status and comment for a task."""
+    if task is None:
+        return
+
+    fields_to_update = []
+
+    if task.review_status != Task.ReviewStatus.PENDING:
+        task.review_status = Task.ReviewStatus.PENDING
+        fields_to_update.append('review_status')
+
+    if task.review_comment != '':
+        task.review_comment = ''
+        fields_to_update.append('review_comment')
+
+    if save and fields_to_update:
+        task.save(update_fields=fields_to_update)
+
+
 class Task(TaskMixin, models.Model):
     """ Business tasks from project
     """
@@ -521,8 +540,9 @@ def update_is_labeled_after_removing_annotation(sender, instance, **kwargs):
     task = instance.task
     if _task_exists_in_db(task): # To prevent django.db.utils.DatabaseError: Save with update_fields did not affect any rows.
         logger.debug(f'Update task stats for task={task}')
-        instance.task.update_is_labeled()
-        instance.task.save(update_fields=['is_labeled'])
+        reset_task_review_state(task)
+        task.update_is_labeled()
+        task.save(update_fields=['is_labeled'])
 
 
 @receiver(post_save, sender=Annotation)
