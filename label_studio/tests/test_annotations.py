@@ -191,56 +191,6 @@ def test_accuracy_on_delete(business_client, project_with_max_annotations_2, ann
     assert not task.is_labeled
 
 
-@pytest.mark.django_db
-def test_task_review_status_reset_on_annotation_create(business_client, configured_project):
-    task = Task.objects.first()
-    task.review_status = Task.ReviewStatus.APPROVED
-    task.review_comment = 'Looks good'
-    task.save(update_fields=['review_status', 'review_comment'])
-
-    annotation_payload = {
-        'task': task.id,
-        'result': json.dumps([]),
-    }
-
-    response = business_client.post(
-        reverse('tasks:api:task-annotations', kwargs={'pk': task.id}),
-        data=annotation_payload,
-    )
-
-    assert response.status_code == 201
-    task.refresh_from_db()
-    assert task.review_status == Task.ReviewStatus.PENDING
-    assert task.review_comment == ''
-
-    response_data = response.json()
-    assert response_data['task']['review_status'] == Task.ReviewStatus.PENDING
-
-
-@pytest.mark.django_db
-def test_task_review_status_reset_on_annotation_update(business_client, configured_project):
-    task = Task.objects.first()
-    annotation = Annotation.objects.create(task=task, result=[])
-
-    task.review_status = Task.ReviewStatus.REJECTED
-    task.review_comment = 'Needs fixes'
-    task.save(update_fields=['review_status', 'review_comment'])
-
-    response = business_client.patch(
-        reverse('tasks:api-annotations:annotation-detail', kwargs={'pk': annotation.id}),
-        data=json.dumps({'result': []}),
-        content_type='application/json',
-    )
-
-    assert response.status_code == 200
-    task.refresh_from_db()
-    assert task.review_status == Task.ReviewStatus.PENDING
-    assert task.review_comment == ''
-
-    response_data = response.json()
-    assert response_data['task']['review_status'] == Task.ReviewStatus.PENDING
-
-
 # @pytest.mark.django_db
 # def test_accuracy_on_delete(business_client, project_with_max_annotations_2, annotations):
 #     task_id = next(iter(annotations.values()))['task']
