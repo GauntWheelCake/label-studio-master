@@ -495,8 +495,20 @@ def update_project_summary_annotations_and_is_labeled(sender, instance, created,
     if created:
         # If new annotation created, update task.is_labeled state
         logger.debug(f'Update task stats for task={instance.task}')
-        instance.task.update_is_labeled()
-        instance.task.save(update_fields=['is_labeled'])
+        task = instance.task
+        task.update_is_labeled()
+
+        update_fields = ['is_labeled']
+
+        if not instance.ground_truth and task.review_status != Task.ReviewStatus.PENDING:
+            task.review_status = Task.ReviewStatus.PENDING
+            update_fields.append('review_status')
+
+            if task.review_comment:
+                task.review_comment = ''
+                update_fields.append('review_comment')
+
+        task.save(update_fields=update_fields)
 
 
 @receiver(pre_delete, sender=Annotation)
