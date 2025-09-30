@@ -11,7 +11,7 @@ from django.utils.decorators import method_decorator
 from django_filters.rest_framework import DjangoFilterBackend
 
 from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
-from rest_framework import generics, viewsets
+from rest_framework import generics, viewsets, status
 from rest_framework.response import Response
 
 from core.utils.common import get_object_with_check_and_log, DjangoFilterDescriptionInspector
@@ -224,12 +224,23 @@ class AnnotationAPI(RequestDebugLogMixin, generics.RetrieveUpdateDestroyAPIView)
         annotation_id = self.kwargs['pk']
         annotation = get_object_with_check_and_log(request, Annotation, pk=annotation_id)
 
-        annotation.task.save()  # refresh task metrics
+        task = annotation.task
+        if task is not None:
+            task.review_status = Task.ReviewStatus.PENDING
+            task.review_comment = ''
+            task.save()  # refresh task metrics and persist review fields
 
         if self.request.data.get('ground_truth'):
             annotation.task.ensure_unique_groundtruth(annotation_id=annotation.id)
 
-        return super(AnnotationAPI, self).update(request, *args, **kwargs)
+        response = super(AnnotationAPI, self).update(request, *args, **kwargs)
+
+        if isinstance(response.data, dict) and task is not None:
+            task.refresh_from_db()
+            context = {**self.get_serializer_context(), 'include_annotations': False}
+            response.data['task'] = TaskSerializer(task, context=context).data
+
+        return response
 
     def get(self, request, *args, **kwargs):
         return super(AnnotationAPI, self).get(request, *args, **kwargs)
@@ -312,6 +323,9 @@ class AnnotationsListAPI(RequestDebugLogMixin, generics.ListCreateAPIView):
         # create annotation
         logger.debug(f'User={self.request.user}: save annotation')
         annotation = ser.save(**extra_args)
+        task.review_status = Task.ReviewStatus.PENDING
+        task.review_comment = ''
+        task.save(update_fields=['review_status', 'review_comment'])
         logger.debug(f'Save activity for user={self.request.user}')
         self.request.user.activity_at = timezone.now()
         self.request.user.save()
@@ -326,6 +340,26 @@ class AnnotationsListAPI(RequestDebugLogMixin, generics.ListCreateAPIView):
             annotation.task.ensure_unique_groundtruth(annotation_id=annotation.id)
 
         return annotation
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        annotation = self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+
+        response_data = dict(serializer.data)
+        task = None
+        if isinstance(annotation, Annotation):
+            task = annotation.task
+        elif hasattr(serializer, 'instance') and getattr(serializer.instance, 'task', None) is not None:
+            task = serializer.instance.task
+
+        if task is not None:
+            task.refresh_from_db()
+            context = {**self.get_serializer_context(), 'include_annotations': False}
+            response_data['task'] = TaskSerializer(task, context=context).data
+
+        return Response(response_data, status=status.HTTP_201_CREATED, headers=headers)
 
 #草稿的增删改查
 class AnnotationDraftListAPI(RequestDebugLogMixin, generics.ListCreateAPIView):
