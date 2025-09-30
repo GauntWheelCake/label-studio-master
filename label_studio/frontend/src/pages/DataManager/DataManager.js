@@ -14,6 +14,7 @@ import { DEFAULT_ROLE, getStoredRole, subscribeToRoleChange, UserRole } from '..
 import { ImportModal } from '../CreateProject/Import/ImportModal';
 import { ExportPage } from '../ExportPage/ExportPage';
 import { APIConfig } from './api-config';
+import { ANNOTATION_UPDATE_EVENTS, createAnnotationUpdateHandler } from './annotation-events';
 import "./DataManager.styl";
 
 const ROLE_PERMISSIONS = {
@@ -814,6 +815,18 @@ DataManagerPage.context = ({dmRef}) => {
       events.forEach((event) => dmRef?.off?.(event, handleNextTask));
     };
   }, [dmRef, mode, selectNextTask]);
+
+  useEffect(() => {
+    if (!dmRef) return;
+
+    const handler = createAnnotationUpdateHandler({ dmRef, setCurrentReviewStatus, extractTaskInfo, resolveTaskId });
+
+    ANNOTATION_UPDATE_EVENTS.forEach((event) => dmRef.on?.(event, handler));
+
+    return () => {
+      ANNOTATION_UPDATE_EVENTS.forEach((event) => dmRef?.off?.(event, handler));
+    };
+  }, [dmRef, extractTaskInfo, resolveTaskId]);
 
   const sendReviewDecision = useCallback(async (decision, options = {}) => {
     if (!dmRef) return;
