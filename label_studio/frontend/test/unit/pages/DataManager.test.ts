@@ -100,3 +100,21 @@ describe('createAnnotationUpdateHandler', () => {
     expect(setCurrentReviewStatus).toHaveBeenCalledWith('pending');
   });
 });
+
+describe('localizeReviewStatus', () => {
+  const translations = {
+    pending: '未审核',
+    approved: '已通过',
+    rejected: '已驳回',
+  };
+
+  it('maps unlocalized review_status_display values to localized labels', () => {
+    const result = localizeReviewStatus({
+      translations,
+      status: 'approved',
+      display: 'approved',
+    });
+
+    expect(result).toBe('已通过');
+  });
+});
