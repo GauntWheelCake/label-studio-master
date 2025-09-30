@@ -1,4 +1,11 @@
-export const ANNOTATION_UPDATE_EVENTS = ['lsf:updateAnnotation', 'annotations:update', 'annotations:updated'];
+export const ANNOTATION_UPDATE_EVENTS = [
+  'lsf:updateAnnotation',
+  'annotations:update',
+  'annotations:updated',
+  'annotations:delete',
+  'annotations:deleted',
+  'annotations:remove',
+];
 
 export const createAnnotationUpdateHandler = ({ dmRef, setCurrentReviewStatus, extractTaskInfo, resolveTaskId }) => {
   return async (payload = {}) => {

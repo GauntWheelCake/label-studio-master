@@ -1,5 +1,4 @@
-import { createAnnotationUpdateHandler } from '../../../src/pages/DataManager/annotation-events';
-import { localizeReviewStatus } from '../../../src/pages/DataManager/reviewStatus';
+import { ANNOTATION_UPDATE_EVENTS, createAnnotationUpdateHandler } from '../../../src/pages/DataManager/annotation-events';
 
 describe('createAnnotationUpdateHandler', () => {
   const resolveTaskId = (task: any) => {
@@ -61,6 +60,44 @@ describe('createAnnotationUpdateHandler', () => {
 
     expect(setCurrentReviewStatus).toHaveBeenCalledWith('pending');
     expect(extractTaskInfo).toHaveBeenCalled();
+  });
+
+  it('resets review status when a deletion event is emitted', async () => {
+    const loadTask = jest.fn().mockResolvedValue(undefined);
+    const extractTaskInfo = jest.fn();
+    const setCurrentReviewStatus = jest.fn();
+
+    const taskStore = {
+      selected: { id: 303 },
+      loadTask,
+    };
+
+    const dmRef = {
+      store: {
+        taskStore,
+      },
+    } as any;
+
+    const handler = createAnnotationUpdateHandler({
+      dmRef,
+      setCurrentReviewStatus,
+      extractTaskInfo,
+      resolveTaskId,
+    });
+
+    const listeners: Record<string, (payload?: any) => any> = {};
+
+    ANNOTATION_UPDATE_EVENTS.forEach((event) => {
+      listeners[event] = handler;
+    });
+
+    const deletionHandler = listeners['annotations:delete'];
+
+    expect(typeof deletionHandler).toBe('function');
+
+    await deletionHandler?.({ task: { id: 303 } });
+
+    expect(setCurrentReviewStatus).toHaveBeenCalledWith('pending');
   });
 });
 
