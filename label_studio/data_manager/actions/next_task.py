@@ -27,7 +27,7 @@ def next_task(project, queryset, **kwargs):
 actions = [
     {
         'entry_point': next_task,
-        'title': 'Generate next task',
+        'title': '生成下一个任务',
         'order': 0,
         'hidden': True
     }
