@@ -294,14 +294,31 @@ export const DataManagerPage = ({...props}) => {
       align: 'left',
     };
 
-    // 3) 注入列：优先使用官方 addColumn；没有就直接 push 再触发刷新
-    if (store?.addColumn) {
-      store.addColumn(reviewStatusColumn);
-    } else if (store?.columns && Array.isArray(store.columns)) {
-      const exists = store.columns.find(c => c.id === 'review_status');
-      if (!exists) store.columns.push(reviewStatusColumn);
-      // 常见的刷新钩子：update/refresh/forceUpdate，按可用性调用一个
-      (dataManager.update || dataManager.refresh || store.update || (()=>{})).call(dataManager);
+    // 3) 注入列：确保位于索引 0（即任务列最前）
+    const columns = store?.columns;
+
+    if (Array.isArray(columns)) {
+      const existingIndex = columns.findIndex((column) => column?.id === 'review_status');
+      const columnConfig = existingIndex >= 0 ? {
+        ...columns[existingIndex],
+        ...reviewStatusColumn,
+      } : reviewStatusColumn;
+
+      if (existingIndex > 0) {
+        columns.splice(existingIndex, 1);
+        columns.unshift(columnConfig);
+      } else if (existingIndex === 0) {
+        columns[0] = columnConfig;
+      } else {
+        columns.unshift(columnConfig);
+      }
+
+      if (typeof dataManager.update === 'function') dataManager.update();
+      else if (typeof dataManager.refresh === 'function') dataManager.refresh();
+      else if (typeof store.update === 'function') store.update();
+    } else if (typeof store?.insertColumn === 'function') {
+      const exists = store.columns?.find?.((column) => column?.id === 'review_status');
+      if (!exists) store.insertColumn(reviewStatusColumn, 0);
     }
   } catch (e) {
     // 出错不影响页面主流程

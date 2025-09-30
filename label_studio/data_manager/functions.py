@@ -66,7 +66,16 @@ def get_all_columns(project):
         'children': task_data_children
     }
 
-    result['columns'] += [
+    review_status_column = {
+        'id': 'review_status',
+        'title': '审核状态',
+        'type': 'String',
+        'target': 'tasks',
+        'help': '任务的审核状态（已通过/已驳回/未审核）',
+        'visibility_defaults': {'explore': True, 'labeling': False},
+    }
+
+    task_columns = [
         # --- Tasks ---
         {
             'id': 'id',
@@ -184,24 +193,17 @@ def get_all_columns(project):
             'type': 'List',
             'target': 'tasks',
             'help': '完成任务的所有用户',
-            'schema': { 'items': project.organization.members.values_list('user__id', flat=True) },
+            'schema': {'items': project.organization.members.values_list('user__id', flat=True)},
             'visibility_defaults': {
                 'explore': True,
                 'labeling': False
             }
         },
-        # 添加审阅状态
-                # --- Review status (展示中文；也保留 review_status 便于筛选) ---
-        {
-            'id': 'review_status',   # 列的 id 对应我们刚加的 serializer 方法字段
-            'title': '审核状态',
-            'type': 'String',
-            'target': 'tasks',
-            'help': '任务的审核状态（已通过/已驳回/未审核）',
-            'visibility_defaults': {'explore': True, 'labeling': False},
-        },
-
     ]
+
+    task_columns.insert(0, review_status_column)
+
+    result['columns'] += task_columns
 
     result['columns'].append(data_root)
 
