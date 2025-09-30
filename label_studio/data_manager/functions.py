@@ -214,15 +214,14 @@ def get_prepared_queryset(request, project):
     if view_id > 0:
         view = get_object_or_404(request, View, pk=view_id)
         if view.project.pk != project.pk:
-            raise DataManagerException('Project and View mismatch')
+            raise DataManagerException('项目与视图不匹配')
         prepare_params = view.get_prepare_tasks_params(add_selected_items=True)
 
     # use filters and selected items from request if it's specified
     else:
         selected = request.data.get('selectedItems', {"all": True, "excluded": []})
         if not isinstance(selected, dict):
-            raise DataManagerException('selectedItems must be dict: {"all": [true|false], '
-                                       '"excluded | included": [...task_ids...]}')
+            raise DataManagerException('selectedItems 必须是字典：{"all": [true|false], "excluded | included": [...task_ids...]}')
         filters = request.data.get('filters', None)
         ordering = request.data.get('ordering', [])
         prepare_params = PrepareParams(project=project.id, selectedItems=selected, data=request.data,

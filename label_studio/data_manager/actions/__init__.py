@@ -81,7 +81,7 @@ def perform_action(action_id, project, queryset, **kwargs):
     """ Perform action using entry point from actions
     """
     if action_id not in settings.DATA_MANAGER_ACTIONS:
-        raise DataManagerException("Can't find '" + action_id + "' in registered actions")
+        raise DataManagerException("在已注册的操作中找不到 '" + action_id + "'")
 
     try:
         result = settings.DATA_MANAGER_ACTIONS[action_id]['entry_point'](project, queryset, **kwargs)
