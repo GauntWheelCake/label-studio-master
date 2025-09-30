@@ -325,18 +325,6 @@ export const DataManagerPage = ({...props}) => {
           store.columns.push(column);
         }
 
-        if (column && Array.isArray(store.columns)) {
-          const currentIndex = store.columns.findIndex((c) => c?.id === columnId);
-
-          if (currentIndex > 0) {
-            const [existing] = store.columns.splice(currentIndex, 1);
-            store.columns.unshift(existing);
-            column = existing;
-          } else if (currentIndex === 0) {
-            column = store.columns[0];
-          }
-        }
-
         applyColumnDefinition(column);
 
         if (typeof store.updateColumn === 'function') {
