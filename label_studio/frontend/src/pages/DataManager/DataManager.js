@@ -15,6 +15,7 @@ import { ImportModal } from '../CreateProject/Import/ImportModal';
 import { ExportPage } from '../ExportPage/ExportPage';
 import { APIConfig } from './api-config';
 import { ANNOTATION_UPDATE_EVENTS, createAnnotationUpdateHandler } from './annotation-events';
+import { localizeReviewStatus, normalizeReviewStatusKey } from './reviewStatus';
 import "./DataManager.styl";
 
 const ROLE_PERMISSIONS = {
@@ -269,20 +270,26 @@ export const DataManagerPage = ({...props}) => {
         };
 
         const getDisplayValue = (row) => {
+          const status = row?.review_status ?? row?.task?.review_status ?? 'pending';
           const display = row?.review_status_display ?? row?.task?.review_status_display;
-          if (display != null && display !== '') return String(display);
 
-          const val = row?.review_status ?? row?.task?.review_status ?? 'pending';
-          const normalized = String(val || 'pending').toLowerCase();
-
-          return translations[normalized] || translations.pending;
+          return localizeReviewStatus({
+            translations,
+            status,
+            display,
+          });
         };
 
         const renderTag = (value, row) => {
-          const raw = row?.review_status ?? row?.task?.review_status ?? 'pending';
-          const normalized = String(raw || 'pending').toLowerCase();
-          const fallback = translations[normalized] || translations.pending;
-          const text = String(value ?? getDisplayValue(row) ?? fallback ?? translations.pending);
+          const status = row?.review_status ?? row?.task?.review_status ?? 'pending';
+          const display = row?.review_status_display ?? row?.task?.review_status_display;
+          const text = localizeReviewStatus({
+            translations,
+            status,
+            display,
+            value,
+          });
+          const normalized = normalizeReviewStatusKey(status || 'pending');
 
           return `<span class="tag" data-status="${normalized}">${text}</span>`;
         };
