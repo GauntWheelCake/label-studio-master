@@ -144,6 +144,7 @@ export const zhCN = {
   'projectSettings.dangerZone.confirm.title': '操作确认',
   'projectSettings.dangerZone.confirm.body': '您即将删除所有内容，此操作无法撤销。',
   'projectSettings.dangerZone.confirm.ok': '继续',
+  'projectSettings.dangerZone.confirm.cancel': '取消',
   'projectSettings.dangerZone.actions.deleteAnnotations': '删除 {count} 条标注',
   'projectSettings.dangerZone.actions.deleteTasks': '删除 {count} 个任务',
   'projectSettings.dangerZone.actions.deletePredictions': '删除 {count} 条预测',

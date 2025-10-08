@@ -85283,6 +85283,36 @@ const SentryRoute = _sentry_react__WEBPACK_IMPORTED_MODULE_2__.withSentryRouting
 
 /***/ }),
 
+/***/ "./src/config/review.ts":
+/*!******************************!*\
+  !*** ./src/config/review.ts ***!
+  \******************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   REVIEW_STATUS: () => (/* binding */ REVIEW_STATUS)
+/* harmony export */ });
+const REVIEW_STATUS = {
+  pending: {
+    label: '未审核',
+    color: '#9aa0a6'
+  },
+  // 灰
+  approved: {
+    label: '已通过',
+    color: '#1a7f37'
+  },
+  // 绿
+  rejected: {
+    label: '已驳回',
+    color: '#d93025'
+  } // 红
+};
+
+/***/ }),
+
 /***/ "./src/i18n/index.js":
 /*!***************************!*\
   !*** ./src/i18n/index.js ***!
@@ -85435,6 +85465,28 @@ const zhCN = {
   'exportPage.notice.noApproved': '没有可导出的审核通过任务。',
   'exportPage.modal.readyTitle': '导出就绪',
   'exportPage.modal.emptyTitle': '没有可导出的数据',
+  'exportPage.formats.JSON.title': 'Label Studio JSON',
+  'exportPage.formats.JSON.description': '将任务和标注导出为单个 JSON 文件，保留完整的原始数据结构。',
+  'exportPage.formats.JSON_MIN.title': '精简 JSON',
+  'exportPage.formats.JSON_MIN.description': '仅导出每条记录中的 from_name/to_name 字段，生成适合下游处理的轻量级标注结果。',
+  'exportPage.formats.CSV.title': 'CSV',
+  'exportPage.formats.CSV.description': '以逗号分隔值的表格形式导出结果，列名来源于 from_name 和 to_name。',
+  'exportPage.formats.TSV.title': 'TSV',
+  'exportPage.formats.TSV.description': '以制表符分隔的表格形式导出结果，列名来源于 from_name 和 to_name。',
+  'exportPage.formats.CONLL2003.title': 'CoNLL 2003',
+  'exportPage.formats.CONLL2003.description': '导出为 CoNLL-2003 命名实体识别挑战所使用的标准格式。',
+  'exportPage.formats.COCO.title': 'COCO',
+  'exportPage.formats.COCO.description': '导出为 COCO 数据集常用的目标检测与图像分割格式。',
+  'exportPage.formats.VOC.title': 'Pascal VOC XML',
+  'exportPage.formats.VOC.description': '导出为 Pascal VOC XML 格式，适用于目标检测与图像分割任务。',
+  'exportPage.formats.BRUSH_TO_NUMPY.title': '画笔标签导出为 NumPy',
+  'exportPage.formats.BRUSH_TO_NUMPY.description': '将画笔标注导出为 NumPy 二维数组，每个标签输出为独立的掩码矩阵。',
+  'exportPage.formats.BRUSH_TO_PNG.title': '画笔标签导出为 PNG',
+  'exportPage.formats.BRUSH_TO_PNG.description': '将画笔标注导出为 PNG 图像，每个标签生成一张带有掩码的图片。',
+  'exportPage.formats.ASR_MANIFEST.title': 'ASR Manifest',
+  'exportPage.formats.ASR_MANIFEST.description': '以 NVIDIA NeMo 兼容的 JSON manifest 格式导出语音转写标注。',
+  'exportPage.formats.YOLO.title': 'YOLO',
+  'exportPage.formats.YOLO.description': '导出为 YOLOv3 目标检测格式，需要在配置中包含矩形等目标检测标签。',
   'createProject.projectName.label': '项目名称',
   'createProject.projectDescription.label': '项目描述',
   'createProject.projectDescription.placeholder': '可选：填写项目描述',
@@ -85506,6 +85558,7 @@ const zhCN = {
   'projectSettings.dangerZone.confirm.title': '操作确认',
   'projectSettings.dangerZone.confirm.body': '您即将删除所有内容，此操作无法撤销。',
   'projectSettings.dangerZone.confirm.ok': '继续',
+  'projectSettings.dangerZone.confirm.cancel': '取消',
   'projectSettings.dangerZone.actions.deleteAnnotations': '删除 {count} 条标注',
   'projectSettings.dangerZone.actions.deleteTasks': '删除 {count} 个任务',
   'projectSettings.dangerZone.actions.deletePredictions': '删除 {count} 条预测',
@@ -87804,8 +87857,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _CreateProject_Import_ImportModal__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../CreateProject/Import/ImportModal */ "./src/pages/CreateProject/Import/ImportModal.js");
 /* harmony import */ var _ExportPage_ExportPage__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../ExportPage/ExportPage */ "./src/pages/ExportPage/ExportPage.js");
 /* harmony import */ var _api_config__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./api-config */ "./src/pages/DataManager/api-config.js");
-/* harmony import */ var _DataManager_styl__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./DataManager.styl */ "./src/pages/DataManager/DataManager.styl");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var _annotation_events__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./annotation-events */ "./src/pages/DataManager/annotation-events.js");
+/* harmony import */ var _reviewStatus__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./reviewStatus */ "./src/pages/DataManager/reviewStatus.js");
+/* harmony import */ var _DataManager_styl__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./DataManager.styl */ "./src/pages/DataManager/DataManager.styl");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
+
 
 
 
@@ -88032,54 +88089,81 @@ const DataManagerPage = ({
       var _dataManager$dm;
       // 1) 容错：不同版本的 DataManager Store 命名略有差异
       const store = dataManager.store || dataManager._store || ((_dataManager$dm = dataManager.dm) === null || _dataManager$dm === void 0 ? void 0 : _dataManager$dm.store);
-
-      // 2) 定义一个列配置（尽量对齐 DataManager 的“列对象”约定）
-      const reviewStatusColumn = {
-        id: 'review_status',
-        // 唯一键
-        title: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('dataManager.review.columnTitle'),
-        // 表头
-        // DataManager 内部每条 Task 的原始数据通常会被放到 item 或 task
-        // 尝试从常见位置读取（缺省给 pending）
-        getValue: row => {
-          var _ref2, _row$review_status, _row$task;
-          const val = (_ref2 = (_row$review_status = row === null || row === void 0 ? void 0 : row.review_status) !== null && _row$review_status !== void 0 ? _row$review_status : row === null || row === void 0 ? void 0 : (_row$task = row.task) === null || _row$task === void 0 ? void 0 : _row$task.review_status) !== null && _ref2 !== void 0 ? _ref2 : 'pending';
-          return String(val || 'pending');
-        },
-        // 可选：用于排序/筛选用的原始值
-        accessor: row => {
-          var _ref3, _row$review_status2, _row$task2;
-          const v = (_ref3 = (_row$review_status2 = row === null || row === void 0 ? void 0 : row.review_status) !== null && _row$review_status2 !== void 0 ? _row$review_status2 : row === null || row === void 0 ? void 0 : (_row$task2 = row.task) === null || _row$task2 === void 0 ? void 0 : _row$task2.review_status) !== null && _ref3 !== void 0 ? _ref3 : 'pending';
-          return String(v || 'pending');
-        },
-        // 渲染到单元格里的内容（用我们全局的 .tag 样式）
-        render: (value /*, row*/) => {
-          const map = {
-            pending: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('dataManager.review.pending'),
-            approved: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('dataManager.review.approved'),
-            rejected: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('dataManager.review.rejected')
+      if (store) {
+        var _store$columns, _store$columns$find;
+        const columnId = 'review_status';
+        const translations = {
+          pending: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('dataManager.review.pending'),
+          approved: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('dataManager.review.approved'),
+          rejected: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('dataManager.review.rejected')
+        };
+        const getDisplayValue = row => {
+          var _ref2, _row$review_status, _row$task, _row$review_status_di, _row$task2;
+          const status = (_ref2 = (_row$review_status = row === null || row === void 0 ? void 0 : row.review_status) !== null && _row$review_status !== void 0 ? _row$review_status : row === null || row === void 0 ? void 0 : (_row$task = row.task) === null || _row$task === void 0 ? void 0 : _row$task.review_status) !== null && _ref2 !== void 0 ? _ref2 : 'pending';
+          const display = (_row$review_status_di = row === null || row === void 0 ? void 0 : row.review_status_display) !== null && _row$review_status_di !== void 0 ? _row$review_status_di : row === null || row === void 0 ? void 0 : (_row$task2 = row.task) === null || _row$task2 === void 0 ? void 0 : _row$task2.review_status_display;
+          return (0,_reviewStatus__WEBPACK_IMPORTED_MODULE_17__.localizeReviewStatus)({
+            translations,
+            status,
+            display
+          });
+        };
+        const renderTag = (value, row) => {
+          var _ref3, _row$review_status2, _row$task3, _row$review_status_di2, _row$task4;
+          const status = (_ref3 = (_row$review_status2 = row === null || row === void 0 ? void 0 : row.review_status) !== null && _row$review_status2 !== void 0 ? _row$review_status2 : row === null || row === void 0 ? void 0 : (_row$task3 = row.task) === null || _row$task3 === void 0 ? void 0 : _row$task3.review_status) !== null && _ref3 !== void 0 ? _ref3 : 'pending';
+          const display = (_row$review_status_di2 = row === null || row === void 0 ? void 0 : row.review_status_display) !== null && _row$review_status_di2 !== void 0 ? _row$review_status_di2 : row === null || row === void 0 ? void 0 : (_row$task4 = row.task) === null || _row$task4 === void 0 ? void 0 : _row$task4.review_status_display;
+          const text = (0,_reviewStatus__WEBPACK_IMPORTED_MODULE_17__.localizeReviewStatus)({
+            translations,
+            status,
+            display,
+            value
+          });
+          const normalized = (0,_reviewStatus__WEBPACK_IMPORTED_MODULE_17__.normalizeReviewStatusKey)(status || 'pending');
+          return `<span class="tag" data-status="${normalized}">${text}</span>`;
+        };
+        const applyColumnDefinition = column => {
+          var _column$type, _column$align, _column$visible, _column$width, _column$accessor;
+          if (!column) return;
+          column.id = columnId;
+          column.title = (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('dataManager.review.columnTitle');
+          column.type = (_column$type = column.type) !== null && _column$type !== void 0 ? _column$type : 'String';
+          column.align = (_column$align = column.align) !== null && _column$align !== void 0 ? _column$align : 'left';
+          column.visible = (_column$visible = column.visible) !== null && _column$visible !== void 0 ? _column$visible : true;
+          column.width = (_column$width = column.width) !== null && _column$width !== void 0 ? _column$width : 110;
+          column.accessor = (_column$accessor = column.accessor) !== null && _column$accessor !== void 0 ? _column$accessor : row => {
+            var _ref4, _row$review_status3, _row$task5;
+            const v = (_ref4 = (_row$review_status3 = row === null || row === void 0 ? void 0 : row.review_status) !== null && _row$review_status3 !== void 0 ? _row$review_status3 : row === null || row === void 0 ? void 0 : (_row$task5 = row.task) === null || _row$task5 === void 0 ? void 0 : _row$task5.review_status) !== null && _ref4 !== void 0 ? _ref4 : 'pending';
+            return String(v || 'pending');
           };
-          const v = (value || 'pending').toLowerCase();
-          const text = map[v] || map.pending;
-          // 用最通用的字符串/HTML 渲染（不同版本可能也支持 ReactNode）
-          return `<span class="tag" data-status="${v}">${text}</span>`;
-        },
-        // UI 细节
-        width: 110,
-        visible: true,
-        // 某些版本使用 type/align 之类的字段，这里给出合理默认
-        type: 'string',
-        align: 'left'
-      };
-
-      // 3) 注入列：优先使用官方 addColumn；没有就直接 push 再触发刷新
-      if (store !== null && store !== void 0 && store.addColumn) {
-        store.addColumn(reviewStatusColumn);
-      } else if (store !== null && store !== void 0 && store.columns && Array.isArray(store.columns)) {
-        const exists = store.columns.find(c => c.id === 'review_status');
-        if (!exists) store.columns.push(reviewStatusColumn);
-        // 常见的刷新钩子：update/refresh/forceUpdate，按可用性调用一个
-        (dataManager.update || dataManager.refresh || store.update || (() => {})).call(dataManager);
+          column.getValue = getDisplayValue;
+          column.render = (value, row) => renderTag(value, row);
+        };
+        const ensureRefresh = () => {
+          const refresh = dataManager.update || dataManager.refresh || dataManager.forceUpdate;
+          if (typeof refresh === 'function') {
+            refresh.call(dataManager);
+          } else if (typeof store.update === 'function') {
+            store.update();
+          }
+        };
+        let column = (_store$columns = store.columns) === null || _store$columns === void 0 ? void 0 : (_store$columns$find = _store$columns.find) === null || _store$columns$find === void 0 ? void 0 : _store$columns$find.call(_store$columns, c => c.id === columnId);
+        if (!column && typeof store.addColumn === 'function') {
+          var _store$columns2, _store$columns2$find;
+          store.addColumn({
+            id: columnId
+          });
+          column = (_store$columns2 = store.columns) === null || _store$columns2 === void 0 ? void 0 : (_store$columns2$find = _store$columns2.find) === null || _store$columns2$find === void 0 ? void 0 : _store$columns2$find.call(_store$columns2, c => c.id === columnId);
+        }
+        if (!column && Array.isArray(store.columns)) {
+          column = {
+            id: columnId
+          };
+          store.columns.push(column);
+        }
+        applyColumnDefinition(column);
+        if (typeof store.updateColumn === 'function') {
+          store.updateColumn(columnId, column);
+        }
+        ensureRefresh();
       }
     } catch (e) {
       // 出错不影响页面主流程
@@ -88203,16 +88287,16 @@ const DataManagerPage = ({
     init();
     return () => destroyDM();
   }, [root, init]);
-  return crashed ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsxs)(_utils_bem__WEBPACK_IMPORTED_MODULE_10__.Block, {
+  return crashed ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsxs)(_utils_bem__WEBPACK_IMPORTED_MODULE_10__.Block, {
     name: "crash",
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_10__.Elem, {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_10__.Elem, {
       name: "info",
       children: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('dataManager.crash.info')
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_components_Button_Button__WEBPACK_IMPORTED_MODULE_3__.Button, {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)(_components_Button_Button__WEBPACK_IMPORTED_MODULE_3__.Button, {
       to: "/projects",
       children: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('dataManager.crash.backToProjects')
     })]
-  }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_10__.Block, {
+  }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_10__.Block, {
     ref: root,
     name: "datamanager"
   });
@@ -88234,11 +88318,12 @@ DataManagerPage.context = ({
   const [currentTaskId, setCurrentTaskId] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
   const [currentReviewStatus, setCurrentReviewStatus] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)('pending');
   const [pendingDecision, setPendingDecision] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  const isSwitchingTaskRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(false);
   const showReviewError = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(message => {
     let modalInstance;
-    const footer = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_components_Space_Space__WEBPACK_IMPORTED_MODULE_5__.Space, {
+    const footer = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)(_components_Space_Space__WEBPACK_IMPORTED_MODULE_5__.Space, {
       align: "end",
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_components_Button_Button__WEBPACK_IMPORTED_MODULE_3__.Button, {
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)(_components_Button_Button__WEBPACK_IMPORTED_MODULE_3__.Button, {
         size: "compact",
         look: "primary",
         onClick: () => {
@@ -88250,7 +88335,7 @@ DataManagerPage.context = ({
     });
     modalInstance = (0,_components_Modal_Modal__WEBPACK_IMPORTED_MODULE_4__.modal)({
       title: '审核失败',
-      body: () => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)("div", {
+      body: () => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)("div", {
         children: message !== null && message !== void 0 ? message : '提交审核结果时出现错误，请稍后重试。'
       }),
       footer
@@ -88277,13 +88362,13 @@ DataManagerPage.context = ({
         (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
           commentRef.current = value;
         }, [value]);
-        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsxs)("div", {
+        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsxs)("div", {
           style: {
             display: 'flex',
             flexDirection: 'column',
             gap: 8
           },
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)("textarea", {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)("textarea", {
             autoFocus: true,
             rows: 4,
             value: value,
@@ -88294,7 +88379,7 @@ DataManagerPage.context = ({
               resize: 'vertical',
               padding: '8px 10px'
             }
-          }), error ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)("div", {
+          }), error ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)("div", {
             style: {
               color: '#d32029'
             },
@@ -88308,13 +88393,13 @@ DataManagerPage.context = ({
         resolve(result);
         (_modalInstance2 = modalInstance) === null || _modalInstance2 === void 0 ? void 0 : _modalInstance2.close();
       };
-      const footer = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsxs)(_components_Space_Space__WEBPACK_IMPORTED_MODULE_5__.Space, {
+      const footer = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsxs)(_components_Space_Space__WEBPACK_IMPORTED_MODULE_5__.Space, {
         align: "end",
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_components_Button_Button__WEBPACK_IMPORTED_MODULE_3__.Button, {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)(_components_Button_Button__WEBPACK_IMPORTED_MODULE_3__.Button, {
           size: "compact",
           onClick: () => closeWithResult(null),
           children: "\u53D6\u6D88"
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_components_Button_Button__WEBPACK_IMPORTED_MODULE_3__.Button, {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)(_components_Button_Button__WEBPACK_IMPORTED_MODULE_3__.Button, {
           size: "compact",
           look: "primary",
           onClick: () => {
@@ -88339,10 +88424,10 @@ DataManagerPage.context = ({
     });
   }, []);
   const [userRole, setUserRole] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(() => {
-    var _ref4, _window$APP_SETTINGS;
+    var _ref5, _window$APP_SETTINGS;
     const storedRole = (0,_utils_roles__WEBPACK_IMPORTED_MODULE_12__.getStoredRole)();
     if (storedRole) return storedRole;
-    return detectUserRole((_ref4 = typeof window !== 'undefined' ? (_window$APP_SETTINGS = window.APP_SETTINGS) === null || _window$APP_SETTINGS === void 0 ? void 0 : _window$APP_SETTINGS.user : {}) !== null && _ref4 !== void 0 ? _ref4 : {});
+    return detectUserRole((_ref5 = typeof window !== 'undefined' ? (_window$APP_SETTINGS = window.APP_SETTINGS) === null || _window$APP_SETTINGS === void 0 ? void 0 : _window$APP_SETTINGS.user : {}) !== null && _ref5 !== void 0 ? _ref5 : {});
   });
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     const unsubscribe = (0,_utils_roles__WEBPACK_IMPORTED_MODULE_12__.subscribeToRoleChange)(role => {
@@ -88356,14 +88441,14 @@ DataManagerPage.context = ({
   const isAdmin = userRole === 'admin';
   const canReview = isReviewer && !isAdmin;
   const resolveTaskId = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(task => {
-    var _ref5, _ref6, _ref7, _task$id, _task$task;
+    var _ref6, _ref7, _ref8, _task$id, _task$task;
     if (!task) return null;
-    return (_ref5 = (_ref6 = (_ref7 = (_task$id = task.id) !== null && _task$id !== void 0 ? _task$id : task.task_id) !== null && _ref7 !== void 0 ? _ref7 : task.pk) !== null && _ref6 !== void 0 ? _ref6 : (_task$task = task.task) === null || _task$task === void 0 ? void 0 : _task$task.id) !== null && _ref5 !== void 0 ? _ref5 : null;
+    return (_ref6 = (_ref7 = (_ref8 = (_task$id = task.id) !== null && _task$id !== void 0 ? _task$id : task.task_id) !== null && _ref8 !== void 0 ? _ref8 : task.pk) !== null && _ref7 !== void 0 ? _ref7 : (_task$task = task.task) === null || _task$task === void 0 ? void 0 : _task$task.id) !== null && _ref6 !== void 0 ? _ref6 : null;
   }, []);
   const resolveReviewStatus = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(task => {
-    var _ref8, _task$review_status, _task$task2;
+    var _ref9, _task$review_status, _task$task2;
     if (!task) return 'pending';
-    const status = (_ref8 = (_task$review_status = task.review_status) !== null && _task$review_status !== void 0 ? _task$review_status : (_task$task2 = task.task) === null || _task$task2 === void 0 ? void 0 : _task$task2.review_status) !== null && _ref8 !== void 0 ? _ref8 : 'pending';
+    const status = (_ref9 = (_task$review_status = task.review_status) !== null && _task$review_status !== void 0 ? _task$review_status : (_task$task2 = task.task) === null || _task$task2 === void 0 ? void 0 : _task$task2.review_status) !== null && _ref9 !== void 0 ? _ref9 : 'pending';
     return String(status || 'pending').toLowerCase();
   }, []);
   const extractTaskInfo = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => {
@@ -88379,6 +88464,75 @@ DataManagerPage.context = ({
     setCurrentTaskId(id);
     setCurrentReviewStatus(status || 'pending');
   }, [dmRef, resolveReviewStatus, resolveTaskId]);
+  const selectNextTask = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async () => {
+    if (!(dmRef !== null && dmRef !== void 0 && dmRef.store)) return;
+    const taskStore = dmRef.store.taskStore;
+    if (!taskStore) return;
+    try {
+      let nextTaskResult;
+      if (typeof taskStore.nextTask === 'function') {
+        nextTaskResult = await taskStore.nextTask();
+      } else {
+        var _dmRef$store$currentV, _dmRef$store, _dmRef$store2, _dmRef$store2$viewsSt, _view$selected, _view$selected2, _view$conjunction, _view$serializedFilte, _dmRef$apiCall, _apiResult$$meta2;
+        const view = (_dmRef$store$currentV = (_dmRef$store = dmRef.store) === null || _dmRef$store === void 0 ? void 0 : _dmRef$store.currentView) !== null && _dmRef$store$currentV !== void 0 ? _dmRef$store$currentV : (_dmRef$store2 = dmRef.store) === null || _dmRef$store2 === void 0 ? void 0 : (_dmRef$store2$viewsSt = _dmRef$store2.viewsStore) === null || _dmRef$store2$viewsSt === void 0 ? void 0 : _dmRef$store2$viewsSt.selected;
+        const hasSelectedItems = view === null || view === void 0 ? void 0 : (_view$selected = view.selected) === null || _view$selected === void 0 ? void 0 : _view$selected.hasSelected;
+        const selectedItems = hasSelectedItems && view !== null && view !== void 0 && (_view$selected2 = view.selected) !== null && _view$selected2 !== void 0 && _view$selected2.snapshot ? view.selected.snapshot : {
+          all: true,
+          excluded: []
+        };
+        const filters = {
+          conjunction: (_view$conjunction = view === null || view === void 0 ? void 0 : view.conjunction) !== null && _view$conjunction !== void 0 ? _view$conjunction : 'and',
+          items: (_view$serializedFilte = view === null || view === void 0 ? void 0 : view.serializedFilters) !== null && _view$serializedFilte !== void 0 ? _view$serializedFilte : []
+        };
+        const requestBody = {
+          ...(view !== null && view !== void 0 && view.ordering ? {
+            ordering: view.ordering
+          } : {}),
+          selectedItems,
+          filters
+        };
+        const requestParams = {};
+        const viewId = view === null || view === void 0 ? void 0 : view.id;
+        if (viewId !== null && viewId !== undefined) {
+          requestParams.tabID = viewId;
+        }
+        const apiResult = await ((_dmRef$apiCall = dmRef.apiCall) === null || _dmRef$apiCall === void 0 ? void 0 : _dmRef$apiCall.call(dmRef, 'nextTask', requestParams, {
+          body: requestBody
+        }));
+        if (!apiResult || apiResult !== null && apiResult !== void 0 && apiResult.error) {
+          var _apiResult$$meta;
+          if ((apiResult === null || apiResult === void 0 ? void 0 : apiResult.status) === 404 || (apiResult === null || apiResult === void 0 ? void 0 : (_apiResult$$meta = apiResult.$meta) === null || _apiResult$$meta === void 0 ? void 0 : _apiResult$$meta.status) === 404) {
+            var _dmRef$store3, _dmRef$store3$SDK, _dmRef$store3$SDK$inv;
+            (_dmRef$store3 = dmRef.store) === null || _dmRef$store3 === void 0 ? void 0 : (_dmRef$store3$SDK = _dmRef$store3.SDK) === null || _dmRef$store3$SDK === void 0 ? void 0 : (_dmRef$store3$SDK$inv = _dmRef$store3$SDK.invoke) === null || _dmRef$store3$SDK$inv === void 0 ? void 0 : _dmRef$store3$SDK$inv.call(_dmRef$store3$SDK, 'labelStreamFinished');
+          }
+          return;
+        }
+        if ((apiResult === null || apiResult === void 0 ? void 0 : apiResult.status) === 404 || (apiResult === null || apiResult === void 0 ? void 0 : (_apiResult$$meta2 = apiResult.$meta) === null || _apiResult$$meta2 === void 0 ? void 0 : _apiResult$$meta2.status) === 404) {
+          var _dmRef$store4, _dmRef$store4$SDK, _dmRef$store4$SDK$inv;
+          (_dmRef$store4 = dmRef.store) === null || _dmRef$store4 === void 0 ? void 0 : (_dmRef$store4$SDK = _dmRef$store4.SDK) === null || _dmRef$store4$SDK === void 0 ? void 0 : (_dmRef$store4$SDK$inv = _dmRef$store4$SDK.invoke) === null || _dmRef$store4$SDK$inv === void 0 ? void 0 : _dmRef$store4$SDK$inv.call(_dmRef$store4$SDK, 'labelStreamFinished');
+          return;
+        }
+        if (typeof taskStore.applyTaskSnapshot === 'function') {
+          nextTaskResult = taskStore.applyTaskSnapshot(apiResult);
+        }
+        if (!nextTaskResult && apiResult !== null && apiResult !== void 0 && apiResult.id && typeof taskStore.loadTask === 'function') {
+          nextTaskResult = await taskStore.loadTask(apiResult.id, {
+            select: true
+          });
+        }
+        if (nextTaskResult && typeof taskStore.setSelected === 'function') {
+          taskStore.setSelected(nextTaskResult);
+        } else if (apiResult !== null && apiResult !== void 0 && apiResult.id) {
+          var _taskStore$setSelecte;
+          taskStore === null || taskStore === void 0 ? void 0 : (_taskStore$setSelecte = taskStore.setSelected) === null || _taskStore$setSelecte === void 0 ? void 0 : _taskStore$setSelecte.call(taskStore, apiResult.id);
+        }
+      }
+    } catch (error) {
+      console.error('[datamanager] Failed to load next task after annotation', error);
+    } finally {
+      extractTaskInfo();
+    }
+  }, [dmRef, extractTaskInfo]);
   const links = {
     '/settings': (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('dataManager.links.settings'),
     '/data/import': (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('dataManager.links.import'),
@@ -88392,10 +88546,10 @@ DataManagerPage.context = ({
       (0,_services_breadrumbs__WEBPACK_IMPORTED_MODULE_9__.deleteCrumb)('dm-crumb');
     } else {
       (0,_services_breadrumbs__WEBPACK_IMPORTED_MODULE_9__.addAction)(dmPath, e => {
-        var _dmRef$store, _dmRef$store$closeLab;
+        var _dmRef$store5, _dmRef$store5$closeLa;
         e.preventDefault();
         e.stopPropagation();
-        dmRef === null || dmRef === void 0 ? void 0 : (_dmRef$store = dmRef.store) === null || _dmRef$store === void 0 ? void 0 : (_dmRef$store$closeLab = _dmRef$store.closeLabeling) === null || _dmRef$store$closeLab === void 0 ? void 0 : _dmRef$store$closeLab.call(_dmRef$store);
+        dmRef === null || dmRef === void 0 ? void 0 : (_dmRef$store5 = dmRef.store) === null || _dmRef$store5 === void 0 ? void 0 : (_dmRef$store5$closeLa = _dmRef$store5.closeLabeling) === null || _dmRef$store5$closeLa === void 0 ? void 0 : _dmRef$store5$closeLa.call(_dmRef$store5);
       });
       (0,_services_breadrumbs__WEBPACK_IMPORTED_MODULE_9__.addCrumb)({
         key: "dm-crumb",
@@ -88412,7 +88566,7 @@ DataManagerPage.context = ({
     if (isLabelStream && show_instruction && expert_instruction) {
       (0,_components_Modal_Modal__WEBPACK_IMPORTED_MODULE_4__.modal)({
         title: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('dataManager.modal.labelingInstructionsTitle'),
-        body: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)("div", {
+        body: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)("div", {
           dangerouslySetInnerHTML: {
             __html: expert_instruction
           }
@@ -88453,17 +88607,60 @@ DataManagerPage.context = ({
       dmRef === null || dmRef === void 0 ? void 0 : (_dmRef$off4 = dmRef.off) === null || _dmRef$off4 === void 0 ? void 0 : _dmRef$off4.call(dmRef, 'lsf:taskLoad', update);
     };
   }, [dmRef, extractTaskInfo]);
-  const sendReviewDecision = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async (decision, options = {}) => {
-    var _dmRef$store2, _dmRef$store2$taskSto;
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     if (!dmRef) return;
-    const selected = (_dmRef$store2 = dmRef.store) === null || _dmRef$store2 === void 0 ? void 0 : (_dmRef$store2$taskSto = _dmRef$store2.taskStore) === null || _dmRef$store2$taskSto === void 0 ? void 0 : _dmRef$store2$taskSto.selected;
+    const handleNextTask = async () => {
+      if (mode === 'explorer') return;
+      if (isSwitchingTaskRef.current) return;
+      isSwitchingTaskRef.current = true;
+      try {
+        await selectNextTask();
+      } finally {
+        isSwitchingTaskRef.current = false;
+      }
+    };
+    const events = ['lsf:submitAnnotation', 'annotations:completed'];
+    events.forEach(event => {
+      var _dmRef$on4;
+      return (_dmRef$on4 = dmRef.on) === null || _dmRef$on4 === void 0 ? void 0 : _dmRef$on4.call(dmRef, event, handleNextTask);
+    });
+    return () => {
+      events.forEach(event => {
+        var _dmRef$off5;
+        return dmRef === null || dmRef === void 0 ? void 0 : (_dmRef$off5 = dmRef.off) === null || _dmRef$off5 === void 0 ? void 0 : _dmRef$off5.call(dmRef, event, handleNextTask);
+      });
+    };
+  }, [dmRef, mode, selectNextTask]);
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    if (!dmRef) return;
+    const handler = (0,_annotation_events__WEBPACK_IMPORTED_MODULE_16__.createAnnotationUpdateHandler)({
+      dmRef,
+      setCurrentReviewStatus,
+      extractTaskInfo,
+      resolveTaskId
+    });
+    _annotation_events__WEBPACK_IMPORTED_MODULE_16__.ANNOTATION_UPDATE_EVENTS.forEach(event => {
+      var _dmRef$on5;
+      return (_dmRef$on5 = dmRef.on) === null || _dmRef$on5 === void 0 ? void 0 : _dmRef$on5.call(dmRef, event, handler);
+    });
+    return () => {
+      _annotation_events__WEBPACK_IMPORTED_MODULE_16__.ANNOTATION_UPDATE_EVENTS.forEach(event => {
+        var _dmRef$off6;
+        return dmRef === null || dmRef === void 0 ? void 0 : (_dmRef$off6 = dmRef.off) === null || _dmRef$off6 === void 0 ? void 0 : _dmRef$off6.call(dmRef, event, handler);
+      });
+    };
+  }, [dmRef, extractTaskInfo, resolveTaskId]);
+  const sendReviewDecision = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async (decision, options = {}) => {
+    var _dmRef$store6, _dmRef$store6$taskSto;
+    if (!dmRef) return;
+    const selected = (_dmRef$store6 = dmRef.store) === null || _dmRef$store6 === void 0 ? void 0 : (_dmRef$store6$taskSto = _dmRef$store6.taskStore) === null || _dmRef$store6$taskSto === void 0 ? void 0 : _dmRef$store6$taskSto.selected;
     const taskId = resolveTaskId(selected);
     if (!taskId) return;
     setPendingDecision(decision);
     try {
-      var _options$comment, _dmRef$apiCall, _result$response;
+      var _options$comment, _dmRef$apiCall2, _result$response;
       const comment = (_options$comment = options.comment) !== null && _options$comment !== void 0 ? _options$comment : '';
-      const result = await ((_dmRef$apiCall = dmRef.apiCall) === null || _dmRef$apiCall === void 0 ? void 0 : _dmRef$apiCall.call(dmRef, 'reviewDecision', {
+      const result = await ((_dmRef$apiCall2 = dmRef.apiCall) === null || _dmRef$apiCall2 === void 0 ? void 0 : _dmRef$apiCall2.call(dmRef, 'reviewDecision', {
         taskID: taskId
       }, {
         body: {
@@ -88477,8 +88674,8 @@ DataManagerPage.context = ({
         throw new Error(responseDetail || result.error || '提交审核结果失败');
       }
       if (result) {
-        var _dmRef$store3, _dmRef$store3$taskSto, _result$review_status;
-        const loadTask = (_dmRef$store3 = dmRef.store) === null || _dmRef$store3 === void 0 ? void 0 : (_dmRef$store3$taskSto = _dmRef$store3.taskStore) === null || _dmRef$store3$taskSto === void 0 ? void 0 : _dmRef$store3$taskSto.loadTask;
+        var _dmRef$store7, _dmRef$store7$taskSto, _result$review_status;
+        const loadTask = (_dmRef$store7 = dmRef.store) === null || _dmRef$store7 === void 0 ? void 0 : (_dmRef$store7$taskSto = _dmRef$store7.taskStore) === null || _dmRef$store7$taskSto === void 0 ? void 0 : _dmRef$store7$taskSto.loadTask;
         if (typeof loadTask === 'function') {
           await loadTask.call(dmRef.store.taskStore, taskId, {
             select: true
@@ -88520,18 +88717,18 @@ DataManagerPage.context = ({
   const approveDisabled = reviewDisabled || pendingDecision !== null;
   const rejectDisabled = reviewDisabled || pendingDecision !== null;
   const showReviewControls = mode !== 'explorer';
-  return project && project.id ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsxs)(_components_Space_Space__WEBPACK_IMPORTED_MODULE_5__.Space, {
+  return project && project.id ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsxs)(_components_Space_Space__WEBPACK_IMPORTED_MODULE_5__.Space, {
     size: "small",
-    children: [showReviewControls && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsxs)(_components_Space_Space__WEBPACK_IMPORTED_MODULE_5__.Space, {
+    children: [showReviewControls && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsxs)(_components_Space_Space__WEBPACK_IMPORTED_MODULE_5__.Space, {
       size: "small",
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsxs)("span", {
-        children: ["\u5BA1\u6838\u72B6\u6001\uFF1A", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)("span", {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsxs)("span", {
+        children: ["\u5BA1\u6838\u72B6\u6001\uFF1A", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)("span", {
           style: {
             fontWeight: 600
           },
           children: statusText
         })]
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_components_Button_Button__WEBPACK_IMPORTED_MODULE_3__.Button, {
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)(_components_Button_Button__WEBPACK_IMPORTED_MODULE_3__.Button, {
         size: "compact",
         look: "primary",
         disabled: approveDisabled,
@@ -88539,7 +88736,7 @@ DataManagerPage.context = ({
         onClick: handleApprove,
         title: approveDisabled && disabledMessage ? disabledMessage : undefined,
         children: "\u901A\u8FC7"
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_components_Button_Button__WEBPACK_IMPORTED_MODULE_3__.Button, {
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)(_components_Button_Button__WEBPACK_IMPORTED_MODULE_3__.Button, {
         size: "compact",
         disabled: rejectDisabled,
         waiting: pendingDecision === 'rejected',
@@ -88547,12 +88744,12 @@ DataManagerPage.context = ({
         title: rejectDisabled && disabledMessage ? disabledMessage : undefined,
         children: "\u9A73\u56DE"
       })]
-    }), project.expert_instruction && mode !== 'explorer' && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_components_Button_Button__WEBPACK_IMPORTED_MODULE_3__.Button, {
+    }), project.expert_instruction && mode !== 'explorer' && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)(_components_Button_Button__WEBPACK_IMPORTED_MODULE_3__.Button, {
       size: "compact",
       onClick: () => {
         (0,_components_Modal_Modal__WEBPACK_IMPORTED_MODULE_4__.modal)({
           title: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('dataManager.instructions.modalTitle'),
-          body: () => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)("div", {
+          body: () => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)("div", {
             dangerouslySetInnerHTML: {
               __html: project.expert_instruction
             }
@@ -88560,7 +88757,7 @@ DataManagerPage.context = ({
         });
       },
       children: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('dataManager.instructions.button')
-    }), Object.entries(links).map(([path, label]) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_components_Button_Button__WEBPACK_IMPORTED_MODULE_3__.Button, {
+    }), Object.entries(links).map(([path, label]) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)(_components_Button_Button__WEBPACK_IMPORTED_MODULE_3__.Button, {
       tag: react_router_dom__WEBPACK_IMPORTED_MODULE_2__.NavLink,
       size: "compact",
       to: `/projects/${project.id}${path}`,
@@ -88584,6 +88781,59 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 // extracted by mini-css-extract-plugin
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({"datamanager":"ls-datamanager","label-studio-dm":"ls-label-studio-dm"});
+
+/***/ }),
+
+/***/ "./src/pages/DataManager/annotation-events.js":
+/*!****************************************************!*\
+  !*** ./src/pages/DataManager/annotation-events.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   ANNOTATION_UPDATE_EVENTS: () => (/* binding */ ANNOTATION_UPDATE_EVENTS),
+/* harmony export */   createAnnotationUpdateHandler: () => (/* binding */ createAnnotationUpdateHandler)
+/* harmony export */ });
+const ANNOTATION_UPDATE_EVENTS = ['lsf:updateAnnotation', 'annotations:update', 'annotations:updated', 'annotations:delete', 'annotations:deleted', 'annotations:remove'];
+const createAnnotationUpdateHandler = ({
+  dmRef,
+  setCurrentReviewStatus,
+  extractTaskInfo,
+  resolveTaskId
+}) => {
+  return async (payload = {}) => {
+    try {
+      var _dmRef$store;
+      const taskStore = dmRef === null || dmRef === void 0 ? void 0 : (_dmRef$store = dmRef.store) === null || _dmRef$store === void 0 ? void 0 : _dmRef$store.taskStore;
+      const selectedTask = taskStore === null || taskStore === void 0 ? void 0 : taskStore.selected;
+      const selectedTaskId = typeof resolveTaskId === 'function' ? resolveTaskId(selectedTask) : selectedTask === null || selectedTask === void 0 ? void 0 : selectedTask.id;
+      if (selectedTaskId) {
+        var _ref, _ref2, _payload$task;
+        const payloadTask = (_ref = (_ref2 = (_payload$task = payload === null || payload === void 0 ? void 0 : payload.task) !== null && _payload$task !== void 0 ? _payload$task : payload === null || payload === void 0 ? void 0 : payload.task_id) !== null && _ref2 !== void 0 ? _ref2 : payload === null || payload === void 0 ? void 0 : payload.taskID) !== null && _ref !== void 0 ? _ref : payload;
+        const payloadTaskId = typeof payloadTask === 'number' ? payloadTask : typeof resolveTaskId === 'function' ? resolveTaskId(payloadTask) : payloadTask === null || payloadTask === void 0 ? void 0 : payloadTask.id;
+        if (!payloadTaskId || payloadTaskId === selectedTaskId) {
+          const loadTask = taskStore === null || taskStore === void 0 ? void 0 : taskStore.loadTask;
+          if (typeof loadTask === 'function') {
+            await loadTask.call(taskStore, selectedTaskId, {
+              select: true
+            });
+          }
+        }
+      }
+    } catch (error) {
+      console.warn('[review] Failed to refresh task after annotation update', error);
+    } finally {
+      if (typeof setCurrentReviewStatus === 'function') {
+        setCurrentReviewStatus('pending');
+      }
+      if (typeof extractTaskInfo === 'function') {
+        extractTaskInfo();
+      }
+    }
+  };
+};
 
 /***/ }),
 
@@ -88659,6 +88909,74 @@ const APIConfig = {
 
 /***/ }),
 
+/***/ "./src/pages/DataManager/reviewStatus.js":
+/*!***********************************************!*\
+  !*** ./src/pages/DataManager/reviewStatus.js ***!
+  \***********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   localizeReviewStatus: () => (/* binding */ localizeReviewStatus),
+/* harmony export */   normalizeReviewStatusKey: () => (/* binding */ normalizeReviewStatusKey)
+/* harmony export */ });
+/* harmony import */ var _config_review__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../config/review */ "./src/config/review.ts");
+
+const normalizeReviewStatusKey = value => String(value !== null && value !== void 0 ? value : '').trim().toLowerCase();
+const STATUS_LABELS = Object.entries(_config_review__WEBPACK_IMPORTED_MODULE_0__.REVIEW_STATUS).reduce((acc, [key, config]) => {
+  var _config$label;
+  acc[normalizeReviewStatusKey(key)] = String((_config$label = config === null || config === void 0 ? void 0 : config.label) !== null && _config$label !== void 0 ? _config$label : '').trim() || key;
+  return acc;
+}, {});
+const ENGLISH_ALIASES = Object.entries({
+  pending: ['pending', 'not reviewed', 'not_reviewed', 'not-reviewed'],
+  approved: ['approved', 'accepted', 'passed'],
+  rejected: ['rejected', 'declined', 'failed']
+}).reduce((acc, [key, aliases]) => {
+  const normalizedKey = normalizeReviewStatusKey(key);
+  aliases.forEach(alias => {
+    const normalizedAlias = normalizeReviewStatusKey(alias);
+    if (!normalizedAlias) return;
+    acc[normalizedAlias] = normalizedKey;
+  });
+  return acc;
+}, {});
+const resolveLocalizedLabel = (translations, key) => {
+  const normalizedKey = normalizeReviewStatusKey(key);
+  return translations[normalizedKey] || STATUS_LABELS[normalizedKey] || translations.pending || STATUS_LABELS.pending || normalizedKey;
+};
+const localizeReviewStatus = ({
+  translations = {},
+  status,
+  display,
+  value
+}) => {
+  const translationValues = Object.values(translations).map(item => String(item !== null && item !== void 0 ? item : '').trim());
+  const normalizedStatus = normalizeReviewStatusKey(status || 'pending');
+  const fallback = resolveLocalizedLabel(translations, normalizedStatus);
+  const candidates = [value, display];
+  for (const candidate of candidates) {
+    if (candidate == null) continue;
+    const candidateString = String(candidate).trim();
+    if (!candidateString) continue;
+    const normalizedCandidate = normalizeReviewStatusKey(candidateString);
+    if (translations[normalizedCandidate]) {
+      return translations[normalizedCandidate];
+    }
+    if (translationValues.includes(candidateString)) {
+      return candidateString;
+    }
+    const aliasKey = ENGLISH_ALIASES[normalizedCandidate];
+    if (aliasKey) {
+      return resolveLocalizedLabel(translations, aliasKey);
+    }
+  }
+  return fallback;
+};
+
+/***/ }),
+
 /***/ "./src/pages/ExportPage/ExportPage.js":
 /*!********************************************!*\
   !*** ./src/pages/ExportPage/ExportPage.js ***!
@@ -88695,6 +89013,44 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+const formatNameAliases = {
+  BRUSH: {
+    'Brush labels to NumPy': 'BRUSH_TO_NUMPY',
+    'Brush labels to PNG': 'BRUSH_TO_PNG'
+  }
+};
+const localizeWithFallback = (key, fallback) => {
+  const translated = (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)(key);
+  if (translated == null || translated === key) return fallback;
+  return translated;
+};
+const getFormatLocalizationKey = (format, fallbackKey) => {
+  if (!format) return fallbackKey;
+  const aliases = formatNameAliases[format.name];
+  const aliasedName = aliases === null || aliases === void 0 ? void 0 : aliases[format.title];
+  if (aliasedName) return aliasedName;
+  return fallbackKey;
+};
+const localizeFormat = format => {
+  if (!(format !== null && format !== void 0 && format.name)) return format;
+  const localizationKey = getFormatLocalizationKey(format, format.name);
+  const titleKey = `exportPage.formats.${localizationKey}.title`;
+  const descriptionKey = `exportPage.formats.${localizationKey}.description`;
+  const localizedFormat = {
+    ...format,
+    title: localizeWithFallback(titleKey, format.title),
+    description: localizeWithFallback(descriptionKey, format.description)
+  };
+  if (Array.isArray(format.tags)) {
+    localizedFormat.tags = format.tags.map(tag => {
+      const tagLocalizationKey = getFormatLocalizationKey(format, format.name);
+      const tagKey = `exportPage.formats.${tagLocalizationKey}.tags.${tag}`;
+      return localizeWithFallback(tagKey, tag);
+    });
+  }
+  return localizedFormat;
+};
 
 // const formats = {
 //   json: 'JSON',
@@ -88788,9 +89144,10 @@ const ExportPage = () => {
           pk: pageParams.id
         }
       }).then(formats => {
-        var _formats$;
-        setAvailableFormats(formats);
-        setCurrentFormat((_formats$ = formats[0]) === null || _formats$ === void 0 ? void 0 : _formats$.name);
+        var _localizedFormats$;
+        const localizedFormats = (formats !== null && formats !== void 0 ? formats : []).map(localizeFormat);
+        setAvailableFormats(localizedFormats);
+        setCurrentFormat((_localizedFormats$ = localizedFormats[0]) === null || _localizedFormats$ === void 0 ? void 0 : _localizedFormats$.name);
       });
     }
   }, [pageParams]);
@@ -89821,6 +90178,7 @@ const DangerZone = () => {
       title: (0,_i18n__WEBPACK_IMPORTED_MODULE_9__.t)('projectSettings.dangerZone.confirm.title'),
       body: (0,_i18n__WEBPACK_IMPORTED_MODULE_9__.t)('projectSettings.dangerZone.confirm.body'),
       okText: (0,_i18n__WEBPACK_IMPORTED_MODULE_9__.t)('projectSettings.dangerZone.confirm.ok'),
+      cancelText: (0,_i18n__WEBPACK_IMPORTED_MODULE_9__.t)('projectSettings.dangerZone.confirm.cancel'),
       buttonLook: "destructive",
       onOk: async () => {
         setProcessing(type);

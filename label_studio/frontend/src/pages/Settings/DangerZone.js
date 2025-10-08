@@ -20,6 +20,7 @@ export const DangerZone = () => {
       title: t('projectSettings.dangerZone.confirm.title'),
       body: t('projectSettings.dangerZone.confirm.body'),
       okText: t('projectSettings.dangerZone.confirm.ok'),
+      cancelText: t('projectSettings.dangerZone.confirm.cancel'),
       buttonLook: "destructive",
       onOk: async () => {
         setProcessing(type);
