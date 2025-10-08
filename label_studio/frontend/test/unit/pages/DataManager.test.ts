@@ -1,4 +1,5 @@
 import { ANNOTATION_UPDATE_EVENTS, createAnnotationUpdateHandler } from '../../../src/pages/DataManager/annotation-events';
+import { localizeReviewStatus } from '../../../src/pages/DataManager/reviewStatus';
 
 describe('createAnnotationUpdateHandler', () => {
   const resolveTaskId = (task: any) => {
@@ -116,5 +117,25 @@ describe('localizeReviewStatus', () => {
     });
 
     expect(result).toBe('已通过');
+  });
+
+  it('maps english aliases to localized labels', () => {
+    const result = localizeReviewStatus({
+      translations,
+      status: 'pending',
+      display: 'Not reviewed',
+    });
+
+    expect(result).toBe('未审核');
+  });
+
+  it('falls back to configured labels when translations are missing', () => {
+    const result = localizeReviewStatus({
+      translations: {},
+      status: 'rejected',
+      value: 'Declined',
+    });
+
+    expect(result).toBe('已驳回');
   });
 });
