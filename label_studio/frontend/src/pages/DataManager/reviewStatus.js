@@ -1,3 +1,15 @@
+export const REVIEW_STATUS_TRANSLATION_KEYS = {
+  pending: 'dataManager.review.pending',
+  approved: 'dataManager.review.approved',
+  rejected: 'dataManager.review.rejected',
+};
+
+export const createReviewStatusTranslations = (translate = (key) => key) =>
+  Object.entries(REVIEW_STATUS_TRANSLATION_KEYS).reduce((acc, [status, translationKey]) => {
+    acc[status] = translate(translationKey);
+    return acc;
+  }, {});
+
 export const normalizeReviewStatusKey = (value) => String(value ?? '').trim().toLowerCase();
 
 export const localizeReviewStatus = ({ translations = {}, status, display, value }) => {
