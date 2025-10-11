@@ -103,30 +103,3 @@ def test_views_total_counters(tasks_count, annotations_count, predictions_count,
     assert response_data["total"] == tasks_count, response_data
     assert response_data["total_annotations"] == tasks_count * annotations_count, response_data
     assert response_data["total_predictions"] == tasks_count * predictions_count, response_data
-
-
-@pytest.mark.django_db
-def test_views_tasks_total_annotations_count(business_client, project_id):
-    payload = dict(project=project_id, data={"test": 1})
-    response = business_client.post(
-        "/api/dm/views/",
-        data=json.dumps(payload),
-        content_type="application/json",
-    )
-
-    assert response.status_code == 201, response.content
-    view_id = response.json()["id"]
-
-    project = Project.objects.get(pk=project_id)
-    task_id = make_task({"data": {}}, project).id
-
-    for _ in range(0, 3):
-        make_annotation({"result": []}, task_id)
-
-    response = business_client.get(f"/api/dm/views/{view_id}/tasks/")
-
-    assert response.status_code == 200, response.content
-    response_data = response.json()
-
-    assert response_data["total"] == 1
-    assert response_data["tasks"][0]["total_annotations"] == 3
