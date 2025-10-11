@@ -122,11 +122,11 @@ const initializeDataManager = async (root, props, params) => {
   return new window.DataManager(dmConfig);
 };
 
-const REVIEW_STATUS_LABELS = {
-  pending: '未审核',
-  approved: '已通过',
-  rejected: '已驳回',
-};
+const getReviewStatusLabels = () => ({
+  pending: t('dataManager.review.pending'),
+  approved: t('dataManager.review.approved'),
+  rejected: t('dataManager.review.rejected'),
+});
 
 const detectUserRole = (user = {}) => {
   const candidates = [
@@ -894,7 +894,8 @@ DataManagerPage.context = ({dmRef}) => {
     await sendReviewDecision('rejected', { comment });
   }, [requestRejectComment, sendReviewDecision]);
 
-  const statusText = REVIEW_STATUS_LABELS[currentReviewStatus] ?? REVIEW_STATUS_LABELS.pending;
+  const reviewStatusLabels = getReviewStatusLabels();
+  const statusText = reviewStatusLabels[currentReviewStatus] ?? reviewStatusLabels.pending;
   const hasTask = !!currentTaskId;
   const reviewDisabled = !canReview || !hasTask;
   const disabledMessage = !hasTask
