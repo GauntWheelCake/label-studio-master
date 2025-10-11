@@ -4,21 +4,7 @@ import logging
 import re
 
 from django.db import models
-from django.db.models import (
-    Aggregate,
-    Avg,
-    Case,
-    CharField,
-    Count,
-    Exists,
-    F,
-    IntegerField,
-    OuterRef,
-    Q,
-    Subquery,
-    Value,
-    When,
-)
+from django.db.models import Aggregate, Count, Exists, OuterRef, Subquery, Avg, Q, F, Value
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models.fields.json import KeyTransform
 from django.db.models.functions import Coalesce
@@ -305,30 +291,9 @@ class PreparedTaskManager(models.Manager):
             fields_for_evaluation = []
 
         # default annotations for calculating total values in pagination output
-        # 这里改用子查询统计注释数量，避免多表 join 时 COUNT 结果被稀释成 1
-        from tasks.models import Annotation, Task, Q_finished_annotations
-
-        # 使用审核通过的注释条件（未取消且 result 非空），避免把草稿或空结果计入统计
-        annotation_count_subquery = Annotation.objects.filter(
-            Q_finished_annotations,
-            task=OuterRef("pk"),
-        ).order_by().values("task").annotate(total=Count("id")).values("total")
-
         queryset = queryset.annotate(
-            total_annotations=Coalesce(
-                Subquery(annotation_count_subquery[:1]),
-                Value(0),
-                output_field=IntegerField(),
-            ),
+            total_annotations=Count("annotations", distinct=True, filter=Q(annotations__was_cancelled=False)),
             total_predictions=Count("predictions", distinct=True),
-            # 根据审核状态枚举返回对应的中文显示值，统一后端输出
-            review_status_display=Case(
-                When(review_status=Task.ReviewStatus.PENDING, then=Value(Task.ReviewStatus.PENDING.label)),
-                When(review_status=Task.ReviewStatus.APPROVED, then=Value(Task.ReviewStatus.APPROVED.label)),
-                When(review_status=Task.ReviewStatus.REJECTED, then=Value(Task.ReviewStatus.REJECTED.label)),
-                default=Value(Task.ReviewStatus.PENDING.label),
-                output_field=CharField(),
-            ),
         )
 
         # db annotations applied only if we need them in ordering or filters

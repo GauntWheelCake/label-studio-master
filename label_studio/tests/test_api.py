@@ -194,14 +194,7 @@ def test_get_task(client_and_token, configured_project, response, status_code):
     )
     assert r.status_code == status_code
     if response:
-        payload = r.json()
-        for key, value in response.items():
-            assert payload[key] == value
-        # 断言审核相关字段与注释统计均已返回
-        assert payload["review_status"] == Task.ReviewStatus.PENDING
-        assert payload["review_status_display"] == Task.ReviewStatus.PENDING.label
-        assert payload["review_status_code"] == Task.ReviewStatus.PENDING
-        assert payload["total_annotations"] == 0
+        assert r.json() == response
 
 
 @pytest.mark.parametrize('payload, response, status_code', [
@@ -238,10 +231,4 @@ def test_patch_task(client_and_token, configured_project, payload, response, sta
 
     assert r.status_code == status_code
     if response:
-        payload = r.json()
-        for key, value in response.items():
-            assert payload[key] == value
-        assert payload["review_status"] == Task.ReviewStatus.PENDING
-        assert payload["review_status_display"] == Task.ReviewStatus.PENDING.label
-        assert payload["review_status_code"] == Task.ReviewStatus.PENDING
-        assert payload["total_annotations"] == 0
+        assert r.json() == response

@@ -5,7 +5,6 @@ import json
 
 from ..utils import make_task, make_annotation, make_prediction, project_id
 from projects.models import Project
-from tasks.models import Task
 
 
 @pytest.mark.django_db
@@ -104,42 +103,3 @@ def test_views_total_counters(tasks_count, annotations_count, predictions_count,
     assert response_data["total"] == tasks_count, response_data
     assert response_data["total_annotations"] == tasks_count * annotations_count, response_data
     assert response_data["total_predictions"] == tasks_count * predictions_count, response_data
-
-
-@pytest.mark.django_db
-def test_review_status_localization_and_annotation_count(business_client, project_id):
-    payload = dict(project=project_id, data={"test": 1})
-    response = business_client.post(
-        "/api/dm/views/",
-        data=json.dumps(payload),
-        content_type="application/json",
-    )
-
-    assert response.status_code == 201, response.content
-    view_id = response.json()["id"]
-
-    project = Project.objects.get(pk=project_id)
-    task = make_task({"data": {"text": "审核文本"}}, project)
-
-    for _ in range(2):
-        make_annotation({"result": []}, task.id)
-
-    task.review_status = Task.ReviewStatus.APPROVED
-    task.save(update_fields=["review_status"])
-
-    response = business_client.get(f"/api/dm/views/{view_id}/tasks/")
-    assert response.status_code == 200, response.content
-
-    payload = response.json()
-    assert payload["total"] == 1
-
-    item = payload["tasks"][0]
-
-    # 中文展示值来自序列化器的转换；review_status 本身回落为英文枚举
-    assert item["review_status"] == Task.ReviewStatus.APPROVED
-    assert item["review_status_display"] == "已通过"
-    # 原始英文编码仍然保留在 review_status_code 中，供筛选使用
-    assert item["review_status_code"] == Task.ReviewStatus.APPROVED
-
-    # total_annotations 需要准确反映 2 条有效注释
-    assert item["total_annotations"] == 2

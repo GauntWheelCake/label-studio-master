@@ -15,7 +15,7 @@ import { ImportModal } from '../CreateProject/Import/ImportModal';
 import { ExportPage } from '../ExportPage/ExportPage';
 import { APIConfig } from './api-config';
 import { ANNOTATION_UPDATE_EVENTS, createAnnotationUpdateHandler } from './annotation-events';
-import { localizeReviewStatus, normalizeReviewStatusKey, REVIEW_STATUS_FALLBACKS } from './reviewStatus';
+import { localizeReviewStatus, normalizeReviewStatusKey } from './reviewStatus';
 import "./DataManager.styl";
 
 const ROLE_PERMISSIONS = {
@@ -128,12 +128,6 @@ const REVIEW_STATUS_LABELS = {
   rejected: '已驳回',
 };
 
-const REVIEW_STATUS_VALUE_TO_CODE = Object.entries(REVIEW_STATUS_FALLBACKS).reduce((acc, [code, label]) => {
-  const normalized = normalizeReviewStatusKey(label);
-  if (normalized) acc[normalized] = code;
-  return acc;
-}, {});
-
 const detectUserRole = (user = {}) => {
   const candidates = [
     user.project_role,
@@ -172,7 +166,6 @@ export const DataManagerPage = ({...props}) => {
   const [activeRole, setActiveRole] = useState(getStoredRole());
   const roleRef = useRef(activeRole);
   const labelButtonInitialState = useRef(null);
-  const reviewDisplayToCodeRef = useRef(REVIEW_STATUS_VALUE_TO_CODE);
 
   const applyAnnotationControlState = useCallback((roleValue) => {
     if (typeof document === 'undefined') return;
@@ -269,6 +262,55 @@ export const DataManagerPage = ({...props}) => {
       const store = dataManager.store || dataManager._store || dataManager.dm?.store;
 
       if (store) {
+        const columnId = 'review_status';
+        const translations = {
+          pending: t('dataManager.review.pending'),
+          approved: t('dataManager.review.approved'),
+          rejected: t('dataManager.review.rejected'),
+        };
+
+        const getDisplayValue = (row) => {
+          const status = row?.review_status ?? row?.task?.review_status ?? 'pending';
+          const display = row?.review_status_display ?? row?.task?.review_status_display;
+
+          return localizeReviewStatus({
+            translations,
+            status,
+            display,
+          });
+        };
+
+        const renderTag = (value, row) => {
+          const status = row?.review_status ?? row?.task?.review_status ?? 'pending';
+          const display = row?.review_status_display ?? row?.task?.review_status_display;
+          const text = localizeReviewStatus({
+            translations,
+            status,
+            display,
+            value,
+          });
+          const normalized = normalizeReviewStatusKey(status || 'pending');
+
+          return `<span class="tag" data-status="${normalized}">${text}</span>`;
+        };
+
+        const applyColumnDefinition = (column) => {
+          if (!column) return;
+
+          column.id = columnId;
+          column.title = t('dataManager.review.columnTitle');
+          column.type = column.type ?? 'String';
+          column.align = column.align ?? 'left';
+          column.visible = column.visible ?? true;
+          column.width = column.width ?? 110;
+          column.accessor = column.accessor ?? ((row) => {
+            const v = row?.review_status ?? row?.task?.review_status ?? 'pending';
+            return String(v || 'pending');
+          });
+          column.getValue = getDisplayValue;
+          column.render = (value, row) => renderTag(value, row);
+        };
+
         const ensureRefresh = () => {
           const refresh = dataManager.update || dataManager.refresh || dataManager.forceUpdate;
           if (typeof refresh === 'function') {
@@ -278,136 +320,23 @@ export const DataManagerPage = ({...props}) => {
           }
         };
 
-        const ensureColumn = (columnId, applyColumnDefinition) => {
-          let column = store.columns?.find?.((c) => c.id === columnId);
+        let column = store.columns?.find?.((c) => c.id === columnId);
 
-          if (!column && typeof store.addColumn === 'function') {
-            store.addColumn({ id: columnId });
-            column = store.columns?.find?.((c) => c.id === columnId);
-          }
+        if (!column && typeof store.addColumn === 'function') {
+          store.addColumn({ id: columnId });
+          column = store.columns?.find?.((c) => c.id === columnId);
+        }
 
-          if (!column && Array.isArray(store.columns)) {
-            column = { id: columnId };
-            store.columns.push(column);
-          }
+        if (!column && Array.isArray(store.columns)) {
+          column = { id: columnId };
+          store.columns.push(column);
+        }
 
-          if (!column) return null;
+        applyColumnDefinition(column);
 
-          applyColumnDefinition(column);
-
-          if (typeof store.updateColumn === 'function') {
-            store.updateColumn(columnId, column);
-          }
-
-          return column;
-        };
-
-        const reviewTranslations = Object.keys(REVIEW_STATUS_FALLBACKS).reduce((acc, key) => {
-          const translationKey = `dataManager.review.${key}`;
-          const raw = t(translationKey);
-          const normalizedRaw = normalizeReviewStatusKey(raw);
-          const fallback = REVIEW_STATUS_FALLBACKS[key];
-          const missing = raw === translationKey || raw == null || raw === '';
-          const isSameAsStatus = normalizedRaw === key;
-
-          if (!missing && !isSameAsStatus && raw !== fallback) {
-            acc[key] = raw;
-          }
-
-          return acc;
-        }, {});
-
-        // 将翻译结果反向映射成 code => 文案，以便后续根据中文反推英文状态码
-        const reverseMap = Object.entries({ ...REVIEW_STATUS_FALLBACKS, ...reviewTranslations }).reduce((acc, [code, text]) => {
-          const normalized = normalizeReviewStatusKey(text);
-          if (normalized) acc[normalized] = code;
-          return acc;
-        }, {});
-        reviewDisplayToCodeRef.current = reverseMap;
-
-        const pick = (row, field) => row?.[field] ?? row?.task?.[field];
-
-        const resolveStatusCode = (row) => {
-          const rawCode = pick(row, 'review_status_code');
-
-          if (rawCode != null && rawCode !== '') {
-            return normalizeReviewStatusKey(rawCode);
-          }
-
-          const displayCandidates = [pick(row, 'review_status_display'), pick(row, 'review_status')];
-
-          for (const candidate of displayCandidates) {
-            if (candidate == null) continue;
-            const normalized = normalizeReviewStatusKey(candidate);
-            if (normalized && reviewDisplayToCodeRef.current?.[normalized]) {
-              return reviewDisplayToCodeRef.current[normalized];
-            }
-          }
-
-          // 没有单独的英文编码时兜底 pending，避免中文被再次转为小写导致匹配失败
-          return 'pending';
-        };
-
-        const getReviewDisplayValue = (row) => {
-          const status = resolveStatusCode(row);
-          const display = pick(row, 'review_status_display') ?? pick(row, 'review_status');
-
-          return localizeReviewStatus({
-            translations: reviewTranslations,
-            status,
-            display,
-          });
-        };
-
-        const renderReviewTag = (value, row) => {
-          const status = resolveStatusCode(row);
-          const display = pick(row, 'review_status_display') ?? pick(row, 'review_status');
-          const text = localizeReviewStatus({
-            translations: reviewTranslations,
-            status,
-            display,
-            value,
-          });
-
-          return `<span class="tag" data-status="${status}">${text}</span>`;
-        };
-
-        ensureColumn('review_status', (column) => {
-          column.id = 'review_status';
-          column.title = t('dataManager.review.columnTitle');
-          column.type = column.type ?? 'String';
-          column.align = column.align ?? 'left';
-          column.visible = column.visible ?? true;
-          column.width = column.width ?? 110;
-          column.accessor = column.accessor ?? ((row) => getReviewDisplayValue(row));
-          column.getValue = getReviewDisplayValue;
-          column.render = (value, row) => renderReviewTag(value, row);
-        });
-
-        ensureColumn('total_annotations', (column) => {
-          const resolveAnnotationCount = (row) => {
-            const direct = row?.total_annotations ?? row?.task?.total_annotations;
-
-            if (direct != null) {
-              const numeric = Number(direct);
-              if (!Number.isNaN(numeric)) return numeric;
-            }
-
-            const annotations = row?.annotations ?? row?.task?.annotations;
-            if (Array.isArray(annotations)) {
-              return annotations.filter((item) => item && item.was_cancelled !== true).length;
-            }
-
-            return 0;
-          };
-
-          column.id = 'total_annotations';
-          column.type = column.type ?? 'Number';
-          column.align = column.align ?? 'right';
-          column.getValue = resolveAnnotationCount;
-          column.accessor = column.accessor ?? ((row) => resolveAnnotationCount(row));
-          column.render = (value, row) => resolveAnnotationCount(row);
-        });
+        if (typeof store.updateColumn === 'function') {
+          store.updateColumn(columnId, column);
+        }
 
         ensureRefresh();
       }
@@ -431,8 +360,7 @@ export const DataManagerPage = ({...props}) => {
       history.push(buildLink("/data/export", {id: params.id}));
     });
 
-    // 将 DataManager 实例和“中文审核状态 => 英文状态码”映射一并传入上下文
-    setContextProps({dmRef: dataManager, reviewDisplayToCodeRef});
+    setContextProps({dmRef: dataManager});
 
     applyRoleRestrictions(roleRef.current ?? DEFAULT_ROLE);
   }, [LabelStudio, DataManager, applyRoleRestrictions]);
@@ -563,7 +491,7 @@ DataManagerPage.pages = {
   ExportPage,
   ImportModal,
 };
-DataManagerPage.context = ({dmRef, reviewDisplayToCodeRef: sharedReviewDisplayToCodeRef}) => {
+DataManagerPage.context = ({dmRef}) => {
   const location = useFixedLocation();
   const {project} = useProject();
   const [mode, setMode] = useState(dmRef?.mode ?? "explorer");
@@ -571,9 +499,6 @@ DataManagerPage.context = ({dmRef, reviewDisplayToCodeRef: sharedReviewDisplayTo
   const [currentReviewStatus, setCurrentReviewStatus] = useState('pending');
   const [pendingDecision, setPendingDecision] = useState(null);
   const isSwitchingTaskRef = useRef(false);
-  // 如果外层已经构建好映射则直接复用，否则使用兜底映射，避免引用未定义导致审核面板报错
-  const fallbackReviewDisplayToCodeRef = useRef(REVIEW_STATUS_VALUE_TO_CODE);
-  const reviewDisplayToCodeRef = sharedReviewDisplayToCodeRef ?? fallbackReviewDisplayToCodeRef;
 
   const showReviewError = useCallback((message) => {
     let modalInstance;
@@ -709,39 +634,9 @@ DataManagerPage.context = ({dmRef, reviewDisplayToCodeRef: sharedReviewDisplayTo
 
   const resolveReviewStatus = useCallback((task) => {
     if (!task) return 'pending';
-
-    const codeCandidates = [
-      task.review_status_code,
-      task.task?.review_status_code,
-      task.review_status,
-      task.task?.review_status,
-    ];
-
-    for (const candidate of codeCandidates) {
-      if (candidate == null) continue;
-      const normalized = normalizeReviewStatusKey(candidate);
-      if (normalized && REVIEW_STATUS_FALLBACKS[normalized]) {
-        return normalized;
-      }
-    }
-
-    const displayCandidates = [
-      task.review_status_display,
-      task.task?.review_status_display,
-      task.review_status,
-      task.task?.review_status,
-    ];
-
-    for (const candidate of displayCandidates) {
-      if (candidate == null) continue;
-      const normalized = normalizeReviewStatusKey(candidate);
-      if (normalized && reviewDisplayToCodeRef.current?.[normalized]) {
-        return reviewDisplayToCodeRef.current[normalized];
-      }
-    }
-
-    return 'pending';
-  }, [reviewDisplayToCodeRef]);
+    const status = task.review_status ?? task.task?.review_status ?? 'pending';
+    return String(status || 'pending').toLowerCase();
+  }, []);
 
   const extractTaskInfo = useCallback(() => {
     if (!dmRef?.store) {
@@ -971,7 +866,7 @@ DataManagerPage.context = ({dmRef, reviewDisplayToCodeRef: sharedReviewDisplayTo
           await loadTask.call(dmRef.store.taskStore, taskId, { select: true });
         }
 
-        const updatedStatus = result?.review_status_code ?? result?.review_status ?? decision;
+        const updatedStatus = result?.review_status ?? decision;
         if (updatedStatus) {
           setCurrentReviewStatus(String(updatedStatus || 'pending').toLowerCase());
         }
