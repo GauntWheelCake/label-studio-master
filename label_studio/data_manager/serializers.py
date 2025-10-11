@@ -255,10 +255,16 @@ class DataManagerTaskSerializer(TaskSerializer):
 
     @staticmethod
     def get_total_predictions(obj):
+        total = getattr(obj, "total_predictions", None)
+        if total is not None:
+            return total
         return obj.predictions.count()
 
     @staticmethod
     def get_total_annotations(obj):
+        total = getattr(obj, "total_annotations", None)
+        if total is not None:
+            return total
         return obj.annotations.filter(was_cancelled=False).count()
 
     @staticmethod
