@@ -9,6 +9,10 @@ export const ANNOTATION_UPDATE_EVENTS = [
 
 export const createAnnotationUpdateHandler = ({ dmRef, setCurrentReviewStatus, extractTaskInfo, resolveTaskId }) => {
   return async (payload = {}) => {
+    if (typeof setCurrentReviewStatus === 'function') {
+      setCurrentReviewStatus('pending');
+    }
+
     try {
       const taskStore = dmRef?.store?.taskStore;
       const selectedTask = taskStore?.selected;
@@ -27,12 +31,18 @@ export const createAnnotationUpdateHandler = ({ dmRef, setCurrentReviewStatus, e
           }
         }
       }
+
+      const view = dmRef?.currentView ?? dmRef?.store?.currentView ?? dmRef?.store?.viewsStore?.selected;
+      const reload = view?.reload ?? view?.load ?? view?.fetch;
+
+      if (typeof reload === 'function') {
+        await reload.call(view);
+      } else if (typeof dmRef?.store?.update === 'function') {
+        dmRef.store.update();
+      }
     } catch (error) {
       console.warn('[review] Failed to refresh task after annotation update', error);
     } finally {
-      if (typeof setCurrentReviewStatus === 'function') {
-        setCurrentReviewStatus('pending');
-      }
       if (typeof extractTaskInfo === 'function') {
         extractTaskInfo();
       }
