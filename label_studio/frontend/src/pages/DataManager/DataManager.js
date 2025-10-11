@@ -15,7 +15,7 @@ import { ImportModal } from '../CreateProject/Import/ImportModal';
 import { ExportPage } from '../ExportPage/ExportPage';
 import { APIConfig } from './api-config';
 import { ANNOTATION_UPDATE_EVENTS, createAnnotationUpdateHandler } from './annotation-events';
-import { localizeReviewStatus, normalizeReviewStatusKey } from './reviewStatus';
+import { localizeReviewStatus, normalizeReviewStatusKey, REVIEW_STATUS_FALLBACKS } from './reviewStatus';
 import "./DataManager.styl";
 
 const ROLE_PERMISSIONS = {
@@ -262,55 +262,6 @@ export const DataManagerPage = ({...props}) => {
       const store = dataManager.store || dataManager._store || dataManager.dm?.store;
 
       if (store) {
-        const columnId = 'review_status';
-        const translations = {
-          pending: t('dataManager.review.pending'),
-          approved: t('dataManager.review.approved'),
-          rejected: t('dataManager.review.rejected'),
-        };
-
-        const getDisplayValue = (row) => {
-          const status = row?.review_status ?? row?.task?.review_status ?? 'pending';
-          const display = row?.review_status_display ?? row?.task?.review_status_display;
-
-          return localizeReviewStatus({
-            translations,
-            status,
-            display,
-          });
-        };
-
-        const renderTag = (value, row) => {
-          const status = row?.review_status ?? row?.task?.review_status ?? 'pending';
-          const display = row?.review_status_display ?? row?.task?.review_status_display;
-          const text = localizeReviewStatus({
-            translations,
-            status,
-            display,
-            value,
-          });
-          const normalized = normalizeReviewStatusKey(status || 'pending');
-
-          return `<span class="tag" data-status="${normalized}">${text}</span>`;
-        };
-
-        const applyColumnDefinition = (column) => {
-          if (!column) return;
-
-          column.id = columnId;
-          column.title = t('dataManager.review.columnTitle');
-          column.type = column.type ?? 'String';
-          column.align = column.align ?? 'left';
-          column.visible = column.visible ?? true;
-          column.width = column.width ?? 110;
-          column.accessor = column.accessor ?? ((row) => {
-            const v = row?.review_status ?? row?.task?.review_status ?? 'pending';
-            return String(v || 'pending');
-          });
-          column.getValue = getDisplayValue;
-          column.render = (value, row) => renderTag(value, row);
-        };
-
         const ensureRefresh = () => {
           const refresh = dataManager.update || dataManager.refresh || dataManager.forceUpdate;
           if (typeof refresh === 'function') {
@@ -320,23 +271,109 @@ export const DataManagerPage = ({...props}) => {
           }
         };
 
-        let column = store.columns?.find?.((c) => c.id === columnId);
+        const ensureColumn = (columnId, applyColumnDefinition) => {
+          let column = store.columns?.find?.((c) => c.id === columnId);
 
-        if (!column && typeof store.addColumn === 'function') {
-          store.addColumn({ id: columnId });
-          column = store.columns?.find?.((c) => c.id === columnId);
-        }
+          if (!column && typeof store.addColumn === 'function') {
+            store.addColumn({ id: columnId });
+            column = store.columns?.find?.((c) => c.id === columnId);
+          }
 
-        if (!column && Array.isArray(store.columns)) {
-          column = { id: columnId };
-          store.columns.push(column);
-        }
+          if (!column && Array.isArray(store.columns)) {
+            column = { id: columnId };
+            store.columns.push(column);
+          }
 
-        applyColumnDefinition(column);
+          if (!column) return null;
 
-        if (typeof store.updateColumn === 'function') {
-          store.updateColumn(columnId, column);
-        }
+          applyColumnDefinition(column);
+
+          if (typeof store.updateColumn === 'function') {
+            store.updateColumn(columnId, column);
+          }
+
+          return column;
+        };
+
+        const reviewTranslations = Object.keys(REVIEW_STATUS_FALLBACKS).reduce((acc, key) => {
+          const translationKey = `dataManager.review.${key}`;
+          const raw = t(translationKey);
+          const normalizedRaw = normalizeReviewStatusKey(raw);
+          const fallback = REVIEW_STATUS_FALLBACKS[key];
+          const missing = raw === translationKey || raw == null || raw === '';
+          const isSameAsStatus = normalizedRaw === key;
+
+          if (!missing && !isSameAsStatus && raw !== fallback) {
+            acc[key] = raw;
+          }
+
+          return acc;
+        }, {});
+
+        const getReviewDisplayValue = (row) => {
+          const status = row?.review_status ?? row?.task?.review_status ?? 'pending';
+          const display = row?.review_status_display ?? row?.task?.review_status_display;
+
+          return localizeReviewStatus({
+            translations: reviewTranslations,
+            status,
+            display,
+          });
+        };
+
+        const renderReviewTag = (value, row) => {
+          const status = row?.review_status ?? row?.task?.review_status ?? 'pending';
+          const display = row?.review_status_display ?? row?.task?.review_status_display;
+          const text = localizeReviewStatus({
+            translations: reviewTranslations,
+            status,
+            display,
+            value,
+          });
+          const normalized = normalizeReviewStatusKey(status || 'pending');
+
+          return `<span class="tag" data-status="${normalized}">${text}</span>`;
+        };
+
+        ensureColumn('review_status', (column) => {
+          column.id = 'review_status';
+          column.title = t('dataManager.review.columnTitle');
+          column.type = column.type ?? 'String';
+          column.align = column.align ?? 'left';
+          column.visible = column.visible ?? true;
+          column.width = column.width ?? 110;
+          column.accessor = column.accessor ?? ((row) => {
+            const v = row?.review_status ?? row?.task?.review_status ?? 'pending';
+            return String(v || 'pending');
+          });
+          column.getValue = getReviewDisplayValue;
+          column.render = (value, row) => renderReviewTag(value, row);
+        });
+
+        ensureColumn('total_annotations', (column) => {
+          const resolveAnnotationCount = (row) => {
+            const direct = row?.total_annotations ?? row?.task?.total_annotations;
+
+            if (direct != null) {
+              const numeric = Number(direct);
+              if (!Number.isNaN(numeric)) return numeric;
+            }
+
+            const annotations = row?.annotations ?? row?.task?.annotations;
+            if (Array.isArray(annotations)) {
+              return annotations.filter((item) => item && item.was_cancelled !== true).length;
+            }
+
+            return 0;
+          };
+
+          column.id = 'total_annotations';
+          column.type = column.type ?? 'Number';
+          column.align = column.align ?? 'right';
+          column.getValue = resolveAnnotationCount;
+          column.accessor = column.accessor ?? ((row) => resolveAnnotationCount(row));
+          column.render = (value, row) => resolveAnnotationCount(row);
+        });
 
         ensureRefresh();
       }

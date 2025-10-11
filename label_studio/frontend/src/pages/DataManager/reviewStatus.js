@@ -1,9 +1,19 @@
+export const REVIEW_STATUS_FALLBACKS = {
+  pending: '未审核',
+  approved: '已通过',
+  rejected: '已驳回',
+};
+
 export const normalizeReviewStatusKey = (value) => String(value ?? '').trim().toLowerCase();
 
 export const localizeReviewStatus = ({ translations = {}, status, display, value }) => {
-  const translationValues = Object.values(translations).map((item) => String(item ?? '').trim());
+  const dictionary = {
+    ...REVIEW_STATUS_FALLBACKS,
+    ...translations,
+  };
+  const translationValues = Object.values(dictionary).map((item) => String(item ?? '').trim());
   const normalizedStatus = normalizeReviewStatusKey(status || 'pending');
-  const fallback = translations[normalizedStatus] || translations.pending;
+  const fallback = dictionary[normalizedStatus] || dictionary.pending;
   const candidates = [value, display];
 
   for (const candidate of candidates) {
@@ -14,8 +24,8 @@ export const localizeReviewStatus = ({ translations = {}, status, display, value
 
     const normalizedCandidate = normalizeReviewStatusKey(candidateString);
 
-    if (translations[normalizedCandidate]) {
-      return translations[normalizedCandidate];
+    if (dictionary[normalizedCandidate]) {
+      return dictionary[normalizedCandidate];
     }
 
     if (translationValues.includes(candidateString)) {
