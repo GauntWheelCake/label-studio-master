@@ -169,7 +169,10 @@ class DataManagerTaskSerializer(TaskSerializer):
     total_predictions = serializers.SerializerMethodField()
     file_upload = serializers.ReadOnlyField(source='file_upload_name')
     annotators = serializers.SerializerMethodField()
+    # 将审核状态的原始值和展示值都返回，方便前端同时进行筛选和中文展示
+    review_status = serializers.SerializerMethodField()
     review_status_display = serializers.SerializerMethodField()
+    review_status_code = serializers.SerializerMethodField()
 
     class Meta:
         model = Task
@@ -192,14 +195,20 @@ class DataManagerTaskSerializer(TaskSerializer):
             "file_upload",
             "annotators",
             "project",
-            # 审核状态
+            # 审核状态（中文展示 + 英文原始值）
             "review_status",
             "review_status_display",
+            "review_status_code",
 
         ]
 
     @staticmethod
     def get_review_status_display(obj):
+        # 如果查询集已经注入 review_status_display（来自 managers.py），直接复用，避免重复判断
+        annotated_value = getattr(obj, 'review_status_display', None)
+        if annotated_value is not None:
+            return annotated_value
+
         try:
             return obj.get_review_status_display()
         except AttributeError:
@@ -216,6 +225,15 @@ class DataManagerTaskSerializer(TaskSerializer):
 
         choices = dict(getattr(Task.ReviewStatus, 'choices', []) or [])
         return choices.get(value, value)
+
+    def get_review_status(self, obj):
+        """对外直接返回中文展示值，保持 Data Manager 列默认显示中文"""
+        return self.get_review_status_display(obj)
+
+    @staticmethod
+    def get_review_status_code(obj):
+        """保留英文编码，供前端筛选、统计等逻辑继续使用"""
+        return getattr(obj, 'review_status', None)
 
     @staticmethod
     def get_cancelled_annotations(obj):
@@ -259,6 +277,11 @@ class DataManagerTaskSerializer(TaskSerializer):
 
     @staticmethod
     def get_total_annotations(obj):
+        # 优先使用查询集中预先统计好的 total_annotations，避免额外 SQL
+        annotated_value = getattr(obj, 'total_annotations', None)
+        if annotated_value is not None:
+            return annotated_value
+
         return obj.annotations.filter(was_cancelled=False).count()
 
     @staticmethod

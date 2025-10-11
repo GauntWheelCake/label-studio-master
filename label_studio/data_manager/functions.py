@@ -190,8 +190,7 @@ def get_all_columns(project):
                 'labeling': False
             }
         },
-        # 添加审阅状态
-                # --- Review status (展示中文；也保留 review_status 便于筛选) ---
+        # 添加审阅状态列，直接使用后端返回的中文文案，保持筛选字段仍为 review_status
         {
             'id': 'review_status',   # 列的 id 对应我们刚加的 serializer 方法字段
             'title': '审核状态',
