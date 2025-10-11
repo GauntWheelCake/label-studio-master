@@ -200,6 +200,11 @@ class DataManagerTaskSerializer(TaskSerializer):
 
     @staticmethod
     def get_review_status_display(obj):
+        # 如果查询集已经注入 review_status_display（来自 managers.py），直接复用，避免重复判断
+        annotated_value = getattr(obj, 'review_status_display', None)
+        if annotated_value is not None:
+            return annotated_value
+
         try:
             return obj.get_review_status_display()
         except AttributeError:
@@ -259,6 +264,11 @@ class DataManagerTaskSerializer(TaskSerializer):
 
     @staticmethod
     def get_total_annotations(obj):
+        # 优先使用查询集中预先统计好的 total_annotations，避免额外 SQL
+        annotated_value = getattr(obj, 'total_annotations', None)
+        if annotated_value is not None:
+            return annotated_value
+
         return obj.annotations.filter(was_cancelled=False).count()
 
     @staticmethod
