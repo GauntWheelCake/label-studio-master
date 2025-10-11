@@ -15,7 +15,11 @@ import { ImportModal } from '../CreateProject/Import/ImportModal';
 import { ExportPage } from '../ExportPage/ExportPage';
 import { APIConfig } from './api-config';
 import { ANNOTATION_UPDATE_EVENTS, createAnnotationUpdateHandler } from './annotation-events';
-import { localizeReviewStatus, normalizeReviewStatusKey } from './reviewStatus';
+import {
+  createReviewStatusTranslations,
+  localizeReviewStatus,
+  normalizeReviewStatusKey,
+} from './reviewStatus';
 import "./DataManager.styl";
 
 const ROLE_PERMISSIONS = {
@@ -263,11 +267,7 @@ export const DataManagerPage = ({...props}) => {
 
       if (store) {
         const columnId = 'review_status';
-        const translations = {
-          pending: t('dataManager.review.pending'),
-          approved: t('dataManager.review.approved'),
-          rejected: t('dataManager.review.rejected'),
-        };
+        const translations = createReviewStatusTranslations(t);
 
         const getDisplayValue = (row) => {
           const status = row?.review_status ?? row?.task?.review_status ?? 'pending';

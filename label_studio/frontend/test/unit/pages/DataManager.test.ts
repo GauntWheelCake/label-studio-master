@@ -1,4 +1,9 @@
 import { ANNOTATION_UPDATE_EVENTS, createAnnotationUpdateHandler } from '../../../src/pages/DataManager/annotation-events';
+import {
+  REVIEW_STATUS_TRANSLATION_KEYS,
+  createReviewStatusTranslations,
+  localizeReviewStatus,
+} from '../../../src/pages/DataManager/reviewStatus';
 
 describe('createAnnotationUpdateHandler', () => {
   const resolveTaskId = (task: any) => {
@@ -101,12 +106,27 @@ describe('createAnnotationUpdateHandler', () => {
   });
 });
 
-describe('localizeReviewStatus', () => {
-  const translations = {
-    pending: '未审核',
-    approved: '已通过',
-    rejected: '已驳回',
-  };
+describe('review status localization helpers', () => {
+  const translations = createReviewStatusTranslations((key) => {
+    switch (key) {
+      case REVIEW_STATUS_TRANSLATION_KEYS.pending:
+        return '未审核';
+      case REVIEW_STATUS_TRANSLATION_KEYS.approved:
+        return '已通过';
+      case REVIEW_STATUS_TRANSLATION_KEYS.rejected:
+        return '已驳回';
+      default:
+        return key;
+    }
+  });
+
+  it('creates translation map from translation keys', () => {
+    expect(translations).toEqual({
+      pending: '未审核',
+      approved: '已通过',
+      rejected: '已驳回',
+    });
+  });
 
   it('maps unlocalized review_status_display values to localized labels', () => {
     const result = localizeReviewStatus({
