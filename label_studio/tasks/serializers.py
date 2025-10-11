@@ -14,7 +14,7 @@ from rest_framework.fields import SkipField
 from rest_framework.settings import api_settings
 
 from projects.models import Project
-from tasks.models import Task, Annotation, AnnotationDraft, Prediction
+from tasks.models import Task, Annotation, AnnotationDraft, Prediction, Q_finished_annotations
 from tasks.validation import TaskValidator
 from core.utils.common import get_object_with_check_and_log, retry_database_locked
 from core.label_config import replace_task_data_undefined_with_config_field
@@ -448,6 +448,10 @@ class TaskWithAnnotationsAndPredictionsAndDraftsSerializer(TaskSerializer):
     predictions = serializers.SerializerMethodField(default=[], read_only=True)
     annotations = serializers.SerializerMethodField(default=[], read_only=True)
     drafts = serializers.SerializerMethodField(default=[], read_only=True)
+    # 序列化时补充审核状态和注释统计，方便前端一次性拿到完整信息
+    review_status_display = serializers.SerializerMethodField()
+    review_status_code = serializers.SerializerMethodField()
+    total_annotations = serializers.SerializerMethodField()
 
     def get_predictions(self, task):
         predictions = task.predictions
@@ -478,7 +482,32 @@ class TaskWithAnnotationsAndPredictionsAndDraftsSerializer(TaskSerializer):
             drafts = drafts.filter(user=user)
 
         return AnnotationDraftSerializer(drafts, many=True, read_only=True, default=[], context=self.context).data
-    
+
+    @staticmethod
+    def get_review_status_display(task):
+        """根据枚举返回中文标签，保证审核栏位无需前端再次映射"""
+        value = getattr(task, 'review_status', None)
+        if value is None:
+            return None
+
+        try:
+            return Task.ReviewStatus(value).label
+        except Exception:
+            return value
+
+    @staticmethod
+    def get_review_status_code(task):
+        """保留英文编码，供筛选/状态判断逻辑使用"""
+        value = getattr(task, 'review_status', None)
+        if value is None:
+            return None
+        return str(value)
+
+    @staticmethod
+    def get_total_annotations(task):
+        """统计未取消且已完成的注释数量，修复前端恒为 1 的问题"""
+        return task.annotations.filter(Q_finished_annotations).count()
+
     def to_representation(self, instance):
         data = super().to_representation(instance)
         # —— 兜底补丁：如果父类没有带出，就手动补齐（不覆盖已有值）
@@ -486,6 +515,10 @@ class TaskWithAnnotationsAndPredictionsAndDraftsSerializer(TaskSerializer):
             data['review_status'] = getattr(instance, 'review_status', None)
         if 'review_comment' not in data:
             data['review_comment'] = getattr(instance, 'review_comment', '') or ''
+        # 审核状态与注释统计字段在旧版本里缺失，这里统一补充
+        data.setdefault('review_status_display', self.get_review_status_display(instance))
+        data.setdefault('review_status_code', self.get_review_status_code(instance))
+        data.setdefault('total_annotations', self.get_total_annotations(instance))
         return data
 
 
