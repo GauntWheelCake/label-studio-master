@@ -292,8 +292,12 @@ class PreparedTaskManager(models.Manager):
 
         # default annotations for calculating total values in pagination output
         queryset = queryset.annotate(
-            total_annotations=Count("annotations", distinct=True, filter=Q(annotations__was_cancelled=False)),
-            total_predictions=Count("predictions", distinct=True),
+            total_annotations=Count(
+                "annotations__id",
+                distinct=True,
+                filter=Q(annotations__was_cancelled=False),
+            ),
+            total_predictions=Count("predictions__id", distinct=True),
         )
 
         # db annotations applied only if we need them in ordering or filters
