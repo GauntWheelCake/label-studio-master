@@ -131,5 +131,5 @@ def test_timestamp_now():
 def test_start_browser():
     from label_studio.core.utils.common import start_browser
 
-    assert start_browser('http://localhost:8000', True) is None
-    assert start_browser('http://localhost:8000', False) is None
+    assert start_browser('http://localhost:8080', True) is None
+    assert start_browser('http://localhost:8080', False) is None

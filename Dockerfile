@@ -36,7 +36,7 @@ RUN find /label-studio/deploy -type f -name "*.sh" -exec sed -i 's/\r$//' {} \; 
 # 开发模式安装项目
 RUN python3.8 /label-studio/setup.py develop
 
-EXPOSE 8000
+EXPOSE 8080
 
 # ★ 补丁(b)：将 DRF 固定到兼容版本（避免 NullBooleanField 报错）
 RUN python3 -m pip install --no-cache-dir "djangorestframework==3.13.1"

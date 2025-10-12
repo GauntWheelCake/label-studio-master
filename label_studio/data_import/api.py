@@ -142,7 +142,7 @@ task_create_response_scheme = {
             ```
             
             <br>
-        """.format(host=(settings.HOSTNAME or 'https://localhost:8000'))
+        """.format(host=(settings.HOSTNAME or 'https://localhost:8080'))
     ))
 # Import
 class ImportAPI(generics.CreateAPIView):

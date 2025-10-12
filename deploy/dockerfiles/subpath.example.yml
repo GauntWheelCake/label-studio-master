@@ -9,7 +9,7 @@ services:
   nginx:
     image: nginx:latest
     ports:
-      - ${LABEL_STUDIO_PORT:-8000}:80
+      - 80:80
     depends_on:
       - app
     volumes:
@@ -23,7 +23,7 @@ services:
     tty: true
     image: heartexlabs/label-studio:latest
     ports:
-      - ${LABEL_STUDIO_INTERNAL_PORT:-8000}:${LABEL_STUDIO_INTERNAL_PORT:-8000}
+      - 8080:8080
     depends_on:
       - db
     environment:
@@ -34,7 +34,6 @@ services:
       - POSTGRE_PORT=5432
       - POSTGRE_HOST=db
       - LABEL_STUDIO_HOST=http://localhost/foo
-      - LABEL_STUDIO_PORT=${LABEL_STUDIO_INTERNAL_PORT:-8000}
     volumes:
       - ./mydata:/label-studio/data:rw
     command: [ "./deploy/wait-for-postgres.sh", "db", "bash", "/label-studio/deploy/start_label_studio.sh" ]

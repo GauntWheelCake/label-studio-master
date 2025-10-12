@@ -25,7 +25,7 @@ pip install label-studio
 ```bash
 label-studio start
 ```
-3. Open the Label Studio UI at http://localhost:8000.
+3. Open the Label Studio UI at http://localhost:8080. 
 4. Sign up with an email address and password that you create.
 5. Click **Create** to create a project and start labeling data.
 6. Name the project, and if you want, type a description and select a color.

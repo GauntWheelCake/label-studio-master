@@ -69,14 +69,14 @@ These API endpoints were introduced in Label Studio version 0.8.1 and are only v
 
 Save labeling config for a project using API: 
 ```
-curl -X POST -H Content-Type:application/json http://localhost:8000/api/project/config \
+curl -X POST -H Content-Type:application/json http://localhost:8080/api/project/config \
 --data "{\"label_config\": \"<View>[...]</View>\"}"
 ```
 
 Or by reading from a local config.xml file:
 
 ```
-curl -X POST -H Content-Type:application/xml http://localhost:8000/api/project/config \
+curl -X POST -H Content-Type:application/xml http://localhost:8080/api/project/config \
 --data @config.xml
 ```
 
@@ -97,14 +97,14 @@ If errors occur, the backend returns status 400 and the response body is a JSON 
 Use the API to import tasks in [Label Studio basic format](tasks.html#Basic-format), which can be useful when you are creating a data stream.
 
 ```bash
-curl -X POST -H Content-Type:application/json http://localhost:8000/api/project/import \
+curl -X POST -H Content-Type:application/json http://localhost:8080/api/project/import \
 --data "[{\"my_key\": \"my_value_1\"}, {\"my_key\": \"my_value_2\"}]"
 ```
 
 Or you can import a file and make a Label Studio task automatically:
 
 ```bash
-curl -X POST -F "FileUpload=@test.jpg" http://localhost:8000/api/project/import
+curl -X POST -F "FileUpload=@test.jpg" http://localhost:8080/api/project/import
 ```
 
 ### Retrieve project
@@ -116,7 +116,7 @@ curl -X POST -F "FileUpload=@test.jpg" http://localhost:8000/api/project/import
 You can retrieve project settings, including the total task count, using the API in JSON format: 
 
 ```json
-curl http://localhost:8000/api/project/
+curl http://localhost:8080/api/project/
 ```
 
 Response example: 
@@ -138,7 +138,7 @@ Response example:
 To get tasks with pagination in JSON format:
 
 ```
-curl http://localhost:8000/api/tasks?page=1&page_size=10&order=-completed_at
+curl http://localhost:8080/api/tasks?page=1&page_size=10&order=-completed_at
 ```
 
 Response example:
@@ -175,7 +175,7 @@ Response example:
 You can use the API to request a file with all annotations, for example:
 
 ```bash
-curl http://localhost:8000/api/project/export?format=JSON > exported_results.json
+curl http://localhost:8080/api/project/export?format=JSON > exported_results.json
 ```
 
 The format descriptions are presented [in the export documentation](export.html). 
