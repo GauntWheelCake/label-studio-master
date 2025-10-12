@@ -2,12 +2,13 @@
 """
 import logging
 
-from django.urls import reverse
 from django.conf import settings
+from django.urls import reverse
 from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
 from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.exceptions import PermissionDenied as DRFPermissionDenied
 
 from drf_yasg.utils import swagger_auto_schema
 from django.utils.decorators import method_decorator
@@ -16,9 +17,13 @@ from label_studio.core.mixins import APIViewVirtualRedirectMixin, APIViewVirtual
 from label_studio.core.permissions import all_permissions, ViewClassPermission
 from label_studio.core.utils.common import get_object_with_check_and_log
 
-from organizations.models import Organization
+from organizations.models import Organization, OrganizationMember
 from organizations.serializers import (
-    OrganizationSerializer, OrganizationIdSerializer, OrganizationMemberUserSerializer, OrganizationInviteSerializer
+    OrganizationSerializer,
+    OrganizationIdSerializer,
+    OrganizationMemberSerializer,
+    OrganizationMemberUserSerializer,
+    OrganizationInviteSerializer,
 )
 
 
@@ -82,6 +87,30 @@ class OrganizationMemberListAPI(generics.ListAPIView):
 
     def get(self, request, *args, **kwargs):
         return super(OrganizationMemberListAPI, self).get(request, *args, **kwargs)
+
+
+class OrganizationMemberAPI(generics.DestroyAPIView):
+
+    parser_classes = (JSONParser, FormParser, MultiPartParser)
+    permission_required = all_permissions.organizations_change
+    serializer_class = OrganizationMemberSerializer
+
+    def get_queryset(self):
+        return OrganizationMember.objects.filter(
+            organization__users=self.request.user,
+        ).select_related('organization', 'user')
+
+    def perform_destroy(self, instance):
+        organization = instance.organization
+        user = self.request.user
+
+        if not (user.is_superuser or organization.created_by_id == user.id):
+            raise DRFPermissionDenied('You do not have permission to remove members from this organization.')
+
+        if organization.created_by_id == instance.user_id:
+            raise DRFPermissionDenied('You cannot remove the organization owner.')
+
+        super().perform_destroy(instance)
 
 
 @method_decorator(name='get', decorator=swagger_auto_schema(

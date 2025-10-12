@@ -21,6 +21,7 @@ import "./DataManager.styl";
 const ROLE_PERMISSIONS = {
   [UserRole.Annotator]: { annotate: true, review: false },
   [UserRole.Reviewer]: { annotate: false, review: true },
+  [UserRole.Manager]: { annotate: true, review: true },
 };
 
 const ROLE_TOOLTIPS = {
@@ -143,10 +144,11 @@ const detectUserRole = (user = {}) => {
     .filter(Boolean)
     .map(value => String(value).toLowerCase());
 
-  if (normalized.some(value => value.includes('review'))) return 'reviewer';
-  if (normalized.some(value => value.includes('annot'))) return 'annotator';
+  if (normalized.some(value => value.includes('manage'))) return UserRole.Manager;
+  if (normalized.some(value => value.includes('review'))) return UserRole.Reviewer;
+  if (normalized.some(value => value.includes('annot'))) return UserRole.Annotator;
 
-  return 'annotator';
+  return UserRole.Annotator;
 };
 
 const buildLink = (path, params) => {
@@ -693,8 +695,9 @@ DataManagerPage.context = ({dmRef}) => {
 
     return unsubscribe;
   }, []);
-  const isReviewer = userRole === 'reviewer';
-  const canReview = isReviewer;
+  const isReviewer = userRole === UserRole.Reviewer;
+  const isManager = userRole === UserRole.Manager;
+  const canReview = isReviewer || isManager;
 
   const resolveTaskId = useCallback((task) => {
     if (!task) return null;

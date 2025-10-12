@@ -15,6 +15,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import PermissionDenied as DRFPermissionDenied
 
 from core.permissions import all_permissions
 from users.models import User
@@ -68,6 +69,27 @@ class UserAPI(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return User.objects.filter(organizations=self.request.user.active_organization)
+
+    def perform_destroy(self, instance):
+        request_user = self.request.user
+        active_org = request_user.active_organization
+
+        if instance.pk == request_user.pk:
+            raise DRFPermissionDenied('You cannot delete the currently authenticated user.')
+
+        if active_org is None or not active_org.has_user(instance):
+            raise DRFPermissionDenied('The selected user does not belong to your active organization.')
+
+        if active_org.created_by_id == instance.pk:
+            raise DRFPermissionDenied('You cannot delete the owner of the organization.')
+
+        role_header = self.request.headers.get('X-User-Role') or self.request.headers.get('x-user-role')
+        role = (role_header or '').strip().lower()
+
+        if not (request_user.is_superuser or active_org.created_by_id == request_user.pk or role == 'manager'):
+            raise DRFPermissionDenied('You do not have permission to delete this user.')
+
+        super().perform_destroy(instance)
 
     @swagger_auto_schema(auto_schema=None, methods=['delete', 'post'])
     @action(detail=True, methods=['delete', 'post'])
