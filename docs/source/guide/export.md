@@ -13,7 +13,7 @@ Export your completed annotations from Label Studio. Label Studio stores your an
 
 You can convert the raw JSON completed annotations stored by Label Studio into a more common format and export that data in several different ways:
 
-- Export from the Label Studio UI on the [/export](http://localhost:8080/export) page.
+- Export from the Label Studio UI on the [/export](http://localhost:8000/export) page.
 - Call the API to export data. See the Label Studio [API documentation](api.html).
 - For versions of Label Studio earlier than 1.0.0, run the relevant [converter tool](https://github.com/heartexlabs/label-studio-converter) on the directory of completed annotations using the command line or Python. You can also run the relevant converter tool on exported JSON from version 1.0.0. 
 

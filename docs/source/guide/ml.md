@@ -94,7 +94,7 @@ After you connect a model to Label Studio as a machine learning backend, you can
 - Automatically after any annotations are submitted or updated, enable the option `Start model training after annotations submit or update` on the **Machine Learning** settings for your project.
 - Manually using the API, cURL the API from the command line, specifying the ID of your project: 
    ```
-   curl -X POST http://localhost:8080/api/ml/{id}/train
+   curl -X POST http://localhost:8000/api/ml/{id}/train
    ```
 
 You must have at least one task annotated before you can start training. 
@@ -132,7 +132,7 @@ If you want to delete all predictions from Label Studio, you can do it using the
 
 ```
 curl -H 'Authorization: Token <user-token-from-account-page>' -X POST \ 
- "http://localhost:8080/api/dm/actions?id=delete_tasks_predictions&project=<id>"
+ "http://localhost:8000/api/dm/actions?id=delete_tasks_predictions&project=<id>"
 ```
    
 ## Set up a machine learning backend with Docker Compose

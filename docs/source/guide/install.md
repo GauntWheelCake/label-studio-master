@@ -46,7 +46,7 @@ After you install Label Studio, start the server with the following command:
 ```bash
 label-studio
 ```
-The default web browser opens automatically at [http://localhost:8080](http://localhost:8080) with Label Studio. See [start Label Studio](start.html) for more options when starting Label Studio.
+The default web browser opens automatically at [http://localhost:8000](http://localhost:8000) with Label Studio. See [start Label Studio](start.html) for more options when starting Label Studio.
 
 ## Install with Docker
 
@@ -54,9 +54,9 @@ Label Studio is also available as a Docker container. Make sure you have [Docker
 
 
 ### Install with Docker on *nix
-To install and start Label Studio at [http://localhost:8080](http://localhost:8080), storing all labeling data in `./my_project` directory, run the following:
+To install and start Label Studio at [http://localhost:8000](http://localhost:8000), storing all labeling data in `./my_project` directory, run the following:
 ```bash
-docker run -it -p 8080:8080 -v `pwd`/mydata:/label-studio/data heartexlabs/label-studio:latest
+docker run -it -p 8000:8000 -v `pwd`/mydata:/label-studio/data heartexlabs/label-studio:latest
 ```
 
 ### Install with Docker on Windows
@@ -65,7 +65,7 @@ Or for Windows, you have to modify the volumes paths set by `-v` option.
 #### Override the default Docker install
 You can override the default Docker install by appending new arguments: 
 ```bash
-docker run -it -p 8080:8080 -v `pwd`/mydata:/label-studio/data heartexlabs/label-studio:latest label-studio --log-level DEBUG
+docker run -it -p 8000:8000 -v `pwd`/mydata:/label-studio/data heartexlabs/label-studio:latest label-studio --log-level DEBUG
 ```
 
 ### Build a local image with Docker
@@ -75,7 +75,7 @@ docker build -t heartexlabs/label-studio:latest .
 ```
 
 ### Run with Docker Compose
-Use Docker Compose to serve Label Studio at `http://localhost:8080`.
+Use Docker Compose to serve Label Studio at `http://localhost:8000`.
 
 Start Label Studio:
 ```bash
@@ -106,7 +106,7 @@ cd label-studio
 pip install -e .
 # Run database migrations
 python label_studio/manage.py migrate
-# Start the server in development mode at http://localhost:8080
+# Start the server in development mode at http://localhost:8000
 python label_studio/manage.py runserver
 ```
 

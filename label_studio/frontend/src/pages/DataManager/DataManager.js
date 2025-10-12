@@ -33,6 +33,7 @@ const ROLE_TOOLTIPS = {
 const ANNOTATION_KEYWORDS = ['submit', 'update', '提交', '更新'];
 const DELETE_KEYWORDS = ['delete', '删除'];
 const REVIEW_KEYWORDS = ['accept', 'reject'];
+const PREDICTION_KEYWORDS = /prediction/i;
 
 const normalizeText = (node) => (node?.textContent ?? '').trim().toLowerCase();
 const normalizeAttribute = (element, name) => (element?.getAttribute?.(name) ?? '').trim().toLowerCase();
@@ -93,6 +94,87 @@ const setElementRoleState = (element, allowed, message) => {
     delete element.dataset.roleOriginalTitle;
     delete element.dataset.roleOriginalTabIndex;
   }
+};
+
+const sanitizeActionMap = (actionsMap) => {
+  if (!(actionsMap instanceof Map)) return;
+
+  Array.from(actionsMap.entries()).forEach(([key, value]) => {
+    const title = value?.action?.title ?? '';
+    if (PREDICTION_KEYWORDS.test(title)) {
+      actionsMap.delete(key);
+    }
+  });
+};
+
+const sanitizeAvailableActions = (store) => {
+  if (!store?.availableActions?.replace) return;
+
+  const filtered = store.availableActions.filter((action) => {
+    const title = action?.title ?? '';
+    return !PREDICTION_KEYWORDS.test(title);
+  });
+
+  if (filtered.length !== store.availableActions.length) {
+    store.availableActions.replace(filtered);
+  }
+};
+
+const registerPredictionGuards = (dataManager, registerCleanup) => {
+  if (!dataManager) return;
+
+  sanitizeActionMap(dataManager.actions);
+
+  if (dataManager.actions instanceof Map) {
+    const originalSet = dataManager.actions.set.bind(dataManager.actions);
+    dataManager.actions.set = (key, value) => {
+      const title = value?.action?.title ?? '';
+      if (PREDICTION_KEYWORDS.test(title)) return dataManager.actions;
+      return originalSet(key, value);
+    };
+
+    registerCleanup?.(() => {
+      dataManager.actions.set = originalSet;
+    });
+  }
+
+  const store = dataManager.store || dataManager._store || dataManager.dm?.store;
+  if (!store) return;
+
+  sanitizeAvailableActions(store);
+
+  if (store.availableActions?.observe) {
+    const disposer = store.availableActions.observe(() => sanitizeAvailableActions(store));
+    registerCleanup?.(() => disposer());
+  }
+};
+
+const updateBulkActionButtonLabels = (rootNode) => {
+  if (!rootNode) return;
+
+  const buttons = rootNode.querySelectorAll('button');
+
+  buttons.forEach((button) => {
+    const textNodes = Array.from(button.childNodes).filter((node) => node.nodeType === Node.TEXT_NODE);
+    if (!textNodes.length) return;
+
+    const targetNode = textNodes.find((node) => /Tasks/i.test(node.textContent ?? ''));
+    if (!targetNode) return;
+
+    const raw = targetNode.textContent ?? '';
+    const match = raw.match(/(\d+)/);
+    const count = match ? Number(match[1]) : 0;
+
+    const translated = count > 0
+      ? t('dataManager.actions.bulkWithCount').replace('{count}', count)
+      : t('dataManager.actions.bulk');
+
+    const formatted = ` ${translated}`;
+
+    if (targetNode.textContent !== formatted) {
+      targetNode.textContent = formatted;
+    }
+  });
 };
 
 const initializeDataManager = async (root, props, params) => {
@@ -162,9 +244,27 @@ export const DataManagerPage = ({...props}) => {
   const setContextProps = useContextProps();
   const [crashed, setCrashed] = useState(false);
   const dataManagerRef = useRef();
+  const cleanupCallbacks = useRef([]);
   const [activeRole, setActiveRole] = useState(getStoredRole());
   const roleRef = useRef(activeRole);
   const interfaceInitialStateRef = useRef(new Map());
+
+  const registerCleanup = useCallback((callback) => {
+    if (typeof callback !== 'function') return;
+    cleanupCallbacks.current.push(callback);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      cleanupCallbacks.current.splice(0).forEach((dispose) => {
+        try {
+          dispose();
+        } catch (err) {
+          console.warn('[dm] Failed to cleanup resource', err);
+        }
+      });
+    };
+  }, []);
 
   const applyAnnotationControlState = useCallback((roleValue) => {
     if (typeof document === 'undefined') return;
@@ -270,6 +370,8 @@ export const DataManagerPage = ({...props}) => {
     );
 
     const {current: dataManager} = dataManagerRef;
+    registerPredictionGuards(dataManager, registerCleanup);
+    updateBulkActionButtonLabels(root.current);
     // === 自定义列：审核状态（最小侵入式注入） =========================
     try {
       // 1) 容错：不同版本的 DataManager Store 命名略有差异
@@ -454,6 +556,40 @@ export const DataManagerPage = ({...props}) => {
   useEffect(() => {
     applyRoleRestrictions(activeRole);
   }, [activeRole, applyRoleRestrictions]);
+
+  useEffect(() => {
+    const rootNode = root.current;
+    if (!rootNode || typeof MutationObserver === 'undefined') return;
+
+    const update = () => updateBulkActionButtonLabels(rootNode);
+
+    update();
+
+    const observer = new MutationObserver(update);
+    observer.observe(rootNode, { childList: true, subtree: true, characterData: true });
+
+    return () => observer.disconnect();
+  }, [root]);
+
+  useEffect(() => {
+    if (!LabelStudio || typeof window === 'undefined') return;
+
+    const messages = window.LabelStudio?.messages;
+    if (!messages) return;
+
+    const previous = messages.NO_COMP_LEFT;
+    const localized = t('annotator.messages.noMoreAnnotations');
+
+    if (localized) {
+      messages.NO_COMP_LEFT = localized;
+    }
+
+    return () => {
+      if (messages) {
+        messages.NO_COMP_LEFT = previous;
+      }
+    };
+  }, [LabelStudio]);
 
   useEffect(() => {
     if (typeof MutationObserver === 'undefined') return;

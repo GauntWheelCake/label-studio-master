@@ -45,7 +45,7 @@ Save this example JSON as a file to import it into Label Studio, for example, `e
 {% codeblock lang:json %}
 [{
   "data": {
-    "image": "http://localhost:8080/static/samples/sample.jpg" 
+    "image": "http://localhost:8000/static/samples/sample.jpg"
   },
 
   "predictions": [{
