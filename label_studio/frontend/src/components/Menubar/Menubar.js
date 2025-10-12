@@ -86,7 +86,6 @@ export const Menubar = ({
   }, []);
 
   const roleOptions = useMemo(() => ([
-    { label: '管理员', value: UserRole.Admin },
     { label: '批注者', value: UserRole.Annotator },
     { label: '审阅者', value: UserRole.Reviewer },
   ]), []);

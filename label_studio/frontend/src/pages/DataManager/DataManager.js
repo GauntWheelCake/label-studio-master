@@ -19,7 +19,6 @@ import { localizeReviewStatus, normalizeReviewStatusKey } from './reviewStatus';
 import "./DataManager.styl";
 
 const ROLE_PERMISSIONS = {
-  [UserRole.Admin]: { annotate: false, review: false },
   [UserRole.Annotator]: { annotate: true, review: false },
   [UserRole.Reviewer]: { annotate: false, review: true },
 };
@@ -28,12 +27,15 @@ const ROLE_TOOLTIPS = {
   annotate: '当前身份不可提交标注',
   review: '当前身份不可执行审核',
   start: '当前身份不可发起标注',
+  delete: '当前身份不可删除注解',
 };
 
-const ANNOTATION_KEYWORDS = ['submit', 'update','提交', '更新'];
+const ANNOTATION_KEYWORDS = ['submit', 'update', '提交', '更新'];
+const DELETE_KEYWORDS = ['delete', '删除'];
 const REVIEW_KEYWORDS = ['accept', 'reject'];
 
 const normalizeText = (node) => (node?.textContent ?? '').trim().toLowerCase();
+const normalizeAttribute = (element, name) => (element?.getAttribute?.(name) ?? '').trim().toLowerCase();
 
 const setElementRoleState = (element, allowed, message) => {
   if (!element) return;
@@ -122,11 +124,11 @@ const initializeDataManager = async (root, props, params) => {
   return new window.DataManager(dmConfig);
 };
 
-const REVIEW_STATUS_LABELS = {
-  pending: '未审核',
-  approved: '已通过',
-  rejected: '已驳回',
-};
+const createReviewStatusTranslations = () => ({
+  pending: t('dataManager.review.pending'),
+  approved: t('dataManager.review.approved'),
+  rejected: t('dataManager.review.rejected'),
+});
 
 const detectUserRole = (user = {}) => {
   const candidates = [
@@ -142,10 +144,7 @@ const detectUserRole = (user = {}) => {
     .map(value => String(value).toLowerCase());
 
   if (normalized.some(value => value.includes('review'))) return 'reviewer';
-  if (normalized.some(value => value.includes('admin'))) return 'admin';
   if (normalized.some(value => value.includes('annot'))) return 'annotator';
-
-  if (user.is_staff || user.is_superuser) return 'admin';
 
   return 'annotator';
 };
@@ -165,7 +164,7 @@ export const DataManagerPage = ({...props}) => {
   const dataManagerRef = useRef();
   const [activeRole, setActiveRole] = useState(getStoredRole());
   const roleRef = useRef(activeRole);
-  const labelButtonInitialState = useRef(null);
+  const interfaceInitialStateRef = useRef(new Map());
 
   const applyAnnotationControlState = useCallback((roleValue) => {
     if (typeof document === 'undefined') return;
@@ -180,12 +179,18 @@ export const DataManagerPage = ({...props}) => {
 
     interactiveElements.forEach((element) => {
       const text = normalizeText(element);
-      if (!text) return;
+      const ariaLabel = normalizeAttribute(element, 'aria-label');
+      const title = normalizeAttribute(element, 'title');
+      const tokens = [text, ariaLabel, title].filter(Boolean);
 
-      if (ANNOTATION_KEYWORDS.some((keyword) => text.includes(keyword))) {
+      if (!tokens.length) return;
+
+      if (tokens.some((value) => ANNOTATION_KEYWORDS.some((keyword) => value.includes(keyword)))) {
         setElementRoleState(element, permissions.annotate, permissions.annotate ? '' : ROLE_TOOLTIPS.annotate);
-      } else if (REVIEW_KEYWORDS.some((keyword) => text.includes(keyword))) {
+      } else if (tokens.some((value) => REVIEW_KEYWORDS.some((keyword) => value.includes(keyword)))) {
         setElementRoleState(element, permissions.review, permissions.review ? '' : ROLE_TOOLTIPS.review);
+      } else if (tokens.some((value) => DELETE_KEYWORDS.some((keyword) => value.includes(keyword)))) {
+        setElementRoleState(element, permissions.annotate, permissions.annotate ? '' : ROLE_TOOLTIPS.delete);
       }
     });
   }, []);
@@ -199,25 +204,34 @@ export const DataManagerPage = ({...props}) => {
 
     const store = dataManagerRef.current?.store;
 
-    if (store?.interfaceEnabled && store?.disableInterface && store?.enableInterface) {
+    const setInterfaceAllowed = (name, allowed) => {
+      if (!store?.interfaceEnabled || !store?.disableInterface || !store?.enableInterface) return;
+
       try {
-        if (!annotateAllowed) {
-          if (labelButtonInitialState.current === null && typeof store.interfaceEnabled === 'function') {
-            labelButtonInitialState.current = store.interfaceEnabled('labelButton');
+        if (!allowed) {
+          if (!interfaceInitialStateRef.current.has(name)) {
+            const currentValue = store.interfaceEnabled(name);
+            interfaceInitialStateRef.current.set(name, Boolean(currentValue));
           }
-          store.disableInterface('labelButton');
-        } else if (labelButtonInitialState.current !== null) {
-          if (labelButtonInitialState.current) {
-            store.enableInterface('labelButton');
+          store.disableInterface(name);
+        } else if (interfaceInitialStateRef.current.has(name)) {
+          const initialState = interfaceInitialStateRef.current.get(name);
+
+          if (initialState) {
+            store.enableInterface(name);
           } else {
-            store.disableInterface('labelButton');
+            store.disableInterface(name);
           }
-          labelButtonInitialState.current = null;
+
+          interfaceInitialStateRef.current.delete(name);
         }
       } catch (err) {
         console.warn('[roles] Failed to update Data Manager interfaces', err);
       }
-    }
+    };
+
+    setInterfaceAllowed('labelButton', annotateAllowed);
+    setInterfaceAllowed('annotations:delete', annotateAllowed);
 
     const labelButtons = document.querySelectorAll('.dm-button');
     labelButtons.forEach((element) => {
@@ -228,7 +242,7 @@ export const DataManagerPage = ({...props}) => {
         setElementRoleState(element, annotateAllowed, annotateAllowed ? '' : ROLE_TOOLTIPS.start);
       }
     });
-  }, [dataManagerRef, labelButtonInitialState]);
+  }, [dataManagerRef, interfaceInitialStateRef]);
 
   const applyRoleRestrictions = useCallback((roleValue) => {
     const resolvedRole = roleValue ?? roleRef.current ?? DEFAULT_ROLE;
@@ -263,11 +277,7 @@ export const DataManagerPage = ({...props}) => {
 
       if (store) {
         const columnId = 'review_status';
-        const translations = {
-          pending: t('dataManager.review.pending'),
-          approved: t('dataManager.review.approved'),
-          rejected: t('dataManager.review.rejected'),
-        };
+        const translations = createReviewStatusTranslations();
 
         const getDisplayValue = (row) => {
           const status = row?.review_status ?? row?.task?.review_status ?? 'pending';
@@ -334,6 +344,66 @@ export const DataManagerPage = ({...props}) => {
 
         applyColumnDefinition(column);
 
+        const getAnnotationCount = (row) => {
+          if (!row) return 0;
+
+          const numericCandidates = [
+            row?.total_annotations,
+            row?.task?.total_annotations,
+            row?.totalAnnotations,
+            row?.task?.totalAnnotations,
+          ];
+
+          for (const candidate of numericCandidates) {
+            const parsed = Number(candidate);
+            if (Number.isFinite(parsed)) {
+              return parsed;
+            }
+          }
+
+          const arrays = [
+            Array.isArray(row?.annotations) ? row.annotations : null,
+            Array.isArray(row?.task?.annotations) ? row.task.annotations : null,
+          ];
+
+          const counts = arrays
+            .filter((items) => Array.isArray(items))
+            .map((items) => items.reduce((acc, item) => acc + (item && !item.was_cancelled ? 1 : 0), 0));
+
+          if (counts.length) {
+            return Math.max(...counts);
+          }
+
+          return 0;
+        };
+
+        const annotationColumnId = 'total_annotations';
+        let annotationColumn = store.columns?.find?.((c) => c.id === annotationColumnId || c.alias === annotationColumnId);
+
+        if (!annotationColumn && typeof store.addColumn === 'function') {
+          store.addColumn({ id: annotationColumnId });
+          annotationColumn = store.columns?.find?.((c) => c.id === annotationColumnId || c.alias === annotationColumnId);
+        }
+
+        if (!annotationColumn && Array.isArray(store.columns)) {
+          annotationColumn = { id: annotationColumnId };
+          store.columns.push(annotationColumn);
+        }
+
+        if (annotationColumn) {
+          annotationColumn.id = annotationColumn.id ?? annotationColumnId;
+          annotationColumn.alias = annotationColumn.alias ?? annotationColumnId;
+          annotationColumn.type = annotationColumn.type ?? 'Number';
+          annotationColumn.align = annotationColumn.align ?? 'center';
+          annotationColumn.accessor = (row) => getAnnotationCount(row);
+          annotationColumn.getValue = (value, row) => getAnnotationCount(row);
+          annotationColumn.render = (value, row) => String(getAnnotationCount(row));
+
+          if (typeof store.updateColumn === 'function') {
+            store.updateColumn(annotationColumnId, annotationColumn);
+          }
+        }
+
         if (typeof store.updateColumn === 'function') {
           store.updateColumn(columnId, column);
         }
@@ -370,7 +440,7 @@ export const DataManagerPage = ({...props}) => {
       dataManagerRef.current.destroy();
       dataManagerRef.current = null;
     }
-    labelButtonInitialState.current = null;
+    interfaceInitialStateRef.current = new Map();
   }, [dataManagerRef]);
 
   useEffect(() => {
@@ -624,8 +694,7 @@ DataManagerPage.context = ({dmRef}) => {
     return unsubscribe;
   }, []);
   const isReviewer = userRole === 'reviewer';
-  const isAdmin = userRole === 'admin';
-  const canReview = isReviewer && !isAdmin;
+  const canReview = isReviewer;
 
   const resolveTaskId = useCallback((task) => {
     if (!task) return null;
@@ -894,13 +963,19 @@ DataManagerPage.context = ({dmRef}) => {
     await sendReviewDecision('rejected', { comment });
   }, [requestRejectComment, sendReviewDecision]);
 
-  const statusText = REVIEW_STATUS_LABELS[currentReviewStatus] ?? REVIEW_STATUS_LABELS.pending;
+  const reviewStatusTranslations = createReviewStatusTranslations();
+  const statusText = localizeReviewStatus({
+    translations: reviewStatusTranslations,
+    status: currentReviewStatus,
+    display: currentReviewStatus,
+    value: currentReviewStatus,
+  });
   const hasTask = !!currentTaskId;
   const reviewDisabled = !canReview || !hasTask;
   const disabledMessage = !hasTask
     ? '暂无可审阅的任务'
     : !canReview
-      ? (isAdmin ? '管理员不可执行审核操作' : '仅审阅者可执行审核操作')
+      ? '仅审阅者可执行审核操作'
       : '';
   const approveDisabled = reviewDisabled || pendingDecision !== null;
   const rejectDisabled = reviewDisabled || pendingDecision !== null;
