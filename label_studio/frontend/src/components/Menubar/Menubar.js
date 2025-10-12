@@ -85,10 +85,11 @@ export const Menubar = ({
     setStoredRole(nextRole);
   }, []);
 
-  const roleOptions = useMemo(() => ([
-    { label: '批注者', value: UserRole.Annotator },
-    { label: '审阅者', value: UserRole.Reviewer },
-  ]), []);
+  const roleOptions = [
+    { label: t('peoplePage.roles.annotator'), value: UserRole.Annotator },
+    { label: t('peoplePage.roles.reviewer'), value: UserRole.Reviewer },
+    { label: t('peoplePage.roles.manager'), value: UserRole.Manager },
+  ];
 
   const sidebarPin = useCallback((e) => {
     e.preventDefault();
