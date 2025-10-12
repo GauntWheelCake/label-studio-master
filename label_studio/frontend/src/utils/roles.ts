@@ -1,5 +1,4 @@
 export enum UserRole {
-  Admin = 'admin',
   Annotator = 'annotator',
   Reviewer = 'reviewer',
 }
@@ -12,7 +11,7 @@ export const ROLE_CHANGE_EVENT = 'ls:user-role-change';
 const isBrowser = () => typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
 
 const isUserRole = (value: unknown): value is UserRole => {
-  return value === UserRole.Admin || value === UserRole.Annotator || value === UserRole.Reviewer;
+  return value === UserRole.Annotator || value === UserRole.Reviewer;
 };
 
 const parseRole = (value: string | null): UserRole => {
