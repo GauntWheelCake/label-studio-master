@@ -14,13 +14,8 @@ logger = logging.getLogger(__name__)
 
 
 class OrganizationMember(models.Model):
-    """Link user to organization with specific role."""
-
-    class Role(models.TextChoices):
-        ANNOTATOR = 'annotator', _('Annotator')
-        REVIEWER = 'reviewer', _('Reviewer')
-        MANAGER = 'manager', _('Manager')
-
+    """
+    """
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='om_through',
         help_text='User ID'
@@ -29,11 +24,7 @@ class OrganizationMember(models.Model):
         'organizations.Organization', on_delete=models.CASCADE,
         help_text='Organization ID'
     )
-    role = models.CharField(
-        _('role'), max_length=32, choices=Role.choices, default=Role.ANNOTATOR,
-        help_text='Organization membership role',
-    )
-
+    
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
     updated_at = models.DateTimeField(_('updated at'), auto_now=True)
 
@@ -47,10 +38,6 @@ class OrganizationMember(models.Model):
     @property
     def is_owner(self):
         return self.user.id == self.organization.created_by.id
-
-    @property
-    def is_manager(self):
-        return self.role == OrganizationMember.Role.MANAGER
 
 
 OrganizationMixin = load_func(settings.ORGANIZATION_MIXIN)
@@ -110,22 +97,16 @@ class Organization(OrganizationMixin, models.Model):
             return True
         return False
 
-    def add_user(self, user, role=None):
+    def add_user(self, user):
         if self.users.filter(pk=user.pk).exists():
             logger.debug('User already exists in organization.')
             return
 
         with transaction.atomic():
-            if role is None:
-                if user == self.created_by or user.is_superuser:
-                    role = OrganizationMember.Role.MANAGER
-                else:
-                    role = OrganizationMember.Role.ANNOTATOR
-
-            om = OrganizationMember(user=user, organization=self, role=role)
+            om = OrganizationMember(user=user, organization=self)
             om.save()
 
-            return om
+            return om    
     
     def reset_token(self):
         self.token = create_hash()

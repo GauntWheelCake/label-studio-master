@@ -37,22 +37,15 @@ export const PeoplePage = () => {
   const api = useAPI();
   const inviteModal = useRef();
   const config = useConfig();
-  const [selectedMembership, setSelectedMembership] = useState(null);
-  const [memberships, setMemberships] = useState([]);
-  const [currentUser, setCurrentUser] = useState();
-  const [reloadToken, setReloadToken] = useState(0);
+  const [selectedUser, setSelectedUser] = useState(null);
 
   const [link, setLink] = useState();
 
-  const selectUser = useCallback((membership) => {
-    setSelectedMembership(membership ?? null);
+  const selectUser = useCallback((user) => {
+    setSelectedUser(user);
 
-    if (membership?.user?.id) {
-      localStorage.setItem('selectedUser', String(membership.user.id));
-    } else {
-      localStorage.removeItem('selectedUser');
-    }
-  }, []);
+    localStorage.setItem('selectedUser', user?.id);
+  }, [setSelectedUser]);
 
   const setInviteLink = useCallback((link) => {
     const hostname = config.hostname || location.origin;
@@ -63,7 +56,7 @@ export const PeoplePage = () => {
     api.callApi('resetInviteLink').then(({invite_url}) => {
       setInviteLink(invite_url);
     });
-  }, [api, setInviteLink]);
+  }, [setInviteLink]);
 
   const inviteModalProps = useCallback((link) => ({
     title: t('peoplePage.invite.title'),
@@ -107,52 +100,14 @@ export const PeoplePage = () => {
   }, []);
 
   useEffect(() => {
-    api.callApi('me').then((user) => {
-      if (user) setCurrentUser(user);
-    });
-  }, [api]);
-
-  useEffect(() => {
     api.callApi("inviteLink").then(({invite_url}) => {
       setInviteLink(invite_url);
     });
-  }, [api, setInviteLink]);
+  }, []);
 
   useEffect(() => {
     inviteModal.current?.update(inviteModalProps(link));
   }, [inviteModalProps, link]);
-
-  useEffect(() => {
-    if (!selectedMembership) return;
-    if (!memberships.some((membership) => membership.id === selectedMembership.id)) {
-      setSelectedMembership(null);
-    }
-  }, [memberships, selectedMembership]);
-
-  const handleMembershipsChange = useCallback((list = []) => {
-    setMemberships(list);
-  }, []);
-
-  const currentMembership = useMemo(() => {
-    if (!currentUser) return null;
-    return memberships.find(({user}) => user.id === currentUser.id) ?? null;
-  }, [memberships, currentUser]);
-
-  const canManageMembers = currentMembership?.role === 'manager';
-  const canDeleteSelected = canManageMembers && selectedMembership?.user?.id !== currentUser?.id;
-
-  const handleDeleteMember = useCallback(async (membership) => {
-    if (!membership) return;
-
-    const result = await api.callApi('deleteMembership', { params: { pk: membership.id } });
-
-    if (!result) return;
-
-    setSelectedMembership(null);
-    localStorage.removeItem('selectedUser');
-    setMemberships((prev = []) => prev.filter((item) => item.id !== membership.id));
-    setReloadToken((token) => token + 1);
-  }, [api]);
 
   return (
     <Block name="people">
@@ -169,20 +124,15 @@ export const PeoplePage = () => {
       </Elem>
       <Elem name="content">
         <PeopleList
-          organizationId={currentUser?.active_organization}
-          selectedMembership={selectedMembership}
+          selectedUser={selectedUser}
           defaultSelected={defaultSelected}
-          onSelect={selectUser}
-          onMembershipsChange={handleMembershipsChange}
-          reloadTrigger={reloadToken}
+          onSelect={(user) => selectUser(user)}
         />
 
-        {selectedMembership && (
+        {selectedUser && (
           <SelectedUser
-            membership={selectedMembership}
+            user={selectedUser}
             onClose={() => selectUser(null)}
-            canDelete={canDeleteSelected}
-            onDelete={handleDeleteMember}
           />
         )}
       </Elem>

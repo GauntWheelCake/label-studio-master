@@ -8,83 +8,56 @@ import { Block, Elem } from "../../utils/bem";
 import { isDefined } from "../../utils/helpers";
 import './PeopleList.styl';
 
-export const PeopleList = ({
-  organizationId,
-  onSelect,
-  selectedMembership,
-  defaultSelected,
-  onMembershipsChange,
-  reloadTrigger = 0,
-}) => {
+export const PeopleList = ({onSelect, selectedUser, defaultSelected}) => {
   const api = useAPI();
-  const [memberships, setMemberships] = useState();
+  const [usersList, setUsersList] = useState();
 
   const fetchUsers = useCallback(async () => {
-    if (!organizationId) {
-      setMemberships(undefined);
-      onMembershipsChange?.([]);
-      return;
-    }
-
     const result = await api.callApi('memberships', {
-      params: {pk: organizationId},
+      params: {pk: 1},
     });
 
-    const list = Array.isArray(result) ? result : [];
-    setMemberships(list);
-    onMembershipsChange?.(list);
-  }, [api, organizationId, onMembershipsChange]);
+    setUsersList(result);
+  }, [api]);
 
-  const selectMembership = useCallback((membership) => {
-    if (!membership) {
-      onSelect?.(null);
-      return;
-    }
-
-    if (selectedMembership?.id === membership.id) {
+  const selectUser = useCallback((user) => {
+    if (selectedUser?.id === user.id) {
       onSelect?.(null);
     } else {
-      onSelect?.(membership);
+      onSelect?.(user);
     }
-  }, [selectedMembership, onSelect]);
+  }, [selectedUser]);
 
   useEffect(() => {
     fetchUsers();
-  }, [fetchUsers, reloadTrigger]);
+  }, []);
 
   useEffect(() => {
-    if (isDefined(defaultSelected) && memberships?.length) {
-      const selected = memberships.find(({user}) => user.id === Number(defaultSelected));
-      if (selected) selectMembership(selected);
+    if (isDefined(defaultSelected) && usersList) {
+      const selected = usersList.find(({user}) => user.id === Number(defaultSelected));
+      if (selected) selectUser(selected.user);
     }
-  }, [memberships, defaultSelected, selectMembership]);
+  }, [usersList, defaultSelected]);
 
   return (
     <Block name="people-list">
-      {memberships ? (
+      {usersList ? (
         <Elem name="users">
           <Elem name="header">
             <Elem name="column" mix="avatar"/>
             <Elem name="column" mix="email">{t('peoplePage.list.email')}</Elem>
             <Elem name="column" mix="name">{t('peoplePage.list.name')}</Elem>
-            <Elem name="column" mix="role">{t('peoplePage.list.role')}</Elem>
             <Elem name="column" mix="last-activity">{t('peoplePage.list.lastActivity')}</Elem>
           </Elem>
           <Elem name="body">
-            {memberships.map((membership) => {
-              const { user, role } = membership;
-              const active = membership.id === selectedMembership?.id;
+            {usersList.map(({user}) => {
+              const active = user.id === selectedUser?.id;
               const lastActivity = user.last_activity
                 ? formatDistance(new Date(user.last_activity), new Date(), {addSuffix: true, locale: zhCN})
                 : t('peoplePage.list.lastActivityEmpty');
-              const roleKey = role ? `peoplePage.roles.${role}` : 'peoplePage.roles.unknown';
-              const translatedRole = t(roleKey);
-              const roleLabel = translatedRole === roleKey && roleKey !== 'peoplePage.roles.unknown'
-                ? t('peoplePage.roles.unknown')
-                : translatedRole;
 
               return (
-                <Elem key={`user-${user.id}`} name="user" mod={{active}} onClick={() => selectMembership(membership)}>
+                <Elem key={`user-${user.id}`} name="user" mod={{active}} onClick={() => selectUser(user)}>
                   <Elem name="field" mix="avatar">
                     <Userpic user={user} style={{ width: 28, height: 28 }}/>
                   </Elem>
@@ -93,9 +66,6 @@ export const PeopleList = ({
                   </Elem>
                   <Elem name="field" mix="name">
                     {user.first_name} {user.last_name}
-                  </Elem>
-                  <Elem name="field" mix="role">
-                    {roleLabel}
                   </Elem>
                   <Elem name="field" mix="last-activity">
                     {lastActivity}

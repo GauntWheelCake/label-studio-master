@@ -1,11 +1,8 @@
 import { format } from "date-fns";
 import { zhCN } from "date-fns/locale";
-import { useCallback } from "react";
 import { NavLink } from "react-router-dom";
 import { LsCross } from "../../assets/icons";
 import { Button, Userpic } from "../../components";
-import { Description } from "../../components/Description/Description";
-import { modal } from "../../components/Modal/Modal";
 import { t } from "../../i18n";
 import { Block, Elem } from "../../utils/bem";
 import "./SelectedUser.styl";
@@ -22,38 +19,11 @@ const UserProjectsLinks = ({projects}) => {
   );
 };
 
-export const SelectedUser = ({ membership, onClose, canDelete, onDelete }) => {
-  if (!membership) return null;
-
-  const { user, role } = membership;
+export const SelectedUser = ({ user, onClose }) => {
   const fullName = [user.first_name, user.last_name].filter(n => !!n).join(" ").trim();
   const lastActivity = user.last_activity
     ? format(new Date(user.last_activity), 'yyyy年MM月dd日 HH:mm', { locale: zhCN })
     : t('peoplePage.selected.lastActivityEmpty');
-  const roleKey = role ? `peoplePage.roles.${role}` : 'peoplePage.roles.unknown';
-  const translatedRole = t(roleKey);
-  const roleLabel = translatedRole === roleKey && roleKey !== 'peoplePage.roles.unknown'
-    ? t('peoplePage.roles.unknown')
-    : translatedRole;
-
-  const confirmDelete = useCallback(() => {
-    if (!canDelete) return;
-
-    modal.confirm({
-      title: t('peoplePage.selected.deleteUserConfirmTitle'),
-      okText: t('peoplePage.selected.deleteUserConfirmOk'),
-      cancelText: t('peoplePage.selected.deleteUserConfirmCancel'),
-      buttonLook: 'destructive',
-      body: () => (
-        <Description>
-          {t('peoplePage.selected.deleteUserConfirmMessage')}
-          <br/>
-          <strong>{user.email}</strong>
-        </Description>
-      ),
-      onOk: () => onDelete?.(membership),
-    });
-  }, [canDelete, membership, onDelete, user.email]);
 
   return (
     <Block name="user-info">
@@ -70,11 +40,6 @@ export const SelectedUser = ({ membership, onClose, canDelete, onDelete }) => {
         )}
 
         <Elem tag="p" name="email">{user.email}</Elem>
-      </Elem>
-
-      <Elem name="section">
-        <Elem name="section-title">{t('peoplePage.selected.role')}</Elem>
-        <Elem name="role-value">{roleLabel}</Elem>
       </Elem>
 
       {user.phone && (
@@ -105,14 +70,6 @@ export const SelectedUser = ({ membership, onClose, canDelete, onDelete }) => {
 
 
       </Elem>
-
-      {canDelete && (
-        <Elem name="actions">
-          <Button look="destructive" onClick={confirmDelete}>
-            {t('peoplePage.selected.deleteUser')}
-          </Button>
-        </Elem>
-      )}
     </Block>
   );
 };

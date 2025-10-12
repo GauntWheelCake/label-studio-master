@@ -25,7 +25,7 @@ class OrganizationSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 class OrganizationMemberSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = OrganizationMember
-        fields = ['id', 'organization', 'user', 'role']
+        fields = ['id', 'organization', 'user']
 
 
 class UserSerializerWithProjects(UserSerializer):
@@ -53,7 +53,7 @@ class OrganizationMemberUserSerializer(DynamicFieldsMixin, serializers.ModelSeri
 
     class Meta:
         model = OrganizationMember
-        fields = ['id', 'organization', 'user', 'role']
+        fields = ['id', 'organization', 'user']
 
 
 class OrganizationInviteSerializer(serializers.Serializer):
