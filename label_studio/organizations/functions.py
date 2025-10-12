@@ -8,7 +8,11 @@ from projects.models import Project
 def create_organization(title, created_by):
     with transaction.atomic():
         org = Organization.objects.create(title=title, created_by=created_by)
-        OrganizationMember.objects.create(user=created_by, organization=org)
+        OrganizationMember.objects.create(
+            user=created_by,
+            organization=org,
+            role=OrganizationMember.Role.MANAGER,
+        )
         return org
 
 
