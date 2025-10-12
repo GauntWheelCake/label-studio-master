@@ -10,6 +10,7 @@ import { useAPI } from "../../providers/ApiProvider";
 import { useConfig } from "../../providers/ConfigProvider";
 import { Block, Elem } from "../../utils/bem";
 import { copyText } from "../../utils/helpers";
+import { getStoredRole, subscribeToRoleChange, UserRole } from "../../utils/roles";
 import "./PeopleInvitation.styl";
 import { PeopleList } from "./PeopleList";
 import "./PeoplePage.styl";
@@ -37,15 +38,23 @@ export const PeoplePage = () => {
   const api = useAPI();
   const inviteModal = useRef();
   const config = useConfig();
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedMembership, setSelectedMembership] = useState(null);
+  const [memberships, setMemberships] = useState([]);
+  const [currentUser, setCurrentUser] = useState();
+  const [reloadToken, setReloadToken] = useState(0);
+  const [currentRole, setCurrentRole] = useState(() => getStoredRole());
 
   const [link, setLink] = useState();
 
-  const selectUser = useCallback((user) => {
-    setSelectedUser(user);
+  const selectUser = useCallback((membership) => {
+    setSelectedMembership(membership ?? null);
 
-    localStorage.setItem('selectedUser', user?.id);
-  }, [setSelectedUser]);
+    if (membership?.user?.id) {
+      localStorage.setItem('selectedUser', String(membership.user.id));
+    } else {
+      localStorage.removeItem('selectedUser');
+    }
+  }, []);
 
   const setInviteLink = useCallback((link) => {
     const hostname = config.hostname || location.origin;
@@ -56,7 +65,7 @@ export const PeoplePage = () => {
     api.callApi('resetInviteLink').then(({invite_url}) => {
       setInviteLink(invite_url);
     });
-  }, [setInviteLink]);
+  }, [api, setInviteLink]);
 
   const inviteModalProps = useCallback((link) => ({
     title: t('peoplePage.invite.title'),
@@ -100,14 +109,61 @@ export const PeoplePage = () => {
   }, []);
 
   useEffect(() => {
+    api.callApi('me').then((user) => {
+      if (user) setCurrentUser(user);
+    });
+  }, [api]);
+
+  useEffect(() => {
+    const unsubscribe = subscribeToRoleChange((role) => setCurrentRole(role), { immediate: true });
+
+    return unsubscribe;
+  }, []);
+
+  useEffect(() => {
     api.callApi("inviteLink").then(({invite_url}) => {
       setInviteLink(invite_url);
     });
-  }, []);
+  }, [api, setInviteLink]);
 
   useEffect(() => {
     inviteModal.current?.update(inviteModalProps(link));
   }, [inviteModalProps, link]);
+
+  useEffect(() => {
+    if (!selectedMembership) return;
+    if (!memberships.some((membership) => membership.id === selectedMembership.id)) {
+      setSelectedMembership(null);
+    }
+  }, [memberships, selectedMembership]);
+
+  const handleMembershipsChange = useCallback((list = []) => {
+    setMemberships(list);
+  }, []);
+
+  const currentMembership = useMemo(() => {
+    if (!currentUser) return null;
+    return memberships.find(({user}) => user.id === currentUser.id) ?? null;
+  }, [memberships, currentUser]);
+
+  const canManageMembers = currentRole === UserRole.Manager;
+  const canDeleteSelected = canManageMembers && selectedMembership?.user?.id !== currentUser?.id;
+
+  const handleDeleteMember = useCallback(async (membership) => {
+    if (!membership) return;
+
+    try {
+      await api.callApi('deleteMembership', { params: { pk: membership.id } });
+    } catch (error) {
+      console.warn('[people] Failed to delete membership', error);
+      return;
+    }
+
+    setSelectedMembership(null);
+    localStorage.removeItem('selectedUser');
+    setMemberships((prev = []) => prev.filter((item) => item.id !== membership.id));
+    setReloadToken((token) => token + 1);
+  }, [api]);
 
   return (
     <Block name="people">
@@ -124,15 +180,20 @@ export const PeoplePage = () => {
       </Elem>
       <Elem name="content">
         <PeopleList
-          selectedUser={selectedUser}
+          organizationId={currentUser?.active_organization}
+          selectedMembership={selectedMembership}
           defaultSelected={defaultSelected}
-          onSelect={(user) => selectUser(user)}
+          onSelect={selectUser}
+          onMembershipsChange={handleMembershipsChange}
+          reloadTrigger={reloadToken}
         />
 
-        {selectedUser && (
+        {selectedMembership && (
           <SelectedUser
-            user={selectedUser}
+            membership={selectedMembership}
             onClose={() => selectUser(null)}
+            canDelete={canDeleteSelected}
+            onDelete={handleDeleteMember}
           />
         )}
       </Elem>
