@@ -43,7 +43,7 @@ The following command line arguments are optional and must be specified with `la
 | `--ml-backends` | `LABEL_STUDIO_ML_BACKENDS` | `None` | Command line argument is deprecated. Specify the URLs for one or more machine learning backends. See [Set up machine learning with your labeling process](ml.html). |
 | `--sampling` | N/A | `sequential` | Specify one of sequential or uniform to define the order for labeling tasks. See [Set up task sampling for your project](start.html#Set_up_task_sampling_for_your_project) on this page. |
 | `--log-level` | N/A | `ERROR` | One of DEBUG, INFO, WARNING, or ERROR. Use to specify the logging level for the Label Studio server. |
-| `-p` `--port` | `LABEL_STUDIO_PORT` | `8080` | Specify the web server port for Label Studio. Defaults to 8080. See [Run Label Studio on localhost with a different port](start.html#Run-Label-Studio-on-localhost-with-a-different-port) on this page. |
+| `-p` `--port` | `LABEL_STUDIO_PORT` | `8000` | Specify the web server port for Label Studio. Defaults to 8000. See [Run Label Studio on localhost with a different port](start.html#Run-Label-Studio-on-localhost-with-a-different-port) on this page. |
 | `--host` | `LABEL_STUDIO_HOST` | `''` | Specify the hostname to use to generate links for imported labeling tasks or static loading requirements. Leave empty to make all paths relative to the root domain. For example, specify `"https://77.42.77.42:1234"` or `"http://ls.example.com/subdomain/"`. See [Run Label Studio with an external domain name](start.html#Run-Label-Studio-with-an-external-domain-name) on this page. |
 | `--cert` | `LABEL_STUDIO_CERT_FILE` | `None` | Deprecated, do not use. Certificate file to use to access Label Studio over HTTPS. Must be in PEM format. See [Run Label Studio with HTTPS](start.html#Run-Label-Studio-with-HTTPS) on this page. | 
 | `--key` | `LABEL_STUDIO_KEY_FILE` | `None` | Deprecated, do not use. Private key file for HTTPS connection. Must be in PEM format. See [Run Label Studio with HTTPS](start.html#Run-Label-Studio-with-HTTPS) on this page. |
@@ -80,7 +80,7 @@ echo %LABEL_STUDIO_LOCAL_FILES_SERVING_ENABLED%
 ```
 
 ## Run Label Studio on localhost with a different port
-By default, Label Studio runs on port 8080. If that port is already in use or if you want to specify a different port, start Label Studio with the following command:
+By default, Label Studio runs on port 8000. If that port is already in use or if you want to specify a different port, start Label Studio with the following command:
 ```bash
 label-studio start --port <port>
 ```
@@ -97,9 +97,9 @@ LABEL_STUDIO_PORT = 9001
 
 ## Run Label Studio on Docker with a different port
 
-To run Label Studio on Docker with a port other than the default of 8080, use the port argument when starting Label Studio on Docker. For example, to start Label Studio in a Docker container accessible with port 9001, run the following: 
+To run Label Studio on Docker with a port other than the default of 8000, use the port argument when starting Label Studio on Docker. For example, to start Label Studio in a Docker container accessible with port 9001, run the following:
 ```bash
-docker run -it -p 9001:8080 -v `pwd`/mydata:/label-studio/data heartexlabs/label-studio:latest label-studio
+docker run -it -p 9001:8000 -v `pwd`/mydata:/label-studio/data heartexlabs/label-studio:latest label-studio
 ```
 
 Or, if you're using Docker Compose, update the `docker-compose.yml` file that you're using to expose a different port for the NGINX server used to proxy the connection to Label Studio. For example, this portion of the [`docker-compose.yml`](https://github.com/heartexlabs/label-studio/blob/master/docker-compose.yml) file exposes port 9001 instead of port 80 for proxying Label Studio:
@@ -121,9 +121,9 @@ To run Label Studio on Docker with a host and sub-path, you can refer to the exa
 ## Run Label Studio on Docker and use local storage
 To run Label Studio on Docker and reference persistent local storage directories, mount those directories as volumes when you start Label Studio and specify any environment variables you need.
 
-The following command starts a Docker container with the latest image of Label Studio with port 8080 and an environment variable that allows Label Studio to access local files. In this example, a local directory `./myfiles` is mounted to the `/label-studio/files` location. 
+The following command starts a Docker container with the latest image of Label Studio with port 8000 and an environment variable that allows Label Studio to access local files. In this example, a local directory `./myfiles` is mounted to the `/label-studio/files` location.
 ```bash
-docker run -it -p 8080:8080 -v `pwd`/mydata:/label-studio/data \
+docker run -it -p 8000:8000 -v `pwd`/mydata:/label-studio/data \
 --env LABEL_STUDIO_LOCAL_FILES_SERVING_ENABLED=true \ 
 --env LABEL_STUDIO_LOCAL_FILES_DOCUMENT_ROOT=/label-studio/files \ 
 -v `pwd`/myfiles:/label-studio/files \

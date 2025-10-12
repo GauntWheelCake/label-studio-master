@@ -8,6 +8,21 @@ import { cn } from "../../utils/bem";
 import { Button } from "../Button/Button";
 import { Space } from "../Space/Space";
 import { Modal } from "./ModalPopup";
+import { t } from "../../i18n";
+
+const translateModalTitle = (title) => {
+  if (!title) return title;
+
+  const normalized = String(title).trim();
+  const mapping = {
+    "Destructive action.": t('modal.titles.destructive'),
+    "Destructive action": t('modal.titles.destructive'),
+    "Confirm action.": t('modal.titles.confirm'),
+    "Confirm action": t('modal.titles.confirm'),
+  };
+
+  return mapping[normalized] ?? title;
+};
 
 const standaloneModal = (props) => {
   const modalRef = createRef();
@@ -57,8 +72,13 @@ const standaloneModal = (props) => {
 };
 
 export const confirm = ({ okText, onOk, cancelText, onCancel, buttonLook, ...props }) => {
+  const resolvedOkText = okText ?? t('modal.actions.ok');
+  const resolvedCancelText = cancelText ?? t('modal.actions.cancel');
+  const translatedTitle = translateModalTitle(props.title);
+
   const modal = standaloneModal({
     ...props,
+    title: translatedTitle,
     allowClose: false,
     footer: (
       <Space align="end">
@@ -70,7 +90,7 @@ export const confirm = ({ okText, onOk, cancelText, onCancel, buttonLook, ...pro
           size="compact"
           autoFocus
         >
-          {cancelText ?? "Cancel"}
+          {resolvedCancelText}
         </Button>
 
         <Button
@@ -81,7 +101,7 @@ export const confirm = ({ okText, onOk, cancelText, onCancel, buttonLook, ...pro
           size="compact"
           look={buttonLook ?? 'primary'}
         >
-          {okText ?? "OK"}
+          {resolvedOkText}
         </Button>
       </Space>
     ),
@@ -103,7 +123,7 @@ export const info = ({ okText, onOkPress, ...props }) => {
           look="primary"
           size="compact"
         >
-          {okText ?? "OK"}
+          {okText ?? t('modal.actions.ok')}
         </Button>
       </Space>
     ),

@@ -63,7 +63,7 @@ To run Label Studio Enterprise in production, start it using Docker. This config
 1. Create a file, `heartex/env.list` with the required environmental variables:
 ```
 # The main server URL (must be a full path like protocol://host:port)
-HEARTEX_HOSTNAME=http://localhost:8080
+HEARTEX_HOSTNAME=http://localhost:8000
 
 # Auxiliary hostname URL: some platform functionality requires URIs generation with specified hostname, 
 # in case HEARTEX_HOSTNAME is not accessible from server side, use this variable to specify server host
@@ -112,11 +112,11 @@ REDIS_SSL_CERTS_REQS=required
 REDIS_SSL_CA_CERTS=redis-ca-bundle.pem
 ```
 
-2. After you set all the environment variables, run Docker exposing port 8080:
+2. After you set all the environment variables, run Docker exposing port 8000:
 
 ```bash
 docker run -d \
--p 8080:8080 \
+-p 8000:8000 \
 --env-file env.list \
 -v `pwd`/license.txt:/heartex/web/htx/settings/license_docker.txt \
 -v `pwd`/logs:/var/log/heartex \
@@ -162,7 +162,7 @@ services:
     volumes:
       - ./license.txt:/heartex/web/htx/settings/license_docker.txt
     environment:
-      - HEARTEX_HOSTNAME=http://localhost:8080
+      - HEARTEX_HOSTNAME=http://localhost:8000
       - POSTGRE_NAME=postgres
       - POSTGRE_USER=postgres
       - POSTGRE_PASSWORD=
@@ -171,7 +171,7 @@ services:
       - REDIS_LOCATION=redis:6379
     command: ["./deploy/wait-for-postgres.sh", "db", "supervisord"]
     ports:
-      - 8080:8080
+      - 8000:8000
     depends_on:
       - redis
     links:
@@ -185,12 +185,12 @@ services:
     ports:
       - 6379:6379
 ```
-If you have existing services running on ports 5432, 6379, or 8080, update the `config.yml` file to use different ports. 
+If you have existing services running on ports 5432, 6379, or 8000, update the `config.yml` file to use different ports.
 2. Start all servers using docker-compose:
 ```bash
 docker-compose -f config.yml up
 ```
-3. Open [http://localhost:8080](http://localhost:8080) in a browser and start using Label Studio Enterprise in development mode. 
+3. Open [http://localhost:8000](http://localhost:8000) in a browser and start using Label Studio Enterprise in development mode.
 
 #### Data persistence
 
@@ -248,7 +248,7 @@ After you pull the latest image, update your Label Studio Enterprise container:
 
 ```bash
 docker run -d \
--p $EXPOSE_PORT:8080 \
+-p $EXPOSE_PORT:8000 \
 -v `pwd`/license.txt:/heartex/web/htx/settings/license_docker.txt \
 -v `pwd`/logs:/var/log/heartex \
 -v `pwd`/postgre-ca-bundle.pem:/etc/ssl/certs/postgre-ca-bundle.pem \

@@ -260,7 +260,7 @@ If you're running Label Studio on Docker and want to add local file storage, you
 
 To import data from the Label Studio UI, do the following:
 1. On the Label Studio UI, open a specific project.
-2. Click **Import** to open the import page available at [http://localhost:8080/import](http://localhost:8080/import).
+2. Click **Import** to open the import page available at [http://localhost:8000/import](http://localhost:8000/import).
 3. Import your data from files or URLs. 
 
 Data that you import is project-specific. 
