@@ -6,7 +6,6 @@ import { LsCross } from "../../assets/icons";
 import { Button, Userpic } from "../../components";
 import { useAPI } from "../../providers/ApiProvider";
 import { useConfig } from "../../providers/ConfigProvider";
-import { absoluteURL } from "../../utils/helpers";
 import { getStoredRole, subscribeToRoleChange, UserRole } from "../../utils/roles";
 import { t } from "../../i18n";
 import { Block, Elem } from "../../utils/bem";
@@ -41,6 +40,13 @@ export const SelectedUser = ({ user, onClose, onDeleted }) => {
 
   const hasCreatedProjects = user.created_projects?.length > 0;
 
+  const deleteDisabled = isSelf || hasCreatedProjects;
+  const deleteDisabledMessage = isSelf
+    ? t('peoplePage.selected.deleteSelfError')
+    : hasCreatedProjects
+      ? t('peoplePage.selected.deleteCreatorError')
+      : null;
+
   const handleDelete = useCallback(async () => {
     if (hasCreatedProjects) {
       window.alert(t('peoplePage.selected.deleteCreatorError'));
@@ -48,17 +54,7 @@ export const SelectedUser = ({ user, onClose, onDeleted }) => {
     }
 
     if (isSelf) {
-      if (!window.confirm(t('peoplePage.selected.deactivateConfirm'))) return;
-
-      const response = await api.callApi('updateUser', {
-        params: { pk: user.id },
-        body: { is_active: false },
-      });
-
-      if (response === null) return;
-
-      window.alert(t('peoplePage.selected.deactivateSuccess'));
-      window.location.assign(absoluteURL('/logout'));
+      window.alert(t('peoplePage.selected.deleteSelfError'));
       return;
     }
 
@@ -125,9 +121,17 @@ export const SelectedUser = ({ user, onClose, onDeleted }) => {
 
       {isAdmin && (
         <Elem name="actions">
-          <Button look="destructive" type="button" onClick={handleDelete}>
+          <Button
+            look="destructive"
+            type="button"
+            disabled={deleteDisabled}
+            onClick={handleDelete}
+          >
             {isSelf ? t('peoplePage.selected.deactivateUser') : t('peoplePage.selected.deleteUser')}
           </Button>
+          {deleteDisabledMessage && (
+            <Elem tag="p" name="actions-hint">{deleteDisabledMessage}</Elem>
+          )}
         </Elem>
       )}
     </Block>
