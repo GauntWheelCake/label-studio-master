@@ -8,7 +8,7 @@ import { Block, Elem } from "../../utils/bem";
 import { isDefined } from "../../utils/helpers";
 import './PeopleList.styl';
 
-export const PeopleList = ({onSelect, selectedUser, defaultSelected}) => {
+export const PeopleList = ({onSelect, selectedUser, defaultSelected, refreshKey = 0}) => {
   const api = useAPI();
   const [usersList, setUsersList] = useState();
 
@@ -30,7 +30,7 @@ export const PeopleList = ({onSelect, selectedUser, defaultSelected}) => {
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [fetchUsers, refreshKey]);
 
   useEffect(() => {
     if (isDefined(defaultSelected) && usersList) {
