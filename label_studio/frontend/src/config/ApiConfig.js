@@ -4,6 +4,7 @@ export const API_CONFIG = {
   endpoints: {
     // Users
     users: "/users",
+    deleteUser: "DELETE:/users/:pk",
     me: "/current-user/whoami",
 
     // Organization
