@@ -8,6 +8,8 @@ export const API_CONFIG = {
 
     // Organization
     memberships: "/organizations/:pk/memberships",
+    deleteMembership: "DELETE:/organizations/memberships/:pk",
+    deleteUser: "DELETE:/users/:pk",
     inviteLink: "/invite",
     resetInviteLink: "POST:/invite/reset-token",
 
