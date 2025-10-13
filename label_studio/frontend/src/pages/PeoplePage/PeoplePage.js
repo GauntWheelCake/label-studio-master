@@ -40,12 +40,22 @@ export const PeoplePage = () => {
   const [selectedUser, setSelectedUser] = useState(null);
 
   const [link, setLink] = useState();
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const selectUser = useCallback((user) => {
     setSelectedUser(user);
 
-    localStorage.setItem('selectedUser', user?.id);
+    if (user?.id != null) {
+      localStorage.setItem('selectedUser', user.id);
+    } else {
+      localStorage.removeItem('selectedUser');
+    }
   }, [setSelectedUser]);
+
+  const handleUserDeleted = useCallback(() => {
+    setRefreshKey((key) => key + 1);
+    selectUser(null);
+  }, [selectUser, setRefreshKey]);
 
   const setInviteLink = useCallback((link) => {
     const hostname = config.hostname || location.origin;
@@ -126,13 +136,15 @@ export const PeoplePage = () => {
         <PeopleList
           selectedUser={selectedUser}
           defaultSelected={defaultSelected}
-          onSelect={(user) => selectUser(user)}
+          onSelect={selectUser}
+          refreshKey={refreshKey}
         />
 
         {selectedUser && (
           <SelectedUser
             user={selectedUser}
             onClose={() => selectUser(null)}
+            onDeleted={handleUserDeleted}
           />
         )}
       </Elem>
