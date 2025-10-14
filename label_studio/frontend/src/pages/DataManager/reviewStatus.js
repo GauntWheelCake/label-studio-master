@@ -7,55 +7,38 @@ const STATUS_SYNONYMS = {
     'not_reviewed',
     'not reviewed',
     'none',
+    '未审核',
+    '待审核',
   ],
   approved: [
     'approved',
     'accept',
     'accepted',
     'approve',
+    '已通过',
+    '通过',
+    '审核通过',
   ],
   rejected: [
     'rejected',
     'reject',
     'declined',
     'decline',
+    '已驳回',
+    '驳回',
+    '拒绝',
+    '已拒绝',
+    '审核未通过',
   ],
 };
 
-const buildDynamicSynonyms = (translations = {}) => {
-  const entries = Object.entries(STATUS_SYNONYMS);
-  const normalizedTranslations = Object.entries(translations)
-    .reduce((acc, [key, value]) => {
-      const normalizedValue = normalizeReviewStatusKey(value);
-      if (normalizedValue) acc[key] = normalizedValue;
-      return acc;
-    }, {});
-
-  return entries.reduce((acc, [key, baseSynonyms]) => {
-    const normalizedKey = normalizeReviewStatusKey(key);
-    const normalizedBase = baseSynonyms
-      .map((synonym) => normalizeReviewStatusKey(synonym))
-      .filter(Boolean);
-    const result = new Set([normalizedKey, ...normalizedBase]);
-
-    const translatedValue = normalizedTranslations[key];
-    if (translatedValue) {
-      result.add(translatedValue);
-    }
-
-    acc[key] = result;
-    return acc;
-  }, {});
-};
-
-const resolveStatusKey = (input, translations) => {
+const resolveStatusKey = (input) => {
   const normalized = normalizeReviewStatusKey(input);
   if (!normalized) return null;
 
-  const dynamicSynonyms = buildDynamicSynonyms(translations);
-
-  for (const [key, synonyms] of Object.entries(dynamicSynonyms)) {
-    if (synonyms.has(normalized)) return key;
+  for (const [key, synonyms] of Object.entries(STATUS_SYNONYMS)) {
+    if (normalized === key) return key;
+    if (synonyms.includes(normalized)) return key;
   }
 
   return null;
@@ -77,12 +60,12 @@ export const localizeReviewStatus = ({ translations = {}, status, display, value
       return candidate;
     }
 
-    const mappedKey = resolveStatusKey(candidate, translations);
+    const mappedKey = resolveStatusKey(candidate);
     if (mappedKey && translations[mappedKey]) {
       return translations[mappedKey];
     }
   }
 
-  const fallbackKey = resolveStatusKey(status, translations) ?? 'pending';
+  const fallbackKey = resolveStatusKey(status) ?? 'pending';
   return translations[fallbackKey] || translations.pending || fallbackKey;
 };
