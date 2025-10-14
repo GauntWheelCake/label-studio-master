@@ -145,9 +145,26 @@ const ConfigureSettings = ({ template }) => {
           template.render();
         };
         return (
-          <li key={key}><label>{options.title} <select value={value} onChange={onChange}>{options.type.map(option => (
-            <option key={option} value={option}>{option}</option>
-          ))}</select></label></li>
+          <li key={key}>
+            <label>
+              {options.title}
+              {' '}
+              <select value={value} onChange={onChange}>
+                {options.type.map(option => {
+                  const optionValue = typeof option === "string" ? option : option.value;
+                  const optionLabel = typeof option === "string"
+                    ? options.optionLabels?.[optionValue] ?? optionValue
+                    : option.label ?? options.optionLabels?.[optionValue] ?? optionValue;
+
+                  return (
+                    <option key={optionValue} value={optionValue}>
+                      {optionLabel}
+                    </option>
+                  );
+                })}
+              </select>
+            </label>
+          </li>
         );
       case Boolean:
         onChange = e => {
