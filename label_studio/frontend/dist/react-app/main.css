@@ -1860,6 +1860,18 @@ input.ls-input[type=radio] {
   margin-top: 32px;
   margin-bottom: 0;
 }
+.ls-user-info__actions {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.ls-user-info__actions-hint {
+  margin-top: 8px;
+  color: rgba(0,0,0,0.45);
+  font-size: 12px;
+  text-align: right;
+}
 .ls-user-info__links-list {
   display: flex;
   flex-direction: column;

@@ -89,7 +89,7 @@ export const Menubar = ({
     { label: '批注者', value: UserRole.Annotator },
     { label: '审阅者', value: UserRole.Reviewer },
     { label: '管理员', value: UserRole.Admin },
-  ]), [];
+  ]), []);
 
   const sidebarPin = useCallback((e) => {
     e.preventDefault();

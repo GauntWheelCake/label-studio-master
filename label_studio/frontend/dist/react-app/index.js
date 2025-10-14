@@ -83819,14 +83819,14 @@ const Menubar = ({
     (0,_utils_roles__WEBPACK_IMPORTED_MODULE_7__.setStoredRole)(nextRole);
   }, []);
   const roleOptions = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => [{
-    label: '管理员',
-    value: _utils_roles__WEBPACK_IMPORTED_MODULE_7__.UserRole.Admin
-  }, {
     label: '批注者',
     value: _utils_roles__WEBPACK_IMPORTED_MODULE_7__.UserRole.Annotator
   }, {
     label: '审阅者',
     value: _utils_roles__WEBPACK_IMPORTED_MODULE_7__.UserRole.Reviewer
+  }, {
+    label: '管理员',
+    value: _utils_roles__WEBPACK_IMPORTED_MODULE_7__.UserRole.Admin
   }], []);
   const sidebarPin = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(e => {
     e.preventDefault();
@@ -85167,6 +85167,7 @@ const API_CONFIG = {
   endpoints: {
     // Users
     users: "/users",
+    deleteUser: "DELETE:/users/:pk",
     me: "/current-user/whoami",
     // Organization
     memberships: "/organizations/:pk/memberships",
@@ -85280,36 +85281,6 @@ const setTags = () => {
   _sentry_browser__WEBPACK_IMPORTED_MODULE_0__.setTags(tags);
 };
 const SentryRoute = _sentry_react__WEBPACK_IMPORTED_MODULE_2__.withSentryRouting(react_router_dom__WEBPACK_IMPORTED_MODULE_4__.Route);
-
-/***/ }),
-
-/***/ "./src/config/review.ts":
-/*!******************************!*\
-  !*** ./src/config/review.ts ***!
-  \******************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   REVIEW_STATUS: () => (/* binding */ REVIEW_STATUS)
-/* harmony export */ });
-const REVIEW_STATUS = {
-  pending: {
-    label: '未审核',
-    color: '#9aa0a6'
-  },
-  // 灰
-  approved: {
-    label: '已通过',
-    color: '#1a7f37'
-  },
-  // 绿
-  rejected: {
-    label: '已驳回',
-    color: '#d93025'
-  } // 红
-};
 
 /***/ }),
 
@@ -85618,6 +85589,12 @@ const zhCN = {
   'peoplePage.selected.createdProjects': '创建的项目',
   'peoplePage.selected.contributedProjects': '参与的项目',
   'peoplePage.selected.lastActivity': '最后活跃时间：',
+  'peoplePage.selected.deleteUser': '删除成员',
+  'peoplePage.selected.deleteConfirm': '确定要删除该成员吗？此操作无法撤销。',
+  'peoplePage.selected.deleteCreatorError': '删除账号前请先删除该用户创建的项目。',
+  'peoplePage.selected.deactivateUser': '注销账号',
+  'peoplePage.selected.selfHint': '这是您的账户，点击上方按钮可注销自己。',
+  'peoplePage.selected.deactivateSuccess': '账号已注销，即将退出登录。',
   'peoplePage.selected.lastActivityEmpty': '暂无记录',
   'dataManager.review.columnTitle': '审核状态',
   'dataManager.review.pending': '未审核',
@@ -87882,10 +87859,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const ROLE_PERMISSIONS = {
-  [_utils_roles__WEBPACK_IMPORTED_MODULE_12__.UserRole.Admin]: {
-    annotate: false,
-    review: false
-  },
   [_utils_roles__WEBPACK_IMPORTED_MODULE_12__.UserRole.Annotator]: {
     annotate: true,
     review: false
@@ -87893,18 +87866,28 @@ const ROLE_PERMISSIONS = {
   [_utils_roles__WEBPACK_IMPORTED_MODULE_12__.UserRole.Reviewer]: {
     annotate: false,
     review: true
+  },
+  [_utils_roles__WEBPACK_IMPORTED_MODULE_12__.UserRole.Admin]: {
+    annotate: true,
+    review: true
   }
 };
 const ROLE_TOOLTIPS = {
   annotate: '当前身份不可提交标注',
   review: '当前身份不可执行审核',
-  start: '当前身份不可发起标注'
+  start: '当前身份不可发起标注',
+  delete: '当前身份不可删除注解'
 };
 const ANNOTATION_KEYWORDS = ['submit', 'update', '提交', '更新'];
+const DELETE_KEYWORDS = ['delete', '删除'];
 const REVIEW_KEYWORDS = ['accept', 'reject'];
 const normalizeText = node => {
   var _node$textContent;
   return ((_node$textContent = node === null || node === void 0 ? void 0 : node.textContent) !== null && _node$textContent !== void 0 ? _node$textContent : '').trim().toLowerCase();
+};
+const normalizeAttribute = (element, name) => {
+  var _element$getAttribute, _element$getAttribute2;
+  return ((_element$getAttribute = element === null || element === void 0 ? void 0 : (_element$getAttribute2 = element.getAttribute) === null || _element$getAttribute2 === void 0 ? void 0 : _element$getAttribute2.call(element, name)) !== null && _element$getAttribute !== void 0 ? _element$getAttribute : '').trim().toLowerCase();
 };
 const setElementRoleState = (element, allowed, message) => {
   if (!element) return;
@@ -87980,18 +87963,17 @@ const initializeDataManager = async (root, props, params) => {
   };
   return new window.DataManager(dmConfig);
 };
-const REVIEW_STATUS_LABELS = {
-  pending: '未审核',
-  approved: '已通过',
-  rejected: '已驳回'
-};
+const createReviewStatusTranslations = () => ({
+  pending: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('dataManager.review.pending'),
+  approved: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('dataManager.review.approved'),
+  rejected: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('dataManager.review.rejected')
+});
 const detectUserRole = (user = {}) => {
   const candidates = [user.project_role, user.role, user.role_slug, user.default_role, user.current_role];
   const normalized = candidates.filter(Boolean).map(value => String(value).toLowerCase());
-  if (normalized.some(value => value.includes('review'))) return 'reviewer';
   if (normalized.some(value => value.includes('admin'))) return 'admin';
+  if (normalized.some(value => value.includes('review'))) return 'reviewer';
   if (normalized.some(value => value.includes('annot'))) return 'annotator';
-  if (user.is_staff || user.is_superuser) return 'admin';
   return 'annotator';
 };
 const buildLink = (path, params) => {
@@ -88010,7 +87992,7 @@ const DataManagerPage = ({
   const dataManagerRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)();
   const [activeRole, setActiveRole] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)((0,_utils_roles__WEBPACK_IMPORTED_MODULE_12__.getStoredRole)());
   const roleRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(activeRole);
-  const labelButtonInitialState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
+  const interfaceInitialStateRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(new Map());
   const applyAnnotationControlState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(roleValue => {
     var _ROLE_PERMISSIONS$res;
     if (typeof document === 'undefined') return;
@@ -88021,11 +88003,16 @@ const DataManagerPage = ({
     const interactiveElements = controlsRoot.querySelectorAll('button.lsf-button, a.lsf-button');
     interactiveElements.forEach(element => {
       const text = normalizeText(element);
-      if (!text) return;
-      if (ANNOTATION_KEYWORDS.some(keyword => text.includes(keyword))) {
+      const ariaLabel = normalizeAttribute(element, 'aria-label');
+      const title = normalizeAttribute(element, 'title');
+      const tokens = [text, ariaLabel, title].filter(Boolean);
+      if (!tokens.length) return;
+      if (tokens.some(value => ANNOTATION_KEYWORDS.some(keyword => value.includes(keyword)))) {
         setElementRoleState(element, permissions.annotate, permissions.annotate ? '' : ROLE_TOOLTIPS.annotate);
-      } else if (REVIEW_KEYWORDS.some(keyword => text.includes(keyword))) {
+      } else if (tokens.some(value => REVIEW_KEYWORDS.some(keyword => value.includes(keyword)))) {
         setElementRoleState(element, permissions.review, permissions.review ? '' : ROLE_TOOLTIPS.review);
+      } else if (tokens.some(value => DELETE_KEYWORDS.some(keyword => value.includes(keyword)))) {
+        setElementRoleState(element, permissions.annotate, permissions.annotate ? '' : ROLE_TOOLTIPS.delete);
       }
     });
   }, []);
@@ -88036,25 +88023,30 @@ const DataManagerPage = ({
     const permissions = (_ROLE_PERMISSIONS$res2 = ROLE_PERMISSIONS[resolvedRole]) !== null && _ROLE_PERMISSIONS$res2 !== void 0 ? _ROLE_PERMISSIONS$res2 : ROLE_PERMISSIONS[_utils_roles__WEBPACK_IMPORTED_MODULE_12__.DEFAULT_ROLE];
     const annotateAllowed = permissions.annotate;
     const store = (_dataManagerRef$curre = dataManagerRef.current) === null || _dataManagerRef$curre === void 0 ? void 0 : _dataManagerRef$curre.store;
-    if (store !== null && store !== void 0 && store.interfaceEnabled && store !== null && store !== void 0 && store.disableInterface && store !== null && store !== void 0 && store.enableInterface) {
+    const setInterfaceAllowed = (name, allowed) => {
+      if (!(store !== null && store !== void 0 && store.interfaceEnabled) || !(store !== null && store !== void 0 && store.disableInterface) || !(store !== null && store !== void 0 && store.enableInterface)) return;
       try {
-        if (!annotateAllowed) {
-          if (labelButtonInitialState.current === null && typeof store.interfaceEnabled === 'function') {
-            labelButtonInitialState.current = store.interfaceEnabled('labelButton');
+        if (!allowed) {
+          if (!interfaceInitialStateRef.current.has(name)) {
+            const currentValue = store.interfaceEnabled(name);
+            interfaceInitialStateRef.current.set(name, Boolean(currentValue));
           }
-          store.disableInterface('labelButton');
-        } else if (labelButtonInitialState.current !== null) {
-          if (labelButtonInitialState.current) {
-            store.enableInterface('labelButton');
+          store.disableInterface(name);
+        } else if (interfaceInitialStateRef.current.has(name)) {
+          const initialState = interfaceInitialStateRef.current.get(name);
+          if (initialState) {
+            store.enableInterface(name);
           } else {
-            store.disableInterface('labelButton');
+            store.disableInterface(name);
           }
-          labelButtonInitialState.current = null;
+          interfaceInitialStateRef.current.delete(name);
         }
       } catch (err) {
         console.warn('[roles] Failed to update Data Manager interfaces', err);
       }
-    }
+    };
+    setInterfaceAllowed('labelButton', annotateAllowed);
+    setInterfaceAllowed('annotations:delete', annotateAllowed);
     const labelButtons = document.querySelectorAll('.dm-button');
     labelButtons.forEach(element => {
       const text = normalizeText(element);
@@ -88063,7 +88055,7 @@ const DataManagerPage = ({
         setElementRoleState(element, annotateAllowed, annotateAllowed ? '' : ROLE_TOOLTIPS.start);
       }
     });
-  }, [dataManagerRef, labelButtonInitialState]);
+  }, [dataManagerRef, interfaceInitialStateRef]);
   const applyRoleRestrictions = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(roleValue => {
     var _ref;
     const resolvedRole = (_ref = roleValue !== null && roleValue !== void 0 ? roleValue : roleRef.current) !== null && _ref !== void 0 ? _ref : _utils_roles__WEBPACK_IMPORTED_MODULE_12__.DEFAULT_ROLE;
@@ -88090,13 +88082,9 @@ const DataManagerPage = ({
       // 1) 容错：不同版本的 DataManager Store 命名略有差异
       const store = dataManager.store || dataManager._store || ((_dataManager$dm = dataManager.dm) === null || _dataManager$dm === void 0 ? void 0 : _dataManager$dm.store);
       if (store) {
-        var _store$columns, _store$columns$find;
+        var _store$columns, _store$columns$find, _store$columns3, _store$columns3$find;
         const columnId = 'review_status';
-        const translations = {
-          pending: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('dataManager.review.pending'),
-          approved: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('dataManager.review.approved'),
-          rejected: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('dataManager.review.rejected')
-        };
+        const translations = createReviewStatusTranslations();
         const getDisplayValue = row => {
           var _ref2, _row$review_status, _row$task, _row$review_status_di, _row$task2;
           const status = (_ref2 = (_row$review_status = row === null || row === void 0 ? void 0 : row.review_status) !== null && _row$review_status !== void 0 ? _row$review_status : row === null || row === void 0 ? void 0 : (_row$task = row.task) === null || _row$task === void 0 ? void 0 : _row$task.review_status) !== null && _ref2 !== void 0 ? _ref2 : 'pending';
@@ -88160,6 +88148,51 @@ const DataManagerPage = ({
           store.columns.push(column);
         }
         applyColumnDefinition(column);
+        const getAnnotationCount = row => {
+          var _row$task6, _row$task7, _row$task8;
+          if (!row) return 0;
+          const numericCandidates = [row === null || row === void 0 ? void 0 : row.total_annotations, row === null || row === void 0 ? void 0 : (_row$task6 = row.task) === null || _row$task6 === void 0 ? void 0 : _row$task6.total_annotations, row === null || row === void 0 ? void 0 : row.totalAnnotations, row === null || row === void 0 ? void 0 : (_row$task7 = row.task) === null || _row$task7 === void 0 ? void 0 : _row$task7.totalAnnotations];
+          for (const candidate of numericCandidates) {
+            const parsed = Number(candidate);
+            if (Number.isFinite(parsed)) {
+              return parsed;
+            }
+          }
+          const arrays = [Array.isArray(row === null || row === void 0 ? void 0 : row.annotations) ? row.annotations : null, Array.isArray(row === null || row === void 0 ? void 0 : (_row$task8 = row.task) === null || _row$task8 === void 0 ? void 0 : _row$task8.annotations) ? row.task.annotations : null];
+          const counts = arrays.filter(items => Array.isArray(items)).map(items => items.reduce((acc, item) => acc + (item && !item.was_cancelled ? 1 : 0), 0));
+          if (counts.length) {
+            return Math.max(...counts);
+          }
+          return 0;
+        };
+        const annotationColumnId = 'total_annotations';
+        let annotationColumn = (_store$columns3 = store.columns) === null || _store$columns3 === void 0 ? void 0 : (_store$columns3$find = _store$columns3.find) === null || _store$columns3$find === void 0 ? void 0 : _store$columns3$find.call(_store$columns3, c => c.id === annotationColumnId || c.alias === annotationColumnId);
+        if (!annotationColumn && typeof store.addColumn === 'function') {
+          var _store$columns4, _store$columns4$find;
+          store.addColumn({
+            id: annotationColumnId
+          });
+          annotationColumn = (_store$columns4 = store.columns) === null || _store$columns4 === void 0 ? void 0 : (_store$columns4$find = _store$columns4.find) === null || _store$columns4$find === void 0 ? void 0 : _store$columns4$find.call(_store$columns4, c => c.id === annotationColumnId || c.alias === annotationColumnId);
+        }
+        if (!annotationColumn && Array.isArray(store.columns)) {
+          annotationColumn = {
+            id: annotationColumnId
+          };
+          store.columns.push(annotationColumn);
+        }
+        if (annotationColumn) {
+          var _annotationColumn$id, _annotationColumn$ali, _annotationColumn$typ, _annotationColumn$ali2;
+          annotationColumn.id = (_annotationColumn$id = annotationColumn.id) !== null && _annotationColumn$id !== void 0 ? _annotationColumn$id : annotationColumnId;
+          annotationColumn.alias = (_annotationColumn$ali = annotationColumn.alias) !== null && _annotationColumn$ali !== void 0 ? _annotationColumn$ali : annotationColumnId;
+          annotationColumn.type = (_annotationColumn$typ = annotationColumn.type) !== null && _annotationColumn$typ !== void 0 ? _annotationColumn$typ : 'Number';
+          annotationColumn.align = (_annotationColumn$ali2 = annotationColumn.align) !== null && _annotationColumn$ali2 !== void 0 ? _annotationColumn$ali2 : 'center';
+          annotationColumn.accessor = row => getAnnotationCount(row);
+          annotationColumn.getValue = (value, row) => getAnnotationCount(row);
+          annotationColumn.render = (value, row) => String(getAnnotationCount(row));
+          if (typeof store.updateColumn === 'function') {
+            store.updateColumn(annotationColumnId, annotationColumn);
+          }
+        }
         if (typeof store.updateColumn === 'function') {
           store.updateColumn(columnId, column);
         }
@@ -88197,7 +88230,7 @@ const DataManagerPage = ({
       dataManagerRef.current.destroy();
       dataManagerRef.current = null;
     }
-    labelButtonInitialState.current = null;
+    interfaceInitialStateRef.current = new Map();
   }, [dataManagerRef]);
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     const unsubscribe = (0,_utils_roles__WEBPACK_IMPORTED_MODULE_12__.subscribeToRoleChange)(role => {
@@ -88309,7 +88342,7 @@ DataManagerPage.pages = {
 DataManagerPage.context = ({
   dmRef
 }) => {
-  var _dmRef$mode, _REVIEW_STATUS_LABELS;
+  var _dmRef$mode;
   const location = (0,_providers_RoutesProvider__WEBPACK_IMPORTED_MODULE_8__.useFixedLocation)();
   const {
     project
@@ -88437,9 +88470,8 @@ DataManagerPage.context = ({
     });
     return unsubscribe;
   }, []);
-  const isReviewer = userRole === 'reviewer';
-  const isAdmin = userRole === 'admin';
-  const canReview = isReviewer && !isAdmin;
+  const isReviewer = userRole === _utils_roles__WEBPACK_IMPORTED_MODULE_12__.UserRole.Reviewer || userRole === _utils_roles__WEBPACK_IMPORTED_MODULE_12__.UserRole.Admin;
+  const canReview = isReviewer;
   const resolveTaskId = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(task => {
     var _ref6, _ref7, _ref8, _task$id, _task$task;
     if (!task) return null;
@@ -88710,10 +88742,16 @@ DataManagerPage.context = ({
       comment
     });
   }, [requestRejectComment, sendReviewDecision]);
-  const statusText = (_REVIEW_STATUS_LABELS = REVIEW_STATUS_LABELS[currentReviewStatus]) !== null && _REVIEW_STATUS_LABELS !== void 0 ? _REVIEW_STATUS_LABELS : REVIEW_STATUS_LABELS.pending;
+  const reviewStatusTranslations = createReviewStatusTranslations();
+  const statusText = (0,_reviewStatus__WEBPACK_IMPORTED_MODULE_17__.localizeReviewStatus)({
+    translations: reviewStatusTranslations,
+    status: currentReviewStatus,
+    display: currentReviewStatus,
+    value: currentReviewStatus
+  });
   const hasTask = !!currentTaskId;
   const reviewDisabled = !canReview || !hasTask;
-  const disabledMessage = !hasTask ? '暂无可审阅的任务' : !canReview ? isAdmin ? '管理员不可执行审核操作' : '仅审阅者可执行审核操作' : '';
+  const disabledMessage = !hasTask ? '暂无可审阅的任务' : !canReview ? '仅审阅者可执行审核操作' : '';
   const approveDisabled = reviewDisabled || pendingDecision !== null;
   const rejectDisabled = reviewDisabled || pendingDecision !== null;
   const showReviewControls = mode !== 'explorer';
@@ -88804,8 +88842,11 @@ const createAnnotationUpdateHandler = ({
   resolveTaskId
 }) => {
   return async (payload = {}) => {
+    if (typeof setCurrentReviewStatus === 'function') {
+      setCurrentReviewStatus('pending');
+    }
     try {
-      var _dmRef$store;
+      var _dmRef$store, _ref3, _dmRef$currentView, _dmRef$store2, _dmRef$store3, _dmRef$store3$viewsSt, _ref4, _view$reload, _dmRef$store4;
       const taskStore = dmRef === null || dmRef === void 0 ? void 0 : (_dmRef$store = dmRef.store) === null || _dmRef$store === void 0 ? void 0 : _dmRef$store.taskStore;
       const selectedTask = taskStore === null || taskStore === void 0 ? void 0 : taskStore.selected;
       const selectedTaskId = typeof resolveTaskId === 'function' ? resolveTaskId(selectedTask) : selectedTask === null || selectedTask === void 0 ? void 0 : selectedTask.id;
@@ -88822,12 +88863,16 @@ const createAnnotationUpdateHandler = ({
           }
         }
       }
+      const view = (_ref3 = (_dmRef$currentView = dmRef === null || dmRef === void 0 ? void 0 : dmRef.currentView) !== null && _dmRef$currentView !== void 0 ? _dmRef$currentView : dmRef === null || dmRef === void 0 ? void 0 : (_dmRef$store2 = dmRef.store) === null || _dmRef$store2 === void 0 ? void 0 : _dmRef$store2.currentView) !== null && _ref3 !== void 0 ? _ref3 : dmRef === null || dmRef === void 0 ? void 0 : (_dmRef$store3 = dmRef.store) === null || _dmRef$store3 === void 0 ? void 0 : (_dmRef$store3$viewsSt = _dmRef$store3.viewsStore) === null || _dmRef$store3$viewsSt === void 0 ? void 0 : _dmRef$store3$viewsSt.selected;
+      const reload = (_ref4 = (_view$reload = view === null || view === void 0 ? void 0 : view.reload) !== null && _view$reload !== void 0 ? _view$reload : view === null || view === void 0 ? void 0 : view.load) !== null && _ref4 !== void 0 ? _ref4 : view === null || view === void 0 ? void 0 : view.fetch;
+      if (typeof reload === 'function') {
+        await reload.call(view);
+      } else if (typeof (dmRef === null || dmRef === void 0 ? void 0 : (_dmRef$store4 = dmRef.store) === null || _dmRef$store4 === void 0 ? void 0 : _dmRef$store4.update) === 'function') {
+        dmRef.store.update();
+      }
     } catch (error) {
       console.warn('[review] Failed to refresh task after annotation update', error);
     } finally {
-      if (typeof setCurrentReviewStatus === 'function') {
-        setCurrentReviewStatus('pending');
-      }
       if (typeof extractTaskInfo === 'function') {
         extractTaskInfo();
       }
@@ -88921,30 +88966,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   localizeReviewStatus: () => (/* binding */ localizeReviewStatus),
 /* harmony export */   normalizeReviewStatusKey: () => (/* binding */ normalizeReviewStatusKey)
 /* harmony export */ });
-/* harmony import */ var _config_review__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../config/review */ "./src/config/review.ts");
-
 const normalizeReviewStatusKey = value => String(value !== null && value !== void 0 ? value : '').trim().toLowerCase();
-const STATUS_LABELS = Object.entries(_config_review__WEBPACK_IMPORTED_MODULE_0__.REVIEW_STATUS).reduce((acc, [key, config]) => {
-  var _config$label;
-  acc[normalizeReviewStatusKey(key)] = String((_config$label = config === null || config === void 0 ? void 0 : config.label) !== null && _config$label !== void 0 ? _config$label : '').trim() || key;
-  return acc;
-}, {});
-const ENGLISH_ALIASES = Object.entries({
-  pending: ['pending', 'not reviewed', 'not_reviewed', 'not-reviewed'],
-  approved: ['approved', 'accepted', 'passed'],
-  rejected: ['rejected', 'declined', 'failed']
-}).reduce((acc, [key, aliases]) => {
-  const normalizedKey = normalizeReviewStatusKey(key);
-  aliases.forEach(alias => {
-    const normalizedAlias = normalizeReviewStatusKey(alias);
-    if (!normalizedAlias) return;
-    acc[normalizedAlias] = normalizedKey;
-  });
-  return acc;
-}, {});
-const resolveLocalizedLabel = (translations, key) => {
-  const normalizedKey = normalizeReviewStatusKey(key);
-  return translations[normalizedKey] || STATUS_LABELS[normalizedKey] || translations.pending || STATUS_LABELS.pending || normalizedKey;
+const STATUS_SYNONYMS = {
+  pending: ['pending', 'unreviewed', 'not_reviewed', 'not reviewed', 'none'],
+  approved: ['approved', 'accept', 'accepted', 'approve'],
+  rejected: ['rejected', 'reject', 'declined', 'decline']
+};
+const resolveStatusKey = input => {
+  const normalized = normalizeReviewStatusKey(input);
+  if (!normalized) return null;
+  for (const [key, synonyms] of Object.entries(STATUS_SYNONYMS)) {
+    if (normalized === key) return key;
+    if (synonyms.includes(normalized)) return key;
+  }
+  return null;
 };
 const localizeReviewStatus = ({
   translations = {},
@@ -88952,27 +88987,20 @@ const localizeReviewStatus = ({
   display,
   value
 }) => {
-  const translationValues = Object.values(translations).map(item => String(item !== null && item !== void 0 ? item : '').trim());
-  const normalizedStatus = normalizeReviewStatusKey(status || 'pending');
-  const fallback = resolveLocalizedLabel(translations, normalizedStatus);
-  const candidates = [value, display];
-  for (const candidate of candidates) {
-    if (candidate == null) continue;
-    const candidateString = String(candidate).trim();
-    if (!candidateString) continue;
-    const normalizedCandidate = normalizeReviewStatusKey(candidateString);
-    if (translations[normalizedCandidate]) {
-      return translations[normalizedCandidate];
+  var _resolveStatusKey;
+  const translationValues = new Set(Object.values(translations).map(item => String(item !== null && item !== void 0 ? item : '').trim()).filter(Boolean));
+  const candidateStrings = [value, display, status].map(item => item == null ? '' : String(item).trim()).filter(Boolean);
+  for (const candidate of candidateStrings) {
+    if (translationValues.has(candidate)) {
+      return candidate;
     }
-    if (translationValues.includes(candidateString)) {
-      return candidateString;
-    }
-    const aliasKey = ENGLISH_ALIASES[normalizedCandidate];
-    if (aliasKey) {
-      return resolveLocalizedLabel(translations, aliasKey);
+    const mappedKey = resolveStatusKey(candidate);
+    if (mappedKey && translations[mappedKey]) {
+      return translations[mappedKey];
     }
   }
-  return fallback;
+  const fallbackKey = (_resolveStatusKey = resolveStatusKey(status)) !== null && _resolveStatusKey !== void 0 ? _resolveStatusKey : 'pending';
+  return translations[fallbackKey] || translations.pending || fallbackKey;
 };
 
 /***/ }),
@@ -89368,7 +89396,8 @@ __webpack_require__.r(__webpack_exports__);
 const PeopleList = ({
   onSelect,
   selectedUser,
-  defaultSelected
+  defaultSelected,
+  refreshKey = 0
 }) => {
   const api = (0,_providers_ApiProvider__WEBPACK_IMPORTED_MODULE_5__.useAPI)();
   const [usersList, setUsersList] = (0,react__WEBPACK_IMPORTED_MODULE_2__.useState)();
@@ -89389,7 +89418,7 @@ const PeopleList = ({
   }, [selectedUser]);
   (0,react__WEBPACK_IMPORTED_MODULE_2__.useEffect)(() => {
     fetchUsers();
-  }, []);
+  }, [fetchUsers, refreshKey]);
   (0,react__WEBPACK_IMPORTED_MODULE_2__.useEffect)(() => {
     if ((0,_utils_helpers__WEBPACK_IMPORTED_MODULE_7__.isDefined)(defaultSelected) && usersList) {
       const selected = usersList.find(({
@@ -89560,10 +89589,19 @@ const PeoplePage = () => {
   const config = (0,_providers_ConfigProvider__WEBPACK_IMPORTED_MODULE_9__.useConfig)();
   const [selectedUser, setSelectedUser] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
   const [link, setLink] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)();
+  const [refreshKey, setRefreshKey] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(0);
   const selectUser = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(user => {
     setSelectedUser(user);
-    localStorage.setItem('selectedUser', user === null || user === void 0 ? void 0 : user.id);
+    if ((user === null || user === void 0 ? void 0 : user.id) != null) {
+      localStorage.setItem('selectedUser', user.id);
+    } else {
+      localStorage.removeItem('selectedUser');
+    }
   }, [setSelectedUser]);
+  const handleUserDeleted = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => {
+    setRefreshKey(key => key + 1);
+    selectUser(null);
+  }, [selectUser, setRefreshKey]);
   const setInviteLink = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(link => {
     const hostname = config.hostname || location.origin;
     setLink(`${hostname}${link}`);
@@ -89652,10 +89690,12 @@ const PeoplePage = () => {
       children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_PeopleList__WEBPACK_IMPORTED_MODULE_13__.PeopleList, {
         selectedUser: selectedUser,
         defaultSelected: defaultSelected,
-        onSelect: user => selectUser(user)
+        onSelect: selectUser,
+        refreshKey: refreshKey
       }), selectedUser && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_SelectedUser__WEBPACK_IMPORTED_MODULE_15__.SelectedUser, {
         user: selectedUser,
-        onClose: () => selectUser(null)
+        onClose: () => selectUser(null),
+        onDeleted: handleUserDeleted
       })]
     })]
   });
@@ -89694,13 +89734,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var date_fns__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! date-fns */ "./node_modules/date-fns/esm/format/index.js");
 /* harmony import */ var date_fns_locale__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! date-fns/locale */ "./node_modules/date-fns/esm/locale/zh-CN/index.js");
-/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
-/* harmony import */ var _assets_icons__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../assets/icons */ "./src/assets/icons/index.js");
-/* harmony import */ var _components__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../components */ "./src/components/index.js");
-/* harmony import */ var _i18n__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../i18n */ "./src/i18n/index.js");
-/* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../utils/bem */ "./src/utils/bem.tsx");
-/* harmony import */ var _SelectedUser_styl__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./SelectedUser.styl */ "./src/pages/PeoplePage/SelectedUser.styl");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+/* harmony import */ var _assets_icons__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../assets/icons */ "./src/assets/icons/index.js");
+/* harmony import */ var _components__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../components */ "./src/components/index.js");
+/* harmony import */ var _providers_ApiProvider__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../providers/ApiProvider */ "./src/providers/ApiProvider.js");
+/* harmony import */ var _providers_ConfigProvider__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../providers/ConfigProvider */ "./src/providers/ConfigProvider.js");
+/* harmony import */ var _utils_roles__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../utils/roles */ "./src/utils/roles.ts");
+/* harmony import */ var _i18n__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../i18n */ "./src/i18n/index.js");
+/* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../utils/bem */ "./src/utils/bem.tsx");
+/* harmony import */ var _SelectedUser_styl__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./SelectedUser.styl */ "./src/pages/PeoplePage/SelectedUser.styl");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
+
+
+
 
 
 
@@ -89713,10 +89761,10 @@ __webpack_require__.r(__webpack_exports__);
 const UserProjectsLinks = ({
   projects
 }) => {
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_6__.Elem, {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_10__.Elem, {
     name: "links-list",
-    children: projects.map(project => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_6__.Elem, {
-      tag: react_router_dom__WEBPACK_IMPORTED_MODULE_2__.NavLink,
+    children: projects.map(project => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_10__.Elem, {
+      tag: react_router_dom__WEBPACK_IMPORTED_MODULE_3__.NavLink,
       name: "project-link",
       to: `/projects/${project.id}`,
       "data-external": true,
@@ -89726,63 +89774,123 @@ const UserProjectsLinks = ({
 };
 const SelectedUser = ({
   user,
-  onClose
+  onClose,
+  onDeleted
 }) => {
-  const fullName = [user.first_name, user.last_name].filter(n => !!n).join(" ").trim();
-  const lastActivity = user.last_activity ? (0,date_fns__WEBPACK_IMPORTED_MODULE_0__["default"])(new Date(user.last_activity), 'yyyy年MM月dd日 HH:mm', {
+  var _config$user, _user$created_project;
+  const api = (0,_providers_ApiProvider__WEBPACK_IMPORTED_MODULE_6__.useAPI)();
+  const config = (0,_providers_ConfigProvider__WEBPACK_IMPORTED_MODULE_7__.useConfig)();
+  const [role, setRole] = (0,react__WEBPACK_IMPORTED_MODULE_2__.useState)(() => (0,_utils_roles__WEBPACK_IMPORTED_MODULE_8__.getStoredRole)());
+  (0,react__WEBPACK_IMPORTED_MODULE_2__.useEffect)(() => {
+    const unsubscribe = (0,_utils_roles__WEBPACK_IMPORTED_MODULE_8__.subscribeToRoleChange)(setRole, {
+      immediate: true
+    });
+    return unsubscribe;
+  }, [setRole]);
+
+  // --- 当前登录用户信息 ---
+  const currentUserId = config === null || config === void 0 ? void 0 : (_config$user = config.user) === null || _config$user === void 0 ? void 0 : _config$user.id;
+  const isSelf = String(currentUserId) === String(user.id);
+  const isAdmin = role === _utils_roles__WEBPACK_IMPORTED_MODULE_8__.UserRole.Admin;
+
+  // --- 项目信息 ---
+  const hasCreatedProjects = ((_user$created_project = user.created_projects) === null || _user$created_project === void 0 ? void 0 : _user$created_project.length) > 0;
+
+  // --- 删除按钮状态 ---
+  const deleteDisabled = hasCreatedProjects; // ✅ 自己账号不再禁用，只因创建项目禁用
+  const deleteDisabledMessage = hasCreatedProjects ? (0,_i18n__WEBPACK_IMPORTED_MODULE_9__.t)("peoplePage.selected.deleteCreatorError") : null;
+
+  // --- 删除逻辑共用 ---
+  const handleDelete = (0,react__WEBPACK_IMPORTED_MODULE_2__.useCallback)(async () => {
+    if (hasCreatedProjects) {
+      window.alert((0,_i18n__WEBPACK_IMPORTED_MODULE_9__.t)("peoplePage.selected.deleteCreatorError"));
+      return;
+    }
+    if (!window.confirm((0,_i18n__WEBPACK_IMPORTED_MODULE_9__.t)("peoplePage.selected.deleteConfirm"))) return;
+    const response = await api.callApi("deleteUser", {
+      params: {
+        pk: user.id
+      }
+    });
+    if (response === null) return;
+    onDeleted === null || onDeleted === void 0 ? void 0 : onDeleted(user);
+    onClose === null || onClose === void 0 ? void 0 : onClose();
+  }, [api, user, onDeleted, onClose, hasCreatedProjects]);
+
+  // --- 显示信息 ---
+  const fullName = [user.first_name, user.last_name].filter(Boolean).join(" ").trim();
+  const lastActivity = user.last_activity ? (0,date_fns__WEBPACK_IMPORTED_MODULE_0__["default"])(new Date(user.last_activity), "yyyy年MM月dd日 HH:mm", {
     locale: date_fns_locale__WEBPACK_IMPORTED_MODULE_1__["default"]
-  }) : (0,_i18n__WEBPACK_IMPORTED_MODULE_5__.t)('peoplePage.selected.lastActivityEmpty');
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)(_utils_bem__WEBPACK_IMPORTED_MODULE_6__.Block, {
+  }) : (0,_i18n__WEBPACK_IMPORTED_MODULE_9__.t)("peoplePage.selected.lastActivityEmpty");
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(_utils_bem__WEBPACK_IMPORTED_MODULE_10__.Block, {
     name: "user-info",
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_6__.Elem, {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_10__.Elem, {
       name: "close",
-      tag: _components__WEBPACK_IMPORTED_MODULE_4__.Button,
+      tag: _components__WEBPACK_IMPORTED_MODULE_5__.Button,
       type: "link",
       onClick: onClose,
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_assets_icons__WEBPACK_IMPORTED_MODULE_3__.LsCross, {})
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)(_utils_bem__WEBPACK_IMPORTED_MODULE_6__.Elem, {
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_assets_icons__WEBPACK_IMPORTED_MODULE_4__.LsCross, {})
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(_utils_bem__WEBPACK_IMPORTED_MODULE_10__.Elem, {
       name: "header",
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_components__WEBPACK_IMPORTED_MODULE_4__.Userpic, {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components__WEBPACK_IMPORTED_MODULE_5__.Userpic, {
         user: user,
         style: {
           width: 64,
           height: 64,
           fontSize: 28
         }
-      }), fullName && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_6__.Elem, {
+      }), fullName && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_10__.Elem, {
         name: "full-name",
         children: fullName
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_6__.Elem, {
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_10__.Elem, {
         tag: "p",
         name: "email",
         children: user.email
       })]
-    }), user.phone && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_6__.Elem, {
+    }), user.phone && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_10__.Elem, {
       name: "section",
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("a", {
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)("a", {
         href: `tel:${user.phone}`,
         children: user.phone
       })
-    }), !!user.created_projects.length && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)(_utils_bem__WEBPACK_IMPORTED_MODULE_6__.Elem, {
+    }), !!user.created_projects.length && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(_utils_bem__WEBPACK_IMPORTED_MODULE_10__.Elem, {
       name: "section",
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_6__.Elem, {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_10__.Elem, {
         name: "section-title",
-        children: (0,_i18n__WEBPACK_IMPORTED_MODULE_5__.t)('peoplePage.selected.createdProjects')
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(UserProjectsLinks, {
+        children: (0,_i18n__WEBPACK_IMPORTED_MODULE_9__.t)("peoplePage.selected.createdProjects")
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(UserProjectsLinks, {
         projects: user.created_projects
       })]
-    }), !!user.contributed_to_projects.length && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)(_utils_bem__WEBPACK_IMPORTED_MODULE_6__.Elem, {
+    }), !!user.contributed_to_projects.length && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(_utils_bem__WEBPACK_IMPORTED_MODULE_10__.Elem, {
       name: "section",
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_6__.Elem, {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_10__.Elem, {
         name: "section-title",
-        children: (0,_i18n__WEBPACK_IMPORTED_MODULE_5__.t)('peoplePage.selected.contributedProjects')
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(UserProjectsLinks, {
+        children: (0,_i18n__WEBPACK_IMPORTED_MODULE_9__.t)("peoplePage.selected.contributedProjects")
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(UserProjectsLinks, {
         projects: user.contributed_to_projects
       })]
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)(_utils_bem__WEBPACK_IMPORTED_MODULE_6__.Elem, {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(_utils_bem__WEBPACK_IMPORTED_MODULE_10__.Elem, {
       tag: "p",
       name: "last-active",
-      children: [(0,_i18n__WEBPACK_IMPORTED_MODULE_5__.t)('peoplePage.selected.lastActivity'), lastActivity]
+      children: [(0,_i18n__WEBPACK_IMPORTED_MODULE_9__.t)("peoplePage.selected.lastActivity"), lastActivity]
+    }), isAdmin && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(_utils_bem__WEBPACK_IMPORTED_MODULE_10__.Elem, {
+      name: "actions",
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components__WEBPACK_IMPORTED_MODULE_5__.Button, {
+        look: "destructive",
+        type: "button",
+        disabled: deleteDisabled,
+        onClick: handleDelete,
+        children: isSelf ? (0,_i18n__WEBPACK_IMPORTED_MODULE_9__.t)("peoplePage.selected.deactivateUser") // “注销账户”
+        : (0,_i18n__WEBPACK_IMPORTED_MODULE_9__.t)("peoplePage.selected.deleteUser")
+      }), isSelf && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_10__.Elem, {
+        tag: "p",
+        name: "actions-hint",
+        children: (0,_i18n__WEBPACK_IMPORTED_MODULE_9__.t)("peoplePage.selected.selfHint") || "这是您的账户，点击上方按钮可注销自己。"
+      }), deleteDisabledMessage && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_10__.Elem, {
+        tag: "p",
+        name: "actions-hint",
+        children: deleteDisabledMessage
+      })]
     })]
   });
 };
@@ -89801,7 +89909,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // extracted by mini-css-extract-plugin
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({"user-info":"ls-user-info","user-info__close":"ls-user-info__close","user-info__header":"ls-user-info__header","user-info__email":"ls-user-info__email","user-info__full-name":"ls-user-info__full-name","user-info__section":"ls-user-info__section","user-info__section-title":"ls-user-info__section-title","user-info__last-active":"ls-user-info__last-active","user-info__links-list":"ls-user-info__links-list","user-info__project-link":"ls-user-info__project-link"});
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({"user-info":"ls-user-info","user-info__close":"ls-user-info__close","user-info__header":"ls-user-info__header","user-info__email":"ls-user-info__email","user-info__full-name":"ls-user-info__full-name","user-info__section":"ls-user-info__section","user-info__section-title":"ls-user-info__section-title","user-info__last-active":"ls-user-info__last-active","user-info__actions":"ls-user-info__actions","user-info__actions-hint":"ls-user-info__actions-hint","user-info__links-list":"ls-user-info__links-list","user-info__project-link":"ls-user-info__project-link"});
 
 /***/ }),
 
@@ -93007,9 +93115,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   subscribeToRoleChange: () => (/* binding */ subscribeToRoleChange)
 /* harmony export */ });
 let UserRole = /*#__PURE__*/function (UserRole) {
-  UserRole["Admin"] = "admin";
   UserRole["Annotator"] = "annotator";
   UserRole["Reviewer"] = "reviewer";
+  UserRole["Admin"] = "admin";
   return UserRole;
 }({});
 const DEFAULT_ROLE = UserRole.Annotator;
@@ -93017,7 +93125,7 @@ const ROLE_STORAGE_KEY = 'ls:user-role';
 const ROLE_CHANGE_EVENT = 'ls:user-role-change';
 const isBrowser = () => typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
 const isUserRole = value => {
-  return value === UserRole.Admin || value === UserRole.Annotator || value === UserRole.Reviewer;
+  return value === UserRole.Annotator || value === UserRole.Reviewer || value === UserRole.Admin;
 };
 const parseRole = value => {
   if (isUserRole(value)) return value;

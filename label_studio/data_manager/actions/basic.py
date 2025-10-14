@@ -107,7 +107,7 @@ actions = [
             'text': '将所选任务发送至项目已连接的全部机器学习后端。'
                     '此操作可能因超时而被中断。'
                     '建议通过 Label Studio API 更新任务以获取预测结果。'
-                    '<a href="https://labelstud.io/guide/ml.html>查看文档了解更多</a>。'
+                    '查看文档了解更多</a>。'
                     '请确认您的操作。',
             'type': 'confirm'
         }

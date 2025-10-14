@@ -209,7 +209,7 @@ export const zhCN = {
   'peoplePage.selected.deleteConfirm': '确定要删除该成员吗？此操作无法撤销。',
   'peoplePage.selected.deleteCreatorError': '删除账号前请先删除该用户创建的项目。',
   'peoplePage.selected.deactivateUser': '注销账号',
-  'peoplePage.selected.deactivateConfirm': '确定要注销您的账号吗？注销后需要管理员重新激活。',
+  'peoplePage.selected.selfHint': '这是您的账户，点击上方按钮可注销自己。',
   'peoplePage.selected.deactivateSuccess': '账号已注销，即将退出登录。',
   'peoplePage.selected.lastActivityEmpty': '暂无记录',
   'dataManager.review.columnTitle': '审核状态',
