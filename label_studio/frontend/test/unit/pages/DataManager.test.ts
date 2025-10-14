@@ -149,4 +149,15 @@ describe('localizeReviewStatus', () => {
 
     expect(result).toBe('未审核');
   });
+
+  it('uses default review status labels when translations are missing', () => {
+    const result = localizeReviewStatus({
+      translations: {},
+      status: 'approved',
+      display: 'approved',
+      value: 'approved',
+    });
+
+    expect(result).toBe('已通过');
+  });
 });

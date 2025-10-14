@@ -1,17 +1,50 @@
+import { t } from '../../i18n';
+
 export const normalizeReviewStatusKey = (value) => String(value ?? '').trim().toLowerCase();
 
+const REVIEW_STATUS_KEYS = ['pending', 'approved', 'rejected'];
+
+const getDefaultReviewStatusLabels = () => REVIEW_STATUS_KEYS.reduce((acc, key) => {
+  const translationKey = `dataManager.review.${key}`;
+  const translated = t(translationKey);
+
+  if (translated && translated !== translationKey) {
+    acc[key] = translated;
+  }
+
+  return acc;
+}, {});
+
 const STATUS_SYNONYMS = {
-  pending: ['pending', 'unreviewed', 'not_reviewed', 'not reviewed', 'none'],
-  approved: ['approved', 'accept', 'accepted', 'approve'],
-  rejected: ['rejected', 'reject', 'declined', 'decline'],
+  pending: [
+    'pending',
+    'unreviewed',
+    'not_reviewed',
+    'not reviewed',
+    'none',
+  ],
+  approved: [
+    'approved',
+    'accept',
+    'accepted',
+    'approve',
+  ],
+  rejected: [
+    'rejected',
+    'reject',
+    'declined',
+    'decline',
+  ],
 };
 
 const resolveStatusKey = (input) => {
   const normalized = normalizeReviewStatusKey(input);
   if (!normalized) return null;
 
+  if (STATUS_SYNONYMS[normalized]) return normalized;
+
   for (const [key, synonyms] of Object.entries(STATUS_SYNONYMS)) {
-    if (normalized === key) return key;
+    if (key === normalized) return key;
     if (synonyms.includes(normalized)) return key;
   }
 
@@ -19,8 +52,13 @@ const resolveStatusKey = (input) => {
 };
 
 export const localizeReviewStatus = ({ translations = {}, status, display, value }) => {
+  const dictionary = {
+    ...getDefaultReviewStatusLabels(),
+    ...translations,
+  };
+
   const translationValues = new Set(
-    Object.values(translations)
+    Object.values(dictionary)
       .map((item) => String(item ?? '').trim())
       .filter(Boolean),
   );
@@ -35,11 +73,11 @@ export const localizeReviewStatus = ({ translations = {}, status, display, value
     }
 
     const mappedKey = resolveStatusKey(candidate);
-    if (mappedKey && translations[mappedKey]) {
-      return translations[mappedKey];
+    if (mappedKey && dictionary[mappedKey]) {
+      return dictionary[mappedKey];
     }
   }
 
   const fallbackKey = resolveStatusKey(status) ?? 'pending';
-  return translations[fallbackKey] || translations.pending || fallbackKey;
+  return dictionary[fallbackKey] || dictionary.pending || fallbackKey;
 };
