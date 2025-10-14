@@ -229,6 +229,8 @@ export const Menubar = ({
 
                 <VersionNotifier showNewVersion/>
 
+                <VersionNotifier showCurrentVersion/>
+
                 <Menu.Divider/>
 
                 <Menu.Item
