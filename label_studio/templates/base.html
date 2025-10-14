@@ -101,6 +101,111 @@
   }, {% block frontend_settings %}{}{% endblock %});
 </script>
 
+<script>
+  (function() {
+    const translations = {
+      DONE: '完成！',
+      NO_COMP_LEFT: '没有更多标注任务',
+      NO_NEXT_TASK: '没有更多可供标注的数据',
+      NO_ACCESS: '您没有权限访问此任务',
+    };
+
+    const patchLabelStudio = () => {
+      const LS = window.LabelStudio;
+      if (!LS || LS.__I18N_PATCHED__) return false;
+
+      const WrappedLS = function(root, options = {}) {
+        const merged = {
+          ...options,
+          messages: {
+            ...translations,
+            ...(options.messages ?? {}),
+          },
+        };
+
+        return Reflect.construct(LS, [root, merged], new.target || WrappedLS);
+      };
+
+      Object.assign(WrappedLS, LS);
+      WrappedLS.prototype = LS.prototype;
+      Object.setPrototypeOf(WrappedLS, LS);
+      WrappedLS.__I18N_PATCHED__ = true;
+      window.LabelStudio = WrappedLS;
+      return true;
+    };
+
+    const patchDataManagerBundle = () => {
+      const chunk = window.webpackChunkDataManager;
+      if (!chunk || chunk.__I18N_PATCHED__) return false;
+
+      let requireFn;
+      chunk.push([[Symbol('i18n-patch')], {}, (req) => { requireFn = req; }]);
+      chunk.pop();
+
+      if (!requireFn) return false;
+
+      const findModuleId = (matcher) => {
+        for (const [id, factory] of Object.entries(requireFn.m)) {
+          if (factory && matcher(factory.toString())) return id;
+        }
+        return null;
+      };
+
+      const modalModuleId = findModuleId((source) => source.includes('components/Common/Modal/Modal.js'));
+
+      if (modalModuleId) {
+        const modalExports = requireFn(modalModuleId);
+
+        if (modalExports?.confirm && !modalExports.confirm.__I18N_PATCHED__) {
+          const originalConfirm = modalExports.confirm;
+
+          modalExports.confirm = (config = {}) => {
+            const nextConfig = {
+              cancelText: '取消',
+              okText: '确定',
+              ...config,
+            };
+
+            if (nextConfig.title === 'Confirm action.') nextConfig.title = '确认操作';
+            if (nextConfig.title === 'Destructive action.') nextConfig.title = '危险操作';
+
+            return originalConfirm(nextConfig);
+          };
+
+          modalExports.confirm.__I18N_PATCHED__ = true;
+        }
+
+        if (modalExports?.info && !modalExports.info.__I18N_PATCHED__) {
+          const originalInfo = modalExports.info;
+
+          modalExports.info = (config = {}) => {
+            const nextConfig = {
+              okText: '确定',
+              ...config,
+            };
+
+            return originalInfo(nextConfig);
+          };
+
+          modalExports.info.__I18N_PATCHED__ = true;
+        }
+      }
+
+      chunk.__I18N_PATCHED__ = true;
+      return true;
+    };
+
+    const tryPatch = (fn) => {
+      const attempt = setInterval(() => {
+        if (fn()) clearInterval(attempt);
+      }, 100);
+    };
+
+    tryPatch(patchLabelStudio);
+    tryPatch(patchDataManagerBundle);
+  })();
+</script>
+
 <script src="{{settings.HOSTNAME}}/react-app/index.js?v={{ versions.backend.commit }}"></script>
 
 <div id="dynamic-content">

@@ -458,6 +458,81 @@ export const DataManagerPage = ({...props}) => {
   }, [activeRole, applyRoleRestrictions]);
 
   useEffect(() => {
+    if (typeof document === 'undefined') return;
+    if (typeof MutationObserver === 'undefined') return;
+
+    const container = root.current;
+    if (!container) return;
+
+    const translateModals = () => {
+      const modals = document.querySelectorAll('.modal');
+
+      modals.forEach((modalNode) => {
+        const titleElem = modalNode.querySelector('.modal__title');
+        const title = titleElem?.textContent?.trim();
+
+        if (title === 'Confirm action.') titleElem.textContent = '确认操作';
+        if (title === 'Destructive action.') titleElem.textContent = '危险操作';
+
+        modalNode.querySelectorAll('button').forEach((button) => {
+          const text = button.textContent?.trim();
+
+          if (text === 'OK') button.textContent = '确定';
+          if (text === 'Cancel') button.textContent = '取消';
+        });
+      });
+    };
+
+    const translateActionsButton = () => {
+      const buttons = container.querySelectorAll('button');
+
+      buttons.forEach((button) => {
+        const normalized = (button.textContent ?? '').replace(/\s+/g, ' ').trim();
+        const shouldPatch = button.dataset.i18nActions === 'true' || /Tasks$/i.test(normalized);
+
+        if (!shouldPatch) return;
+
+        button.dataset.i18nActions = 'true';
+
+        const countFromStore = dataManagerRef.current?.store?.currentView?.selectedCount;
+        const fallbackMatch = normalized.match(/(\d+)/);
+        const count = typeof countFromStore === 'number'
+          ? countFromStore
+          : fallbackMatch
+            ? Number(fallbackMatch[1])
+            : 0;
+
+        const elementNodes = Array.from(button.childNodes).filter((node) => node.nodeType === Node.ELEMENT_NODE);
+
+        elementNodes.forEach((node) => button.removeChild(node));
+
+        button.textContent = count > 0
+          ? `已选 ${count} 项`
+          : '操作按钮';
+
+        elementNodes.forEach((node) => button.appendChild(node));
+      });
+    };
+
+    const handleMutations = () => {
+      translateActionsButton();
+      translateModals();
+    };
+
+    const observer = new MutationObserver(handleMutations);
+
+    observer.observe(container, { childList: true, subtree: true });
+
+    if (document.body) {
+      observer.observe(document.body, { childList: true, subtree: true });
+    }
+
+    handleMutations();
+
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
     if (typeof MutationObserver === 'undefined') return;
     if (typeof document === 'undefined' || !document.body) return;
 
