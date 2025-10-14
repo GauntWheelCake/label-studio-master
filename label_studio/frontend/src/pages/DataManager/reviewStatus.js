@@ -1,9 +1,35 @@
 export const normalizeReviewStatusKey = (value) => String(value ?? '').trim().toLowerCase();
 
 const STATUS_SYNONYMS = {
-  pending: ['pending', 'unreviewed', 'not_reviewed', 'not reviewed', 'none'],
-  approved: ['approved', 'accept', 'accepted', 'approve'],
-  rejected: ['rejected', 'reject', 'declined', 'decline'],
+  pending: [
+    'pending',
+    'unreviewed',
+    'not_reviewed',
+    'not reviewed',
+    'none',
+    '未审核',
+    '待审核',
+  ],
+  approved: [
+    'approved',
+    'accept',
+    'accepted',
+    'approve',
+    '已通过',
+    '通过',
+    '审核通过',
+  ],
+  rejected: [
+    'rejected',
+    'reject',
+    'declined',
+    'decline',
+    '已驳回',
+    '驳回',
+    '拒绝',
+    '已拒绝',
+    '审核未通过',
+  ],
 };
 
 const resolveStatusKey = (input) => {
