@@ -1,25 +1,26 @@
+import {t} from '../../../i18n';
 const OBJECTS = {
   Image: {
     type: 'Image',
     settings: {
       strokeWidth: {
-        title: 'Width of region borders',
+        title: t('createProject.config.settings.widthOfRegionBorders'),
         type: Number,
         param: ($obj, value) => $obj.$controls.forEach($control => $control.setAttribute('strokeWidth', value)),
         value: $obj => $obj.$controls[0]?.getAttribute('strokeWidth') ?? 1,
       },
       zoom: {
-        title: 'Allow image zoom (ctrl+wheel)',
+        title: t('createProject.config.settings.allowImageZoom'),
         type: Boolean,
         param: 'zoom',
       },
       zoomControl: {
-        title: 'Show controls to zoom in and out',
+        title: t('createProject.config.settings.showZoomControls'),
         type: Boolean,
         param: 'zoomControl',
       },
       rotateControl: {
-        title: 'Show controls to rotate image',
+        title: t('createProject.config.settings.showRotateControls'),
         type: Boolean,
         param: 'rotateControl',
       },
@@ -29,7 +30,7 @@ const OBJECTS = {
     type: 'Text',
     settings: {
       granularity: {
-        title: 'Select text by words',
+        title: t('createProject.config.settings.selectTextByWords'),
         type: Boolean,
         param: ($obj, value) => value ? $obj.setAttribute('granularity', 'word') : $obj.removeAttribute('granularity'),
         value: $obj => $obj.getAttribute('granularity') === 'word',
@@ -61,8 +62,14 @@ const Labels = {
   type: 'Labels',
   settings: {
     placeLabelsLeft: {
-      title: 'Display labels:',
+      title: t('createProject.config.settings.displayLabels'),
       type: ["bottom", "left", "right", "top"],
+      optionLabels: {
+        bottom: t('createProject.config.settings.displayLabels.bottom'),
+        left: t('createProject.config.settings.displayLabels.left'),
+        right: t('createProject.config.settings.displayLabels.right'),
+        top: t('createProject.config.settings.displayLabels.top'),
+      },
       control: true,
       param: ($control, value) => {
         let $container = $control.parentNode;
@@ -101,7 +108,7 @@ const Labels = {
       },
     },
     filter: {
-      title: 'Add filter for long list of labels',
+      title: t('createProject.config.settings.addFilterForLabels'),
       type: Boolean,
       control: true,
       param: ($obj, value) => {

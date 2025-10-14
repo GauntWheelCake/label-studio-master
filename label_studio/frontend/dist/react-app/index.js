@@ -83961,11 +83961,7 @@ const Menubar = ({
               to: "/people",
               icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_assets_icons__WEBPACK_IMPORTED_MODULE_2__.IconPersonInCircle, {}),
               exact: true
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_12__.Menu.Spacer, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_VersionNotifier_VersionNotifier__WEBPACK_IMPORTED_MODULE_14__.VersionNotifier, {
-              showNewVersion: true
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_VersionNotifier_VersionNotifier__WEBPACK_IMPORTED_MODULE_14__.VersionNotifier, {
-              showCurrentVersion: true
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_12__.Menu.Divider, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_12__.Menu.Item, {
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_12__.Menu.Spacer, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_12__.Menu.Divider, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_12__.Menu.Item, {
               icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_assets_icons__WEBPACK_IMPORTED_MODULE_2__.IconPin, {}),
               className: sidebarClass.elem('pin'),
               onClick: sidebarPin,
@@ -85478,6 +85474,17 @@ const zhCN = {
   'createProject.config.labels.choicesHeading': '选项',
   'createProject.config.labels.labelsHeading': '标签',
   'createProject.config.settings.title': '配置设置',
+  'createProject.config.settings.widthOfRegionBorders': '区域边框宽度',
+  'createProject.config.settings.allowImageZoom': '允许图像缩放（Ctrl+滚轮）',
+  'createProject.config.settings.showZoomControls': '显示缩放控制',
+  'createProject.config.settings.showRotateControls': '显示旋转控制',
+  'createProject.config.settings.selectTextByWords': '按单词选择文本',
+  'createProject.config.settings.displayLabels': '标签显示位置',
+  'createProject.config.settings.displayLabels.bottom': '底部',
+  'createProject.config.settings.displayLabels.left': '左侧',
+  'createProject.config.settings.displayLabels.right': '右侧',
+  'createProject.config.settings.displayLabels.top': '顶部',
+  'createProject.config.settings.addFilterForLabels': '为长标签列表添加筛选器',
   'createProject.config.columns.title': '配置数据',
   'createProject.config.columns.moreDataNeeded': '此模板需要比当前更多的数据。',
   'createProject.config.columns.uploadRequired': '请选择要标注的字段前需要先上传数据，或在代码模式中手动配置。',
@@ -85810,13 +85817,18 @@ const ConfigureSettings = ({
         };
         return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("li", {
           children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsxs)("label", {
-            children: [options.title, " ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("select", {
+            children: [options.title, ' ', /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("select", {
               value: value,
               onChange: onChange,
-              children: options.type.map(option => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("option", {
-                value: option,
-                children: option
-              }, option))
+              children: options.type.map(option => {
+                var _options$optionLabels, _options$optionLabels2, _ref, _option$label, _options$optionLabels3;
+                const optionValue = typeof option === "string" ? option : option.value;
+                const optionLabel = typeof option === "string" ? (_options$optionLabels = (_options$optionLabels2 = options.optionLabels) === null || _options$optionLabels2 === void 0 ? void 0 : _options$optionLabels2[optionValue]) !== null && _options$optionLabels !== void 0 ? _options$optionLabels : optionValue : (_ref = (_option$label = option.label) !== null && _option$label !== void 0 ? _option$label : (_options$optionLabels3 = options.optionLabels) === null || _options$optionLabels3 === void 0 ? void 0 : _options$optionLabels3[optionValue]) !== null && _ref !== void 0 ? _ref : optionValue;
+                return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("option", {
+                  value: optionValue,
+                  children: optionLabel
+                }, optionValue);
+              })
             })]
           })
         }, key);
@@ -86712,12 +86724,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   OBJECTS: () => (/* binding */ OBJECTS),
 /* harmony export */   TAGS: () => (/* binding */ TAGS)
 /* harmony export */ });
+/* harmony import */ var _i18n__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../i18n */ "./src/i18n/index.js");
+
 const OBJECTS = {
   Image: {
     type: 'Image',
     settings: {
       strokeWidth: {
-        title: 'Width of region borders',
+        title: (0,_i18n__WEBPACK_IMPORTED_MODULE_0__.t)('createProject.config.settings.widthOfRegionBorders'),
         type: Number,
         param: ($obj, value) => $obj.$controls.forEach($control => $control.setAttribute('strokeWidth', value)),
         value: $obj => {
@@ -86726,17 +86740,17 @@ const OBJECTS = {
         }
       },
       zoom: {
-        title: 'Allow image zoom (ctrl+wheel)',
+        title: (0,_i18n__WEBPACK_IMPORTED_MODULE_0__.t)('createProject.config.settings.allowImageZoom'),
         type: Boolean,
         param: 'zoom'
       },
       zoomControl: {
-        title: 'Show controls to zoom in and out',
+        title: (0,_i18n__WEBPACK_IMPORTED_MODULE_0__.t)('createProject.config.settings.showZoomControls'),
         type: Boolean,
         param: 'zoomControl'
       },
       rotateControl: {
-        title: 'Show controls to rotate image',
+        title: (0,_i18n__WEBPACK_IMPORTED_MODULE_0__.t)('createProject.config.settings.showRotateControls'),
         type: Boolean,
         param: 'rotateControl'
       }
@@ -86746,7 +86760,7 @@ const OBJECTS = {
     type: 'Text',
     settings: {
       granularity: {
-        title: 'Select text by words',
+        title: (0,_i18n__WEBPACK_IMPORTED_MODULE_0__.t)('createProject.config.settings.selectTextByWords'),
         type: Boolean,
         param: ($obj, value) => value ? $obj.setAttribute('granularity', 'word') : $obj.removeAttribute('granularity'),
         value: $obj => $obj.getAttribute('granularity') === 'word',
@@ -86777,8 +86791,14 @@ const Labels = {
   type: 'Labels',
   settings: {
     placeLabelsLeft: {
-      title: 'Display labels:',
+      title: (0,_i18n__WEBPACK_IMPORTED_MODULE_0__.t)('createProject.config.settings.displayLabels'),
       type: ["bottom", "left", "right", "top"],
+      optionLabels: {
+        bottom: (0,_i18n__WEBPACK_IMPORTED_MODULE_0__.t)('createProject.config.settings.displayLabels.bottom'),
+        left: (0,_i18n__WEBPACK_IMPORTED_MODULE_0__.t)('createProject.config.settings.displayLabels.left'),
+        right: (0,_i18n__WEBPACK_IMPORTED_MODULE_0__.t)('createProject.config.settings.displayLabels.right'),
+        top: (0,_i18n__WEBPACK_IMPORTED_MODULE_0__.t)('createProject.config.settings.displayLabels.top')
+      },
       control: true,
       param: ($control, value) => {
         var _$container$firstChil, _$container$firstChil2, _$container$getAttrib;
@@ -86818,7 +86838,7 @@ const Labels = {
       }
     },
     filter: {
-      title: 'Add filter for long list of labels',
+      title: (0,_i18n__WEBPACK_IMPORTED_MODULE_0__.t)('createProject.config.settings.addFilterForLabels'),
       type: Boolean,
       control: true,
       param: ($obj, value) => {
