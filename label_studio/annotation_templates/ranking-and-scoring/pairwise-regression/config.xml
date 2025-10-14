@@ -1,5 +1,5 @@
 <View>
-  <Header>请设置这些图像代表同一事物的可能性：</Header>
+  <Header>Set how likely these images represent the same thing:</Header>
     <View style="display: grid; column-gap: 8px; grid-template: auto/1fr 1fr">
   	<Image name="image1" value="$image1" />
     <Image name="image2" value="$image2" />

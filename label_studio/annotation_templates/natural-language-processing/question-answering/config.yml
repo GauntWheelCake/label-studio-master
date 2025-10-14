@@ -2,16 +2,16 @@ title: 问答
 type: community
 group: 自然语言处理
 image: /static/templates/question-answering.png
-details: <h1>从文本中选择答案</h1>
+details: <h1>Select an answer from text</h1>
 config: '
 <View>
-  <Header value="请阅读下列段落" />
+  <Header value="Please read the passage" />
   <Text name="text" value="$text" granularity="word"/>
-  <Header value="请选择能够回答下列问题的文本片段："/>
+  <Header value="Select a text span answering the following question:"/>
   <Text name="question" value="$question"/>
   <View style="display: none;">
   <Labels name="answer" toName="text">
-    <Label value="答案" maxUsage="1" background="red"/>
+    <Label value="Answer" maxUsage="1" background="red"/>
   </Labels>
   </View>
 </View>

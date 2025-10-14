@@ -1,6 +1,6 @@
 <View>
   <Text name="query" value="$query" />
-  <Header value="请选择与查询相关的文档：" />
+  <Header value="Select document related to the query:" />
   <View style="display: flex">
     <View>
     <Text name="text1" value="$text1" />
@@ -9,9 +9,9 @@
     </View>
     <View style="padding: 30px">
     <Choices name="selection" toName="query" required="true" choice="multiple">
-      <Choice value="选项一" />
-      <Choice value="选项二" />
-          <Choice value="选项三" />
+      <Choice value="One" />
+      <Choice value="Two" />
+  	  <Choice value="Three" />
     </Choices>
     </View>
   </View>

@@ -1,7 +1,7 @@
 <View>
   <Labels name="labels" toName="audio">
-    <Label value="语音" />
-    <Label value="噪声" />
+    <Label value="Speech" />
+    <Label value="Noise" />
   </Labels>
 
   <AudioPlus name="audio" value="$audio"/>

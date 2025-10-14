@@ -1,6 +1,6 @@
 <View>  
   <Paragraphs name="prg" value="$dialogue" layout="dialogue" />
-  <Header value="选择一个回复" />
+  <Header value="Choose a response" />
   <View style="display: flex">
     <View>
     <Text name="resp1" value="$respone" />
@@ -9,9 +9,9 @@
     </View>
     <View style="padding: 50px;">
     <Choices name="resp" toName="prg" required="true">
-      <Choice value="选项一" />
-      <Choice value="选项二" />
-          <Choice value="选项三" />
+      <Choice value="One" />
+      <Choice value="Two" />
+  	  <Choice value="Three" />
     </Choices>
     </View>
   </View>

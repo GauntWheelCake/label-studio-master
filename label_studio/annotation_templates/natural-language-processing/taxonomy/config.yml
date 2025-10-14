@@ -2,17 +2,17 @@ title: 分类学
 type: community
 group: 自然语言处理
 image: /static/templates/taxonomy.png
-details: <h1>执行多标签层级分类</h1>
+details: <h1>Do multilabel hierarchical classification</h1>
 config: '
 <View>
   <Text name="text" value="$text"/>
   <Taxonomy name="taxonomy" toName="text">
-    <Choice value="古菌" />
-    <Choice value="细菌" />
-    <Choice value="真核生物">
-      <Choice value="人类" />
-      <Choice value="负鼠" />
-      <Choice value="外星生物" />
+    <Choice value="Archaea" />
+    <Choice value="Bacteria" />
+    <Choice value="Eukarya">
+      <Choice value="Human" />
+      <Choice value="Oppossum" />
+      <Choice value="Extraterrestial" />
     </Choice>
   </Taxonomy>
 </View>

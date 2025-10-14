@@ -9,19 +9,19 @@
                 overviewChannels="velocity">
 
         <Channel column="velocity"
-                 units="英里/小时"
+                 units="miles/h"
                  displayFormat=",.1f"
                  strokeColor="#1f77b4"
-                 legend="速度"/>
+                 legend="Velocity"/>
     </TimeSeries>
     <!-- Control tag for region labels -->
     <TimeSeriesLabels name="label" toName="ts">
-        <Label value="区域" background="red" />
+        <Label value="Region" background="red" />
     </TimeSeriesLabels>
   <Choices name="region_type" toName="ts"
         perRegion="true" required="true">
-      <Choice value="离群点"/>
-      <Choice value="异常"/>
+      <Choice value="Outlier"/>
+      <Choice value="Anomaly"/>
   </Choices>
 </View>
 

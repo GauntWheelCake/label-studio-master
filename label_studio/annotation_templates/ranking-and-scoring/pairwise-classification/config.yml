@@ -1,11 +1,11 @@
-title: 成对分类
+title: Pairwise classification
 type: community
 group: 排名和评分
 image: /static/templates/pairwise-classification.png
-details: <h1>请选择两个条目中的一个</h1>
+details: <h1>Select one of two items</h1>
 config: '
 <View>
-  <Header>请选择两个条目中的一个</Header>
+  <Header>Select one of two items</Header>
   <Pairwise name="pw" toName="text1,text2" />
   <Text name="text1" value="$pairText1" />
   <Text name="text2" value="$pairText2" />

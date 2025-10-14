@@ -1,10 +1,10 @@
 <View>
-    <Header value="请为本文评分"/>
+    <Header value="Rate this article"/>
   <Rating name="rating" toName="pdf" maxRating="10" icon="star" size="medium" />
 
   <Choices name="choices" choice="single-radio" toName="pdf" showInline="true">
-    <Choice value="重要文章"/>
-    <Choice value="小报文章"/>
+    <Choice value="Important article"/>
+    <Choice value="Yellow press"/>
   </Choices>
   <HyperText name="pdf" value="$pdf"/>
 </View>

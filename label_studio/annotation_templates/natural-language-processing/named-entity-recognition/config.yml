@@ -2,14 +2,14 @@ title: 命名实体识别
 type: community
 group: 自然语言处理
 image: /static/templates/named-entity-recognition.png
-details: <h1>从文本中抽取命名实体</h1>
+details: <h1>Extract named entities from text</h1>
 config: '
 <View>
   <Labels name="label" toName="text">
-    <Label value="人物" background="red"/>
-    <Label value="组织" background="darkorange"/>
-    <Label value="地点" background="orange"/>
-    <Label value="其他" background="green"/>
+    <Label value="PER" background="red"/>
+    <Label value="ORG" background="darkorange"/>
+    <Label value="LOC" background="orange"/>
+    <Label value="MISC" background="green"/>
   </Labels>
 
   <Text name="text" value="$ner"/>

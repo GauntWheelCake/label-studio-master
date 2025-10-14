@@ -2,11 +2,11 @@ title: 自动语音识别
 type: community
 group: 音频/语音处理
 image: /static/templates/automatic-speech-recognition.png
-details: <h1>请为音频提供转写文本</h1>
+details: <h1>Provide transcript for the audio</h1>
 config: '
 <View>
   <Audio name="audio" value="$audio" zoom="true" hotkey="ctrl+enter" />
-  <Header value="请提供转写内容" />
+  <Header value="Provide Transcription" />
   <TextArea name="transcription" toName="audio" rows="4" editable="true" maxSubmissions="1" />
 </View>
 '

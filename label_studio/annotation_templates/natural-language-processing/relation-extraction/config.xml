@@ -1,12 +1,12 @@
 <View>
    <Relations>
-    <Relation value="组织:创立者"/>
-    <Relation value="组织:成立时间"/>
+    <Relation value="org:founded_by"/>
+    <Relation value="org:founded"/>
   </Relations>
   <Labels name="label" toName="text">
-    <Label value="组织" background="orange"/>
-    <Label value="人物" background="green"/>
-    <Label value="日期时间" background="blue"/>
+    <Label value="Organization" background="orange"/>
+    <Label value="Person" background="green"/>
+    <Label value="Datetime" background="blue"/>
   </Labels>
 
   <Text name="text" value="$text"/>

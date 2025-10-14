@@ -2,13 +2,13 @@ title: 时间序列预测
 type: community
 group: 时间序列分析
 image: /static/templates/time-series-forecasting.png
-details: <h1>为时间序列预测模型准备训练数据</h1>
+details: <h1>Prepare training data for time series forecasting models</h1>
 config: '
 <View>
     <!-- Control tag for region labels -->
-    <Header value="请选择时间序列中可预测的区间："/>
+    <Header value="Select predictable region spans in time series:"/>
     <TimeSeriesLabels name="predictable" toName="stock">
-        <Label value="区域" background="red" />
+        <Label value="Regions" background="red" />
     </TimeSeriesLabels>
 
     <!-- Object tag for time series data source -->
@@ -22,13 +22,13 @@ config: '
         <Channel column="value"
                  displayFormat=",.1f"
                  strokeColor="#1f77b4"
-                 legend="股票价值"/>
+                 legend="Stock Value"/>
     </TimeSeries>
-    <Header value="预测下一段趋势："/>
+    <Header value="Forecast next trend:"/>
     <Choices name="trend_forecast" toName="stock">
-        <Choice value="上升"/>
-        <Choice value="下降"/>
-        <Choice value="持平"/>
+        <Choice value="Up"/>
+        <Choice value="Down"/>
+        <Choice value="Steady"/>
     </Choices>
 </View>
 '

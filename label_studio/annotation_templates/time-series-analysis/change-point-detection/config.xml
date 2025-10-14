@@ -1,7 +1,7 @@
 <View>
     <!-- Control tag for region labels -->
     <TimeSeriesLabels name="label" toName="ts">
-        <Label value="变化" background="red" />
+        <Label value="Change" background="red" />
     </TimeSeriesLabels>
 
     <!-- Object tag for time series data source -->
@@ -13,10 +13,10 @@
                 overviewChannels="velocity">
 
         <Channel column="velocity"
-                 units="英里/小时"
+                 units="miles/h"
                  displayFormat=",.1f"
                  strokeColor="#1f77b4"
-                 legend="速度"/>
+                 legend="Velocity"/>       
     </TimeSeries>
 </View>
 

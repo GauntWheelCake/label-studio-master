@@ -1,10 +1,10 @@
 <View>
-  <Header value="通过 AudioPlus 同步技巧进行视频时间轴分割"/>
+  <Header value="Video timeline segmentation via AudioPlus sync trick"/>
   <HyperText name="video" value="$video"/>
   <Labels name="tricks" toName="audio" choice="multiple">
-    <Label value="踢翻板" background="#1BB500" />
-    <Label value="360 翻板" background="#FFA91D" />
-    <Label value="技巧" background="#358EF3" />
+    <Label value="Kickflip" background="#1BB500" />
+    <Label value="360 Flip" background="#FFA91D" />
+    <Label value="Trick" background="#358EF3" />
   </Labels>
   <AudioPlus name="audio" value="$videoSource" speed="false"/>
 </View>

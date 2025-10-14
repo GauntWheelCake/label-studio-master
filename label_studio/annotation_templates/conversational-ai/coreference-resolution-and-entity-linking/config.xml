@@ -1,7 +1,7 @@
 <View>
   <Labels name="label" toName="text">
-    <Label value="名词" background="red"/>
-    <Label value="代词" background="darkorange"/>
+    <Label value="Noun" background="red"/>
+    <Label value="Pronoun" background="darkorange"/>
   </Labels>
 
   <Text name="text" value="$text"/>

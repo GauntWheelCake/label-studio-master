@@ -2,7 +2,7 @@ title: 异常值和异常检测
 type: community
 group: 时间序列分析
 image: /static/templates/outliers-anomaly-detection.png
-details: <h1>选择时间段以标注时间序列中的离群点或异常</h1>
+details: <h1>Select time spans identifying outliers or anomalies on time series signals</h1>
 config: '
 <View>
 
@@ -15,19 +15,19 @@ config: '
                 overviewChannels="velocity">
 
         <Channel column="velocity"
-                 units="英里/小时"
+                 units="miles/h"
                  displayFormat=",.1f"
                  strokeColor="#1f77b4"
-                 legend="速度"/>
+                 legend="Velocity"/>
     </TimeSeries>
     <!-- Control tag for region labels -->
     <TimeSeriesLabels name="label" toName="ts">
-        <Label value="区域" background="red" />
+        <Label value="Region" background="red" />
     </TimeSeriesLabels>
   <Choices name="region_type" toName="ts"
         perRegion="true" required="true">
-      <Choice value="离群点"/>
-      <Choice value="异常"/>
+      <Choice value="Outlier"/>
+      <Choice value="Anomaly"/>
   </Choices>
 </View>
 '

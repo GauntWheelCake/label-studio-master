@@ -2,21 +2,21 @@ title: 意图分类
 type: community
 group: 音频/语音处理
 image: /static/templates/intent-classification.png
-details: <h1>对语音进行分段并选择说话意图</h1>
+details: <h1>Do voice activity segmentation and choose spoken intent</h1>
 config: '
 <View>
   <Labels name="labels" toName="audio">
-    <Label value="片段" />
+    <Label value="Segment" />
   </Labels>
 
   <AudioPlus name="audio" value="$audio"/>
 
   <Choices name="intent" toName="audio" perRegion="true" required="true">
-    <Choice value="提问" />
-    <Choice value="请求" />
-    <Choice value="满意" />
-    <Choice value="感兴趣" />
-    <Choice value="不满意" />
+    <Choice value="Question" />
+    <Choice value="Request" />
+    <Choice value="Satisfied" />
+    <Choice value="Interested" />
+    <Choice value="Unsatisfied" />
   </Choices>
 </View>
 

@@ -1,7 +1,7 @@
 <View>
   <View style="display: grid; grid-template: auto/1fr 1fr; column-gap: 1em">
-    <Header value="阅读英文文本" />
-    <Header value="提供西班牙语翻译" />
+    <Header value="Read the text in English" />
+    <Header value="Provide translaton in Spanish" />
 
   <Text name="english" value="$english" />
 

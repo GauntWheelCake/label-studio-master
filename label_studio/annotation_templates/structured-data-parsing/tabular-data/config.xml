@@ -1,4 +1,4 @@
 <View>
-    <Header value="包含 {键: 值} 对的表格"/>
+    <Header value="Table with {key: value} pairs"/>
     <Table name="table" value="$item"/>
 </View>

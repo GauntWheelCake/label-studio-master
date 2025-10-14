@@ -3,12 +3,12 @@
   <View style="box-shadow: 2px 2px 5px #999;
                padding: 20px; margin-top: 2em;
                border-radius: 5px;">
-    <Header value="选择文本情感"/>
+    <Header value="Choose text sentiment"/>
     <Choices name="sentiment" toName="text"
              choice="single" showInLine="true">
-      <Choice value="正面"/>
-      <Choice value="负面"/>
-      <Choice value="中性"/>
+      <Choice value="Positive"/>
+      <Choice value="Negative"/>
+      <Choice value="Neutral"/>
     </Choices>
   </View>
 </View>

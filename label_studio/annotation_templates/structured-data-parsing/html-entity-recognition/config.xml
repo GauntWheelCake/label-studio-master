@@ -1,8 +1,8 @@
 <View>
   <HyperTextLabels name="ner" toName="text">
-    <Label value="标题" background="green"/>
-    <Label value="作者" background="blue"/>
-    <Label value="正文" background="yellow"/>
+    <Label value="Title" background="green"/>
+    <Label value="Author" background="blue"/>
+    <Label value="Body" background="yellow"/>
   </HyperTextLabels>
 
   <View style="border: 1px solid #CCC;

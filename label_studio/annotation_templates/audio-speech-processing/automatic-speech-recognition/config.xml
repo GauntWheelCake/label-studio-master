@@ -1,6 +1,6 @@
 <View>
   <Audio name="audio" value="$audio" zoom="true" hotkey="ctrl+enter" />
-  <Header value="请提供转写内容" />
+  <Header value="Provide Transcription" />
   <TextArea name="transcription" toName="audio" rows="4" editable="true" maxSubmissions="1" />
 </View>
 
