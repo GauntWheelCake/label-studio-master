@@ -3,13 +3,13 @@ type: community
 group: 计算机视觉
 order: 2
 image: /static/templates/semantic-segmentation-with-masks.png
-details: <h1>Draw masks around the object with the brush tool</h1>
+details: <h1>使用画笔工具为目标描绘掩码</h1>
 config: '
 <View>
   <Image name="image" value="$image" zoom="true"/>
   <BrushLabels name="tag" toName="image">
-    <Label value="Airplane" background="rgba(255, 0, 0, 0.7)"/>
-    <Label value="Car" background="rgba(0, 0, 255, 0.7)"/>
+    <Label value="飞机" background="rgba(255, 0, 0, 0.7)"/>
+    <Label value="汽车" background="rgba(0, 0, 255, 0.7)"/>
   </BrushLabels>
 </View>
 '

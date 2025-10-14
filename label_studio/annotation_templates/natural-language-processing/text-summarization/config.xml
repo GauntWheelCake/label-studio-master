@@ -1,8 +1,8 @@
 <View>
-  <Header value="Please read the text" />
+  <Header value="请阅读以下文本" />
   <Text name="text" value="$text" />
 
-  <Header value="Provide one sentence summary" />
+  <Header value="请提供一句话总结" />
   <TextArea name="answer" toName="text"
             showSubmitButton="true" maxSubmissions="1" editable="true"
             required="true" />

@@ -1,8 +1,8 @@
 <View>
   <HyperText name="video" value="$video"/>
   <Choices name="choice" toName="video" showInLine="true">
-    <Choice value="Blurry" />
-    <Choice value="Sharp" />
+    <Choice value="模糊" />
+    <Choice value="清晰" />
   </Choices>
 </View>
 

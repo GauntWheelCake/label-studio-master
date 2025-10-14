@@ -2,11 +2,11 @@ title: 文献检索
 type: community
 group: 排名和评分
 image: /static/templates/document-retrieval.png
-details: <h1>Select document related to the query</h1>
+details: <h1>选择与查询相关的文档</h1>
 config: '
 <View>
   <Text name="query" value="$query" />
-  <Header value="Select document related to the query:" />
+  <Header value="请选择与查询相关的文档：" />
   <View style="display: flex">
     <View>
     <Text name="text1" value="$text1" />
@@ -15,9 +15,9 @@ config: '
     </View>
     <View>
     <Choices name="selection" toName="query" required="true" choice="multiple">
-      <Choice value="One" />
-      <Choice value="Two" />
-  	  <Choice value="Two" />
+      <Choice value="选项一" />
+      <Choice value="选项二" />
+          <Choice value="选项三" />
     </Choices>
     </View>
   </View>

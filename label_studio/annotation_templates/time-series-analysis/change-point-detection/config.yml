@@ -2,12 +2,12 @@ title: 变点检测
 type: community
 group: 时间序列分析
 image: /static/templates/change-point-detection.png
-details: <h1>Identify changing points on time series signals</h1>
+details: <h1>识别时间序列信号中的变化点</h1>
 config: '
 <View>
     <!-- Control tag for region labels -->
     <TimeSeriesLabels name="label" toName="ts">
-        <Label value="Change" background="red" />
+        <Label value="变化" background="red" />
     </TimeSeriesLabels>
 
     <!-- Object tag for time series data source -->
@@ -19,10 +19,10 @@ config: '
                 overviewChannels="velocity">
 
         <Channel column="velocity"
-                 units="miles/h"
+                 units="英里/小时"
                  displayFormat=",.1f"
                  strokeColor="#1f77b4"
-                 legend="Velocity"/>
+                 legend="速度"/>
     </TimeSeries>
 </View>
 '

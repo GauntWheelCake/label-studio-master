@@ -2,13 +2,13 @@ title: HTML实体识别
 type: community
 group: 结构化数据解析
 image: /static/templates/html-entity-recognition.png
-details: <h1>Extract entities from hypertext documents</h1>
+details: <h1>从超文本文档中抽取实体</h1>
 config: '
 <View>
   <HyperTextLabels name="ner" toName="text">
-    <Label value="Title" background="green"/>
-    <Label value="Author" background="blue"/>
-    <Label value="Body" background="yellow"/>
+    <Label value="标题" background="green"/>
+    <Label value="作者" background="blue"/>
+    <Label value="正文" background="yellow"/>
   </HyperTextLabels>
 
   <View style="border: 1px solid #CCC;

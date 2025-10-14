@@ -8,12 +8,12 @@
   <Text value="$text" name="text"/>
 
   <View style="display: grid;  grid-template-columns: 1fr 1fr; max-height: 300px; width: 400px">
-    <TextArea name="table_name_1" toName="text" placeholder="name" editable="true" maxSubmissions="1"/>
-    <TextArea name="table_value_1" toName="text" placeholder="value" editable="true" maxSubmissions="1"/>
-    <TextArea name="table_name_2" toName="text" placeholder="name" editable="true" maxSubmissions="1"/>
-    <TextArea name="table_value_2" toName="text" placeholder="value" editable="true" maxSubmissions="1"/>
-    <TextArea name="table_name_3" toName="text" placeholder="name" editable="true" maxSubmissions="1"/>
-    <TextArea name="table_value_3" toName="text" placeholder="value" editable="true" maxSubmissions="1"/>
+    <TextArea name="table_name_1" toName="text" placeholder="名称" editable="true" maxSubmissions="1"/>
+    <TextArea name="table_value_1" toName="text" placeholder="数值" editable="true" maxSubmissions="1"/>
+    <TextArea name="table_name_2" toName="text" placeholder="名称" editable="true" maxSubmissions="1"/>
+    <TextArea name="table_value_2" toName="text" placeholder="数值" editable="true" maxSubmissions="1"/>
+    <TextArea name="table_name_3" toName="text" placeholder="名称" editable="true" maxSubmissions="1"/>
+    <TextArea name="table_value_3" toName="text" placeholder="数值" editable="true" maxSubmissions="1"/>
   </View>
 </View>
 

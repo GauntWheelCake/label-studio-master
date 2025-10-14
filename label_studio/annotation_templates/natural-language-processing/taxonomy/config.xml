@@ -1,12 +1,12 @@
 <View>
   <Text name="text" value="$text"/>
   <Taxonomy name="taxonomy" toName="text">
-    <Choice value="Archaea" />
-    <Choice value="Bacteria" />
-    <Choice value="Eukarya">
-      <Choice value="Human" />
-      <Choice value="Oppossum" />
-      <Choice value="Extraterrestial" />
+    <Choice value="古菌" />
+    <Choice value="细菌" />
+    <Choice value="真核生物">
+      <Choice value="人类" />
+      <Choice value="负鼠" />
+      <Choice value="外星生物" />
     </Choice>
   </Taxonomy>
 </View>

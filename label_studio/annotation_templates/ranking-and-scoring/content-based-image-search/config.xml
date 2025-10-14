@@ -1,15 +1,15 @@
 <View>
   <Image name="query" value="$query_image" />
-  <Header value="Choose similar images:" />
+  <Header value="请选择相似的图像：" />
   <View style="display: grid; column-gap: 8px; grid-template: auto/1fr 1fr 1fr">
     <Image name="image1" value="$image1" />
     <Image name="image2" value="$image2" />
     <Image name="image3" value="$image3" />
   </View>
   <Choices name="similar" toName="query" required="true" choice="multiple">
-    <Choice value="One" />
-    <Choice value="Two" />
-    <Choice value="Three" />
+    <Choice value="选项一" />
+    <Choice value="选项二" />
+    <Choice value="选项三" />
   </Choices>
   <Style>
     [dataneedsupdate]~div form {display: flex}

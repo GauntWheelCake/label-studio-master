@@ -2,12 +2,12 @@ title: 共指消解与实体链接
 type: community
 group: 人工智能对话
 image: /static/templates/coreference-resolution-and-entity-linking.png
-details: <h1>Do coreference resolution between parts of speech and link entities in text</h1>
+details: <h1>执行词性之间的共指消解并在文本中链接实体</h1>
 config: '
 <View>
   <Labels name="label" toName="text">
-    <Label value="Noun" background="red"/>
-    <Label value="Pronoun" background="darkorange"/>
+    <Label value="名词" background="red"/>
+    <Label value="代词" background="darkorange"/>
   </Labels>
 
   <Text name="text" value="$corefText"/>

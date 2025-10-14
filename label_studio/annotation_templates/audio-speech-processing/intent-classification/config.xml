@@ -1,16 +1,16 @@
 <View>
   <Labels name="labels" toName="audio">
-    <Label value="Segment" />
+    <Label value="片段" />
   </Labels>
 
   <AudioPlus name="audio" value="$audio"/>
 
   <Choices name="intent" toName="audio" perRegion="true" required="true">
-    <Choice value="Question" />
-    <Choice value="Request" />
-    <Choice value="Satisfied" />
-    <Choice value="Interested" />
-    <Choice value="Unsatisfied" />
+    <Choice value="提问" />
+    <Choice value="请求" />
+    <Choice value="满意" />
+    <Choice value="感兴趣" />
+    <Choice value="不满意" />
   </Choices>
 </View>
 

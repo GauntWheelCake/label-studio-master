@@ -1,6 +1,6 @@
 <View>  
   <Paragraphs name="chat" value="$dialogue" layout="dialogue" />
-  <Header value="Provide response" />
+  <Header value="请提供回复" />
   <TextArea name="response" toName="chat" rows="4" editable="true" maxSubmissions="1" />
 </View>
 

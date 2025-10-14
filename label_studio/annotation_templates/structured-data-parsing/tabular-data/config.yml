@@ -2,10 +2,10 @@ title: 表格数据
 type: community
 group: 结构化数据解析
 image: /static/templates/tabular-data.png
-details: <h1>Annotate data in tables</h1>
+details: <h1>在表格中标注数据</h1>
 config: '
 <View>
-    <Header value="Table with {key: value} pairs"/>
+    <Header value="包含 {键: 值} 对的表格"/>
     <Table name="table" value="$item"/>
 </View>
 '

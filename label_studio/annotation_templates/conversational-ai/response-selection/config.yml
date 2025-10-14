@@ -2,11 +2,11 @@ title: 响应选择
 type: community
 group: 人工智能对话
 image: /static/templates/response-selection.png
-details: <h1>Collect chatbot training data by selecting next dialogue response</h1>
+details: <h1>通过选择下一轮对话回复来收集聊天机器人训练数据</h1>
 config: '
 <View>
   <Paragraphs name="prg" value="$humanMachineDialogue" layout="dialogue" />
-  <Header value="Choose response" />
+  <Header value="选择回复" />
   <View style="display: flex;">
     <View>
     <Text name="resp1" value="$respone" />
@@ -15,9 +15,9 @@ config: '
     </View>
     <View style="padding: 50px;">
     <Choices name="resp" toName="prg" required="true">
-      <Choice value="One" />
-      <Choice value="Two" />
-  	  <Choice value="Three" />
+      <Choice value="选项一" />
+      <Choice value="选项二" />
+          <Choice value="选项三" />
     </Choices>
     </View>
   </View>

@@ -2,19 +2,19 @@ title: 文本分类
 type: community
 group: 自然语言处理
 image: /static/templates/text-classification.png
-details: <h1>Classify text document</h1>
+details: <h1>对文本进行分类</h1>
 config: '
 <View>
   <Text name="text" value="$text"/>
   <View style="box-shadow: 2px 2px 5px #999;
                padding: 20px; margin-top: 2em;
                border-radius: 5px;">
-    <Header value="Choose text sentiment"/>
+    <Header value="选择文本情感"/>
     <Choices name="sentiment" toName="text"
              choice="single" showInLine="true">
-      <Choice value="Positive"/>
-      <Choice value="Negative"/>
-      <Choice value="Neutral"/>
+      <Choice value="正面"/>
+      <Choice value="负面"/>
+      <Choice value="中性"/>
     </Choices>
   </View>
 </View>

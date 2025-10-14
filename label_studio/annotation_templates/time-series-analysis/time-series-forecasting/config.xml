@@ -1,8 +1,8 @@
 <View>
     <!-- Control tag for region labels -->
-    <Header value="Select predictable region spans in time series:"/>
+    <Header value="请选择时间序列中可预测的区间："/>
     <TimeSeriesLabels name="predictable" toName="stock">
-        <Label value="Regions" background="red" />
+        <Label value="区域" background="red" />
     </TimeSeriesLabels>
 
     <!-- Object tag for time series data source -->
@@ -16,13 +16,13 @@
         <Channel column="value"
                  displayFormat=",.1f"
                  strokeColor="#1f77b4"
-                 legend="Stock Value"/>
+                 legend="股票价值"/>
     </TimeSeries>
-    <Header value="Forecast next trend:"/>
+    <Header value="预测下一段趋势："/>
     <Choices name="trend_forecast" toName="stock">
-        <Choice value="Up"/>
-        <Choice value="Down"/>
-        <Choice value="Steady"/>
+        <Choice value="上升"/>
+        <Choice value="下降"/>
+        <Choice value="持平"/>
     </Choices>
 </View>
 

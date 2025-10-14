@@ -1,11 +1,11 @@
 <View>
-  <Header value="Please read the passage" />
+  <Header value="请阅读下列段落" />
   <Text name="text" value="$text" granularity="word"/>
-  <Header value="Select a text span answering the following question:"/>
+  <Header value="请选择能够回答下列问题的文本片段："/>
   <Text name="question" value="$question"/>
   <View style="display: none;">
   <Labels name="answer" toName="text">
-    <Label value="Answer" maxUsage="1" background="red"/>
+    <Label value="答案" maxUsage="1" background="red"/>
   </Labels>
   </View>
 </View>

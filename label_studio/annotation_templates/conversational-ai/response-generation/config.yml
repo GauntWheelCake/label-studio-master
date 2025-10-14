@@ -2,11 +2,11 @@ title: 响应生成
 type: community
 group: 人工智能对话
 image: /static/templates/response-generation.png
-details: <h1>Collect chatbot training data by generating next dialogue response</h1>
+details: <h1>通过生成下一轮对话回复来收集聊天机器人训练数据</h1>
 config: '
 <View>
   <Paragraphs name="chat" value="$dialogue" layout="dialogue" />
-  <Header value="Provide response" />
+  <Header value="请提供回复" />
   <TextArea name="response" toName="chat" rows="4" editable="true" maxSubmissions="1" />
 </View>
 '

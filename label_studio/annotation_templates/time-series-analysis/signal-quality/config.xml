@@ -5,7 +5,7 @@
 
         <!-- Control tag for region labels -->
         <TimeSeriesLabels name="label" toName="ts">
-            <Label value="Region" background="#5b5"/>
+            <Label value="区域" background="#5b5"/>
         </TimeSeriesLabels>
     </View>
 
@@ -20,9 +20,9 @@
         <Choices name="choices" toName="ts"
                  showInline="true" required="true"
                  perRegion="true">
-            <Choice value="Good"/>
-            <Choice value="Medium"/>
-            <Choice value="Poor"/>
+            <Choice value="良好"/>
+            <Choice value="中等"/>
+            <Choice value="较差"/>
         </Choices>
     </View>
 
@@ -30,9 +30,9 @@
     <TimeSeries name="ts" valueType="url" value="$csv"
                 sep="," timeColumn="time">
         <Channel column="signal_1"
-                 strokeColor="#17b" legend="Signal 1"/>
+                 strokeColor="#17b" legend="信号 1"/>
         <Channel column="signal_2"
-                 strokeColor="#f70" legend="Signal 2"/>
+                 strokeColor="#f70" legend="信号 2"/>
     </TimeSeries>
 </View>
 

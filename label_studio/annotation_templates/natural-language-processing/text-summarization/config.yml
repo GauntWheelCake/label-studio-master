@@ -1,14 +1,14 @@
-title: Text Summarization
+title: 文本摘要
 type: community
 group: 自然语言处理
 image: /static/templates/text-summarization.png
-details: <h1>Provide one sentence summary</h1>
+details: <h1>请提供一句话总结</h1>
 config: '
 <View>
-  <Header value="Please read the text" />
+  <Header value="请阅读以下文本" />
   <Text name="text" value="$text" />
 
-  <Header value="Provide one sentence summary" />
+  <Header value="请提供一句话总结" />
   <TextArea name="answer" toName="text"
             showSubmitButton="true" maxSubmissions="1" editable="true"
             required="true" />
