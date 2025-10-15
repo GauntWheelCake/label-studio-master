@@ -97,7 +97,7 @@ const setElementRoleState = (element, allowed, message) => {
 };
 
 const initializeDataManager = async (root, props, params) => {
-  if (!window.LabelStudio) throw Error("Label Studio Frontend doesn't exist on the page");
+  if (!window.LabelStudio) throw Error("慧标系统前端未在页面中加载");
   if (!root && root.dataset.dmInitialized) return;
 
   root.dataset.dmInitialized = true;

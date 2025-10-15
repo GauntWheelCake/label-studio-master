@@ -85395,7 +85395,7 @@ const zhCN = {
   'menubar.menu.organization': '组织管理',
   'menubar.menu.pin': '固定菜单',
   'menubar.menu.unpin': '取消固定菜单',
-  'menubar.logoAlt': 'Label Studio 徽标',
+  'menubar.logoAlt': '慧标系统徽标',
   'importModal.title': '导入数据',
   'importModal.actions.cancel': '取消',
   'importModal.actions.import': '导入',
@@ -85432,7 +85432,7 @@ const zhCN = {
   'exportPage.notice.noApproved': '没有可导出的审核通过任务。',
   'exportPage.modal.readyTitle': '导出就绪',
   'exportPage.modal.emptyTitle': '没有可导出的数据',
-  'exportPage.formats.JSON.title': 'Label Studio JSON',
+  'exportPage.formats.JSON.title': '慧标系统 JSON',
   'exportPage.formats.JSON.description': '将任务和标注导出为单个 JSON 文件，保留完整的原始数据结构。',
   'exportPage.formats.JSON_MIN.title': '精简 JSON',
   'exportPage.formats.JSON_MIN.description': '仅导出每条记录中的 from_name/to_name 字段，生成适合下游处理的轻量级标注结果。',
@@ -85583,7 +85583,7 @@ const zhCN = {
   'peoplePage.pageTitle': '组织成员',
   'peoplePage.controls.addPeople': '添加成员',
   'peoplePage.invite.title': '邀请成员',
-  'peoplePage.invite.description.prefix': '邀请成员加入您的 Label Studio 实例。被邀请的成员将拥有您所有项目的完整访问权限，',
+  'peoplePage.invite.description.prefix': '邀请成员加入您的慧标系统实例。被邀请的成员将拥有您所有项目的完整访问权限，',
   'peoplePage.invite.description.link': '了解更多',
   'peoplePage.invite.description.suffix': '。',
   'peoplePage.invite.resetLink': '重置链接',
@@ -87958,7 +87958,7 @@ const setElementRoleState = (element, allowed, message) => {
   }
 };
 const initializeDataManager = async (root, props, params) => {
-  if (!window.LabelStudio) throw Error("Label Studio Frontend doesn't exist on the page");
+  if (!window.LabelStudio) throw Error("慧标系统前端未在页面中加载");
   if (!root && root.dataset.dmInitialized) return;
   root.dataset.dmInitialized = true;
   const {
