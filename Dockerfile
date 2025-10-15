@@ -3,7 +3,8 @@ FROM ubuntu:20.04
 
 WORKDIR /label-studio
 
-ENV TZ=Europe/Berlin
+# ENV TZ=Europe/Berlin
+ENV TZ=Asia/Shanghai
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # 系统依赖
