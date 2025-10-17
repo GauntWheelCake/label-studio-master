@@ -84099,7 +84099,7 @@ const confirm = ({
         },
         size: "compact",
         autoFocus: true,
-        children: cancelText !== null && cancelText !== void 0 ? cancelText : "Cancel"
+        children: cancelText !== null && cancelText !== void 0 ? cancelText : "取消"
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_Button_Button__WEBPACK_IMPORTED_MODULE_7__.Button, {
         onClick: () => {
           onOk === null || onOk === void 0 ? void 0 : onOk();
@@ -84107,7 +84107,7 @@ const confirm = ({
         },
         size: "compact",
         look: buttonLook !== null && buttonLook !== void 0 ? buttonLook : 'primary',
-        children: okText !== null && okText !== void 0 ? okText : "OK"
+        children: okText !== null && okText !== void 0 ? okText : "确定"
       })]
     })
   });
@@ -84129,7 +84129,7 @@ const info = ({
         },
         look: "primary",
         size: "compact",
-        children: okText !== null && okText !== void 0 ? okText : "OK"
+        children: okText !== null && okText !== void 0 ? okText : "确定"
       })
     })
   });
