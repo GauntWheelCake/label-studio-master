@@ -137,6 +137,8 @@ class OrganizationInviteAPI(APIView):
     permission_required = all_permissions.organizations_change
 
     def get(self, request, *args, **kwargs):
+        if settings.ENABLE_SHARED_ADMIN_MODE:
+            return Response({'detail': '共享管理员模式下已禁用邀请成员。'}, status=403)
         org = get_object_with_check_and_log(self.request, Organization, pk=request.user.active_organization_id)
         self.check_object_permissions(self.request, org)
         invite_url = '{}?token={}'.format(reverse('user-signup'), org.token)
@@ -158,6 +160,8 @@ class OrganizationResetTokenAPI(APIView):
     parser_classes = (JSONParser,)
 
     def post(self, request, *args, **kwargs):
+        if settings.ENABLE_SHARED_ADMIN_MODE:
+            return Response({'detail': '共享管理员模式下已禁用重置邀请链接。'}, status=403)
         org = request.user.active_organization
         org.reset_token()
         logger.debug(f'New token for organization {org.pk} is {org.token}')

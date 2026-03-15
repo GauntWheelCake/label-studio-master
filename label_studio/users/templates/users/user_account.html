@@ -10,13 +10,13 @@
 {% endblock %}
 
 {% block frontend_settings %}
-  {
-    breadcrumbs: [
-      {
-        title: "账户与设置"
-      }
-    ],
-  }
+{
+breadcrumbs: [
+{
+title: "账户与设置"
+}
+],
+}
 {% endblock %}
 
 {% block content %}
@@ -25,7 +25,7 @@
 <div class="full_content">
   <div class="account-page">
     <form action="{% url 'user-detail' pk=user.pk %}" method="patch" class="user__info">
-      <input type="hidden" name="_method" value="patch"/>
+      <input type="hidden" name="_method" value="patch" />
 
       <header>账户信息</header>
       <ul>
@@ -53,13 +53,13 @@
         <div class="user-pic {{ user.avatar|yesno:'can_delete,can_upload' }}">
           <div class="userpic userpic--big">
             {% if user.avatar %}
-              <img src="{{user.avatar_url}}" alt="User photo" width="92" />
+            <img src="{{user.avatar_url}}" alt="User photo" width="92" />
             {% endif %}
 
             {% if user.get_initials %}
-              <span>{{user.get_initials}}</span>
+            <span>{{user.get_initials}}</span>
             {% else %}
-              <span>{{user.username}}</span>
+            <span>{{user.username}}</span>
             {% endif %}
           </div>
 
@@ -68,7 +68,7 @@
           </button>
 
           <input class="file-input" type="file" name="avatar" value="Choose"
-                accept="image/png, image/jpeg, image/jpg"/>
+            accept="image/png, image/jpeg, image/jpg" />
         </div>
 
         <!-- <div class="user-activity">
@@ -90,7 +90,11 @@
         <input id="access_token" class="ls-input" name="access_token" type="text" value="{{token}}" readonly />
         <p class="actions">
           <button type="button" class="blinking-status ls-button" data-copy="access_token">复制</button>
+          {% if settings.ENABLE_SHARED_ADMIN_MODE %}
+          <button type="button" class="blinking-status ls-button" name="renew" disabled>更新（已固定）</button>
+          {% else %}
           <button type="button" class="blinking-status ls-button" name="renew">更新</button>
+          {% endif %}
         </p>
       </div>
       <!-- Example -->
@@ -113,11 +117,7 @@
 
   <script>
     (() => {
-      {% if settings.HOSTNAME %}
-      const CURL_TEMPLATE = "curl -X GET {{ settings.HOSTNAME }}/api/projects/ -H 'Authorization: Token'"
-      {% else %}
-      const CURL_TEMPLATE = "curl -X GET http://localhost:8080/api/projects/ -H 'Authorization: Token'"
-      {% endif %}
+      const CURL_TEMPLATE = "curl -X GET {{ settings.HOSTNAME|default:'http://localhost:8080' }}/api/projects/ -H 'Authorization: Token'"
 
       document.querySelectorAll('[data-copy]').forEach(button => {
         button.onclick = e => {
@@ -131,20 +131,23 @@
         }
       });
 
-      document.querySelector('[name=renew]').onclick = e => {
-        const button = e.target;
-        const input = document.getElementById("access_token");
-        const example = document.getElementById("example_fetch");
+      const renewButton = document.querySelector('[name=renew]');
+      if (renewButton && !renewButton.disabled) {
+        renewButton.onclick = e => {
+          const button = e.target;
+          const input = document.getElementById("access_token");
+          const example = document.getElementById("example_fetch");
 
-        fetch("{% url 'current-user-reset-token' %}", { method: "POST" })
-          .then(res => res.json())
-          .then(res => {
-            input.value = res.token;
-            example.value = `${CURL_TEMPLATE} ${res.token}`
-            button.classList.add('blink');
-            setTimeout(() => button.classList.remove('blink'))
-          });
-      };
+          fetch("{% url 'current-user-reset-token' %}", { method: "POST" })
+            .then(res => res.json())
+            .then(res => {
+              input.value = res.token;
+              example.value = `${CURL_TEMPLATE} ${res.token}`
+              button.classList.add('blink');
+              setTimeout(() => button.classList.remove('blink'))
+            });
+        };
+      }
 
       $('[name=avatar]').on('change', async (e) => {
         const formData = new FormData;
@@ -197,7 +200,7 @@
           const response = await fetch("{% url 'current-user-whoami' %}")
 
           if (response.ok) {
-            const {avatar} = await response.json()
+            const { avatar } = await response.json()
             const userpic = document.querySelector('.userpic')
 
             let userpicImage = userpic.querySelector('img')

@@ -16,7 +16,7 @@ const errorFormatter = (result) => {
 
   return {
     isShutdown,
-    title: result.error ? "Runtime error" : "Server error",
+    title: result.error ? "运行时错误" : "服务器错误",
     message: response?.detail ?? result?.error,
     stacktrace: response?.exc_info ?? null,
     version: response?.version,
@@ -45,8 +45,8 @@ const handleError = async (response, showModal = true) => {
       body: isShutdown ? (
         <ErrorWrapper
           possum={false}
-          title={"Connection refused"}
-          message={"Server not responding. Is it still running?"}
+          title={"连接失败"}
+          message={"服务器未响应，请确认服务仍在运行。"}
         />
       ) : (
         <ErrorWrapper {...formattedError}/>

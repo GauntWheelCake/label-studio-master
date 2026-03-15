@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Redirect } from 'react-router-dom';
 import { LsPlus } from "../../assets/icons";
 import { Button } from "../../components";
 import { Description } from "../../components/Description/Description";
@@ -15,16 +16,16 @@ import { PeopleList } from "./PeopleList";
 import "./PeoplePage.styl";
 import { SelectedUser } from "./SelectedUser";
 
-const InvitationModal = ({link}) => {
+const InvitationModal = ({ link }) => {
   return (
     <Block name="invite">
       <Input
         value={link}
-        style={{width: '100%'}}
+        style={{ width: '100%' }}
         readOnly
       />
 
-      <Description style={{width: '70%', marginTop: 16}}>
+      <Description style={{ width: '70%', marginTop: 16 }}>
         {t('peoplePage.invite.description.prefix')}
         {t('peoplePage.invite.description.link')}
         {t('peoplePage.invite.description.suffix')}
@@ -63,7 +64,7 @@ export const PeoplePage = () => {
   }, [config, setLink]);
 
   const updateLink = useCallback(() => {
-    api.callApi('resetInviteLink').then(({invite_url}) => {
+    api.callApi('resetInviteLink').then(({ invite_url }) => {
       setInviteLink(invite_url);
     });
   }, [setInviteLink]);
@@ -72,7 +73,7 @@ export const PeoplePage = () => {
     title: t('peoplePage.invite.title'),
     style: { width: 640, height: 472 },
     body: () => (
-      <InvitationModal link={link}/>
+      <InvitationModal link={link} />
     ),
     footer: () => {
       const [copied, setCopied] = useState(false);
@@ -86,12 +87,12 @@ export const PeoplePage = () => {
       return (
         <Space spread>
           <Space>
-            <Button style={{width: 170}} onClick={() => updateLink()}>
+            <Button style={{ width: 170 }} onClick={() => updateLink()}>
               {t('peoplePage.invite.resetLink')}
             </Button>
           </Space>
           <Space>
-            <Button primary style={{width: 170}} onClick={copyLink}>
+            <Button primary style={{ width: 170 }} onClick={copyLink}>
               {copied ? t('peoplePage.invite.copied') : t('peoplePage.invite.copyLink')}
             </Button>
           </Space>
@@ -102,22 +103,28 @@ export const PeoplePage = () => {
   }), [updateLink]);
 
   const showInvitationModal = useCallback(() => {
+    if (config.sharedAdminMode) return;
     inviteModal.current = modal(inviteModalProps(link));
-  }, [inviteModalProps, link]);
+  }, [inviteModalProps, link, config.sharedAdminMode]);
 
   const defaultSelected = useMemo(() => {
     return localStorage.getItem('selectedUser');
   }, []);
 
   useEffect(() => {
-    api.callApi("inviteLink").then(({invite_url}) => {
+    if (config.sharedAdminMode) return;
+    api.callApi("inviteLink").then(({ invite_url }) => {
       setInviteLink(invite_url);
     });
-  }, []);
+  }, [api, setInviteLink, config.sharedAdminMode]);
 
   useEffect(() => {
     inviteModal.current?.update(inviteModalProps(link));
   }, [inviteModalProps, link]);
+
+  if (config.sharedAdminMode) {
+    return <Redirect to="/projects" />;
+  }
 
   return (
     <Block name="people">
@@ -125,11 +132,13 @@ export const PeoplePage = () => {
         <Space spread>
           <Space></Space>
 
-          <Space>
-            <Button icon={<LsPlus/>} primary onClick={showInvitationModal}>
-              {t('peoplePage.controls.addPeople')}
-            </Button>
-          </Space>
+          {!config.sharedAdminMode && (
+            <Space>
+              <Button icon={<LsPlus />} primary onClick={showInvitationModal}>
+                {t('peoplePage.controls.addPeople')}
+              </Button>
+            </Space>
+          )}
         </Space>
       </Elem>
       <Elem name="content">

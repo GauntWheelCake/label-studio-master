@@ -41,6 +41,7 @@ export const SelectedUser = ({ user, onClose, onDeleted }) => {
 
   // --- 当前登录用户信息 ---
   const currentUserId = config?.user?.id;
+  const isSharedAdminMode = !!config?.sharedAdminMode;
   const isSelf = String(currentUserId) === String(user.id);
   const isAdmin = role === UserRole.Admin;
 
@@ -117,7 +118,7 @@ export const SelectedUser = ({ user, onClose, onDeleted }) => {
         {lastActivity}
       </Elem>
 
-      {isAdmin && (
+      {isAdmin && !isSharedAdminMode && (
         <Elem name="actions">
           <Button
             look="destructive"

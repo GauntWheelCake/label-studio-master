@@ -156,6 +156,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'core.middleware.DisableCSRF',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'core.middleware.SharedAdminAutoLoginMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'core.middleware.CommonMiddlewareAppendSlashWithoutRedirect',  # instead of 'CommonMiddleware'
@@ -342,6 +343,10 @@ PROJECT_TITLE_MIN_LEN = 3
 PROJECT_TITLE_MAX_LEN = 50
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/'
+ENABLE_SHARED_ADMIN_MODE = get_bool_env('ENABLE_SHARED_ADMIN_MODE', default=False) # if True, all users will be automatically logged in as a shared admin user with email SHARED_ADMIN_EMAIL and username SHARED_ADMIN_USERNAME, and will have access to the shared organization with title SHARED_ORGANIZATION_TITLE. This mode is useful for quick evaluation of Label Studio without the need to create an account, but it is not recommended for production use due to security concerns.
+SHARED_ADMIN_EMAIL = get_env('SHARED_ADMIN_EMAIL', 'shared-admin@huibiaosystem.local')
+SHARED_ADMIN_USERNAME = get_env('SHARED_ADMIN_USERNAME', 'shared-admin')
+SHARED_ORGANIZATION_TITLE = get_env('SHARED_ORGANIZATION_TITLE', 'Hui Biao Shared')
 MIN_GROUND_TRUTH = 10
 DATA_UNDEFINED_NAME = '$undefined$'
 LICENSE = {}

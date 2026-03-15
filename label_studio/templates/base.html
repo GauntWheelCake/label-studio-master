@@ -5,18 +5,19 @@
 
 <!doctype html>
 <html lang="en">
+
 <head>
-  <meta charset="utf-8"/>
-  <meta name="author" content="慧标系统"/>
-  <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+  <meta charset="utf-8" />
+  <meta name="author" content="慧标系统" />
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=0.9, shrink-to-fit=no">
 
   <!-- Address string color -->
   <meta name="theme-color" content="#272727"> <!-- Chrome, Firefox OS and Opera -->
-  <meta name="msapplication-navbutton-color" content="#272727">  <!-- Windows Phone -->
-  <meta name="apple-mobile-web-app-status-bar-style" content="#272727">  <!-- iOS Safari -->
+  <meta name="msapplication-navbutton-color" content="#272727"> <!-- Windows Phone -->
+  <meta name="apple-mobile-web-app-status-bar-style" content="#272727"> <!-- iOS Safari -->
 
-  <link href="{{settings.HOSTNAME}}{% static 'images/favicon.ico' %}" rel="shortcut icon"/>
+  <link href="{{settings.HOSTNAME}}{% static 'images/favicon.ico' %}" rel="shortcut icon" />
   <link href="{{settings.HOSTNAME}}{% static 'css/uikit.css' %}" rel="stylesheet">
   <link href="{{settings.HOSTNAME}}{% static 'css/main.css' %}" rel="stylesheet">
   <link href="{{settings.HOSTNAME}}/static/fonts/roboto/roboto.css" rel="stylesheet">
@@ -32,17 +33,16 @@
     DM_CSS = "{{settings.HOSTNAME}}/dm/css/main.css?v={{ versions.dm2.commit }}";
   </script>
 
-  <script
-   src="https://browser.sentry-cdn.com/5.17.0/bundle.min.js"
-   integrity="sha384-lowBFC6YTkvMIWPORr7+TERnCkZdo5ab00oH5NkFLeQUAmBTLGwJpFjF6djuxJ/5"
-   crossorigin="anonymous"></script>
+  <script src="https://browser.sentry-cdn.com/5.17.0/bundle.min.js"
+    integrity="sha384-lowBFC6YTkvMIWPORr7+TERnCkZdo5ab00oH5NkFLeQUAmBTLGwJpFjF6djuxJ/5"
+    crossorigin="anonymous"></script>
 
   <script>
-    window.exports = () => {};
+    window.exports = () => { };
   </script>
 
   {% block head %}
-    <title>慧标系统</title>
+  <title>慧标系统</title>
   {% endblock %}
 
   {% get_current_language as LANGUAGE_CODE %}
@@ -51,71 +51,61 @@
 
 <body>
 
-<div class="app-wrapper"></div>
+  <div class="app-wrapper"></div>
 
-<template id="main-content">
-  <main class="main" style="background: transparent">
+  <template id="main-content">
+    <main class="main" style="background: transparent">
 
       <div class="ui floating dropdown theme basic" style="float: right;">
         {% block top-buttons %}
         {% endblock %}
       </div>
-    </div>
+      </div>
 
-    <!-- Space & Divider -->
-    {% block divider %}
+      <!-- Space & Divider -->
+      {% block divider %}
       <div class="ui divider divider-wide"></div>
-    {% endblock %}
+      {% endblock %}
 
-    <!-- Content -->
-    {% block content %}
-    {% endblock %}
+      <!-- Content -->
+      {% block content %}
+      {% endblock %}
 
-  </main>
-</template>
+    </main>
+  </template>
 
-<template id="context-menu-left">
-  {% block context_menu_left %}{% endblock %}
-</template>
+  <template id="context-menu-left">
+    {% block context_menu_left %}{% endblock %}
+  </template>
 
-<template id="context-menu-right">
-  {% block context_menu_right %}{% endblock %}
-</template>
+  <template id="context-menu-right">
+    {% block context_menu_right %}{% endblock %}
+  </template>
 
-<script id="app-settings">
-  window.APP_SETTINGS = Object.assign({
-    user: {
-      id:"{{ user.id }}",
-      username: "{{user.username}}",
-      firstName: "{{user.first_name}}",
-      lastName: "{{user.last_name}}",
-      initials: "{{user.get_initials}}",
-      email: "{{user.email}}",
-      {% if user.avatar %}
-      avatar: "{{user.avatar_url}}",
-      {% endif %}
-    },
-    debug: {{settings.DEBUG|yesno:"true,false"}},
-    hostname: "{{settings.HOSTNAME}}",
-    version: {{ versions|json_dumps_ensure_ascii|safe }},
-  }, {% block frontend_settings %}{}{% endblock %});
-</script>
+  {{ app_settings|json_script:"app-settings-json" }}
+  <script id="app-settings">
+    window.APP_SETTINGS = Object.assign(
+      JSON.parse(document.getElementById('app-settings-json').textContent),
+      {% block frontend_settings %}{}{% endblock %}
+    );
+  </script>
 
-<script src="{{settings.HOSTNAME}}/react-app/index.js?v={{ versions.backend.commit }}"></script>
+  <script src="{{settings.HOSTNAME}}/react-app/index.js?v={{ versions.backend.commit }}"></script>
 
-<div id="dynamic-content">
-  <script>
+  <div id="dynamic-content">
+    <script>
       applyCsrf();
 
       $('.message .close').on('click', function () {
-           $(this).closest('.message').transition('fade');
+        $(this).closest('.message').transition('fade');
       });
-  </script>
+    </script>
 
-  {% block bottomjs %}
-  {% endblock %}
+    {% block bottomjs %}
+    {% endblock %}
 
-</div>
+  </div>
 
 </body>
+
 </html>

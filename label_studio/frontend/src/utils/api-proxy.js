@@ -161,7 +161,7 @@ export class APIProxy {
         );
 
         const requestMethod =
-           method ?? (methodSettings.method ?? "get").toUpperCase();
+          method ?? (methodSettings.method ?? "get").toUpperCase();
 
         const initialheaders = Object.assign(
           this.getDefaultHeaders(requestMethod),
@@ -217,8 +217,8 @@ export class APIProxy {
 
         if (
           methodSettings.mock &&
-           process.env.NODE_ENV === "development" &&
-           !this.mockDisabled
+          process.env.NODE_ENV === "development" &&
+          !this.mockDisabled
         ) {
           rawResponse = await this.mockRequest(
             apiCallURL,
@@ -243,11 +243,11 @@ export class APIProxy {
 
           try {
             const responseData =
-               rawResponse.status !== 204
-                 ? JSON.parse(
-                   this.alwaysExpectJSON ? responseText : responseText || "{}",
-                 )
-                 : { ok: true };
+              rawResponse.status !== 204
+                ? JSON.parse(
+                  this.alwaysExpectJSON ? responseText : responseText || "{}",
+                )
+                : { ok: true };
 
             if (methodSettings.convert instanceof Function) {
               return await methodSettings.convert(responseData);
@@ -426,7 +426,7 @@ export class APIProxy {
 
     return {
       status: fetchResponse.status,
-      error: (exception?.message ?? fetchResponse.statusText) || "Server Error",
+      error: (exception?.message ?? fetchResponse.statusText) || "服务器错误",
       response: await result,
     };
   }

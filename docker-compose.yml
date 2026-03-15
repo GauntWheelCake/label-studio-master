@@ -31,6 +31,10 @@ services:
       - POSTGRE_PORT=5432
       - POSTGRE_HOST=db
       - LABEL_STUDIO_HOST=${LABEL_STUDIO_HOST:-}
+      - ENABLE_SHARED_ADMIN_MODE=${ENABLE_SHARED_ADMIN_MODE:-true}
+      - SHARED_ADMIN_EMAIL=${SHARED_ADMIN_EMAIL:-shared-admin@huibiaosystem.local}
+      - SHARED_ADMIN_USERNAME=${SHARED_ADMIN_USERNAME:-shared-admin}
+      - SHARED_ORGANIZATION_TITLE=${SHARED_ORGANIZATION_TITLE:-Hui Biao Shared}
     volumes:
       - ./mydata:/label-studio/data:rw
       - static:/label-studio/label_studio:rw
@@ -45,6 +49,5 @@ services:
     volumes:
       - ${POSTGRES_DATA_DIR:-./postgres-data}:/var/lib/postgresql/data
 
-
 volumes:
-  static: {} 
+  static: {}

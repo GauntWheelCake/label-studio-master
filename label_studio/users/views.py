@@ -33,6 +33,9 @@ def logout(request):
 def user_signup(request):
     """ Sign up page
     """
+    if settings.ENABLE_SHARED_ADMIN_MODE:
+        return redirect(reverse('projects:project-index'))
+
     user = request.user
     next_page = request.GET.get('next')
     token = request.GET.get('token')
@@ -69,6 +72,9 @@ def user_signup(request):
 def user_login(request):
     """ Login page
     """
+    if settings.ENABLE_SHARED_ADMIN_MODE:
+        return redirect(reverse('projects:project-index'))
+
     user = request.user
     next_page = request.GET.get('next')
     next_page = next_page if next_page else reverse('projects:project-index')

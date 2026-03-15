@@ -29,7 +29,29 @@ def settings(request):
     if 'dm2' in versions:
         versions['dm2']['commit'] = versions['dm2'].get('commit', 'none')[0:6]
 
+    user = request.user
+    user_settings = {
+        'id': str(user.id) if getattr(user, 'id', None) is not None else '',
+        'username': getattr(user, 'username', ''),
+        'firstName': getattr(user, 'first_name', ''),
+        'lastName': getattr(user, 'last_name', ''),
+        'initials': user.get_initials() if hasattr(user, 'get_initials') else '',
+        'email': getattr(user, 'email', ''),
+    }
+
+    if getattr(user, 'avatar', None) and hasattr(user, 'avatar_url'):
+        user_settings['avatar'] = user.avatar_url
+
+    app_settings = {
+        'user': user_settings,
+        'debug': django_settings.DEBUG,
+        'hostname': django_settings.HOSTNAME,
+        'sharedAdminMode': django_settings.ENABLE_SHARED_ADMIN_MODE,
+        'version': versions,
+    }
+
     return {
         'settings': django_settings,
-        'versions': versions
+        'versions': versions,
+        'app_settings': app_settings,
     }

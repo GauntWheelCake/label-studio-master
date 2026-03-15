@@ -26,6 +26,9 @@ logger = logging.getLogger(__name__)
 
 
 def main(request):
+    if settings.ENABLE_SHARED_ADMIN_MODE:
+        return redirect(reverse('projects:project-index'))
+
     user = request.user
 
     if user.is_authenticated:

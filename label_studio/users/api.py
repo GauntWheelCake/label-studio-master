@@ -3,6 +3,7 @@
 import logging
 import drf_yasg.openapi as openapi
 
+from django.conf import settings
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_yasg.utils import swagger_auto_schema
 from django.utils.decorators import method_decorator
@@ -90,6 +91,8 @@ class UserAPI(viewsets.ModelViewSet):
         return super(UserAPI, self).list(request, *args, **kwargs)
 
     def create(self, request, *args, **kwargs):
+        if settings.ENABLE_SHARED_ADMIN_MODE:
+            return Response({'detail': '共享管理员模式下已禁用创建用户。'}, status=403)
         return super(UserAPI, self).create(request, *args, **kwargs)
 
     def retrieve(self, request, *args, **kwargs):
@@ -99,6 +102,8 @@ class UserAPI(viewsets.ModelViewSet):
         return super(UserAPI, self).partial_update(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
+        if settings.ENABLE_SHARED_ADMIN_MODE:
+            return Response({'detail': '共享管理员模式下已禁用删除用户。'}, status=403)
         return super(UserAPI, self).destroy(request, *args, **kwargs)
 
 
@@ -126,6 +131,8 @@ class UserResetTokenAPI(APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request, *args, **kwargs):
+        if settings.ENABLE_SHARED_ADMIN_MODE:
+            return Response({'detail': '共享管理员模式下已禁用重置访问 Token。'}, status=403)
         user = request.user
         token = user.reset_token()
         logger.debug(f'New token for user {user.pk} is {token.key}')

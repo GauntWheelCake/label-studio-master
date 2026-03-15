@@ -4,6 +4,8 @@ import json
 import time
 
 from uuid import uuid4
+from django.contrib import auth
+from django.contrib.auth import get_user_model
 from django.http import HttpResponsePermanentRedirect
 from django.utils.deprecation import MiddlewareMixin
 from django.core.handlers.base import BaseHandler
@@ -20,6 +22,73 @@ from core.utils.contextlog import ContextLog
 class DisableCSRF(MiddlewareMixin):
     def process_request(self, request):
         setattr(request, '_dont_enforce_csrf_checks', True)
+
+
+class SharedAdminAutoLoginMiddleware(MiddlewareMixin):
+    def process_request(self, request):
+        if not settings.ENABLE_SHARED_ADMIN_MODE:
+            return
+
+        shared_user = self._get_or_create_shared_user()
+        current_user = request.user
+
+        if not current_user.is_authenticated or current_user.id != shared_user.id:
+            auth.login(request, shared_user, backend='django.contrib.auth.backends.ModelBackend')
+
+        self._ensure_organization_context(shared_user, request)
+
+    def _get_or_create_shared_user(self):
+        User = get_user_model()
+        defaults = {
+            'username': settings.SHARED_ADMIN_USERNAME,
+            'is_staff': True,
+            'is_superuser': True,
+            'is_active': True,
+        }
+        shared_user, _ = User.objects.get_or_create(email=settings.SHARED_ADMIN_EMAIL, defaults=defaults)
+
+        fields_to_update = []
+        if shared_user.username != settings.SHARED_ADMIN_USERNAME:
+            shared_user.username = settings.SHARED_ADMIN_USERNAME
+            fields_to_update.append('username')
+        if not shared_user.is_staff:
+            shared_user.is_staff = True
+            fields_to_update.append('is_staff')
+        if not shared_user.is_superuser:
+            shared_user.is_superuser = True
+            fields_to_update.append('is_superuser')
+        if not shared_user.is_active:
+            shared_user.is_active = True
+            fields_to_update.append('is_active')
+        if not shared_user.has_usable_password():
+            pass
+        else:
+            shared_user.set_unusable_password()
+            fields_to_update.append('password')
+
+        if fields_to_update:
+            shared_user.save(update_fields=fields_to_update)
+
+        return shared_user
+
+    def _ensure_organization_context(self, user, request):
+        from organizations.models import Organization
+
+        organization = Organization.objects.first()
+        if organization is None:
+            organization = Organization.create_organization(
+                created_by=user,
+                title=settings.SHARED_ORGANIZATION_TITLE,
+            )
+
+        if not organization.has_user(user):
+            organization.add_user(user)
+
+        if user.active_organization_id != organization.id:
+            user.active_organization = organization
+            user.save(update_fields=['active_organization'])
+
+        request.session['organization_pk'] = organization.id
 
 
 class HttpSmartRedirectResponse(HttpResponsePermanentRedirect):

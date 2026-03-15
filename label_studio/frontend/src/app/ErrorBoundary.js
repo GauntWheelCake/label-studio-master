@@ -15,7 +15,7 @@ export default class ErrorBoundary extends Component {
     return { hasError: true, error };
   }
 
-  componentDidCatch(error, {componentStack}) {
+  componentDidCatch(error, { componentStack }) {
     // You can also log the error to an error reporting service
     this.setState({
       error,
@@ -26,7 +26,7 @@ export default class ErrorBoundary extends Component {
 
   render() {
     if (this.state.hasError) {
-      const {error, errorInfo} = this.state;
+      const { error, errorInfo } = this.state;
 
       const goBack = () => {
         // usually this will trigger React Router in the broken app, which is not helpful
@@ -37,9 +37,9 @@ export default class ErrorBoundary extends Component {
 
       return (
         <Modal onHide={() => location.reload()} style={{ width: "60vw" }} visible bare>
-          <div style={{padding: 40}}>
+          <div style={{ padding: 40 }}>
             <ErrorWrapper
-              title="Runtime error"
+              title="运行时错误"
               message={error}
               stacktrace={`${errorInfo ? `Component Stack: ${errorInfo}` : ''}\n\n${this.state.error?.stack ?? ''}`}
               onGoBack={goBack}
@@ -69,7 +69,7 @@ export const ErrorUI = () => {
 
   return context.hasError && (
     <div className="error">
-      Error occurred
+      发生错误
     </div>
   );
 };
