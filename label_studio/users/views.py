@@ -7,6 +7,7 @@ from django.shortcuts import render, redirect, reverse
 from django.contrib import auth
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
+from django.http import HttpResponseForbidden
 from rest_framework.authtoken.models import Token
 
 from users import forms
@@ -21,6 +22,9 @@ logger = logging.getLogger()
 
 @login_required
 def logout(request):
+    if settings.ENABLE_SHARED_ADMIN_MODE:
+        return HttpResponseForbidden('共享管理员模式下已禁用退出登录。')
+
     auth.logout(request)
     if settings.HOSTNAME:
         redirect_url = settings.HOSTNAME
@@ -104,6 +108,9 @@ def user_login(request):
 
 @login_required
 def user_account(request):
+    if settings.ENABLE_SHARED_ADMIN_MODE:
+        return HttpResponseForbidden('共享管理员模式下已禁用账户与设置页面。')
+
     user = request.user
 
     if user.active_organization is None and 'organization_pk' not in request.session:

@@ -12,7 +12,7 @@ import { CreateProject } from '../CreateProject/CreateProject';
 import { DataManagerPage } from '../DataManager/DataManager';
 import { SettingsPage } from '../Settings';
 import './Projects.styl';
-import { EmptyProjectsList, ProjectsList } from './ProjectsList';
+import { ProjectsList } from './ProjectsList';
 
 export const ProjectsPage = () => {
   const api = React.useContext(ApiContext);
@@ -37,22 +37,17 @@ export const ProjectsPage = () => {
   }, []);
 
   React.useEffect(() => {
-    // there is a nice page with Create button when list is empty
-    // so don't show the context button in that case
-    setContextProps({ openModal, showButton: projectsList.length > 0 });
+    setContextProps({ openModal, showButton: true });
   }, [projectsList.length]);
 
   return (
     <Block name="projects-page">
       <Oneof value={networkState}>
         <Elem name="loading" case="loading">
-          <Spinner size={64}/>
+          <Spinner size={64} />
         </Elem>
         <Elem name="content" case="loaded">
-          {projectsList.length
-            ? <ProjectsList projects={projectsList}/>
-            : <EmptyProjectsList openModal={openModal} />
-          }
+          <ProjectsList projects={projectsList} openModal={openModal} />
           {modal && <CreateProject onClose={closeModal} />}
         </Elem>
       </Oneof>
@@ -63,14 +58,14 @@ export const ProjectsPage = () => {
 ProjectsPage.title = t('menubar.menu.projects');
 ProjectsPage.path = "/projects";
 ProjectsPage.exact = true;
-ProjectsPage.routes = ({store}) => [
+ProjectsPage.routes = ({ store }) => [
   {
     title: () => store.project?.title,
     path: "/:id(\\d+)",
     exact: true,
     component: () => {
       const params = useRouterParams();
-      return <Redirect to={`/projects/${params.id}/data`}/>;
+      return <Redirect to={`/projects/${params.id}/data`} />;
     },
     pages: {
       DataManagerPage,

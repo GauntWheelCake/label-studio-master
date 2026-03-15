@@ -7,6 +7,7 @@ from uuid import uuid4
 from django.contrib import auth
 from django.contrib.auth import get_user_model
 from django.http import HttpResponsePermanentRedirect
+from rest_framework.authtoken.models import Token
 from django.utils.deprecation import MiddlewareMixin
 from django.core.handlers.base import BaseHandler
 from django.core.exceptions import MiddlewareNotUsed
@@ -35,6 +36,7 @@ class SharedAdminAutoLoginMiddleware(MiddlewareMixin):
         if not current_user.is_authenticated or current_user.id != shared_user.id:
             auth.login(request, shared_user, backend='django.contrib.auth.backends.ModelBackend')
 
+        self._ensure_fixed_token(shared_user)
         self._ensure_organization_context(shared_user, request)
 
     def _get_or_create_shared_user(self):
@@ -70,6 +72,22 @@ class SharedAdminAutoLoginMiddleware(MiddlewareMixin):
             shared_user.save(update_fields=fields_to_update)
 
         return shared_user
+
+    def _ensure_fixed_token(self, user):
+        fixed_token = (settings.SHARED_ADMIN_FIXED_TOKEN or '').strip()
+        if not fixed_token:
+            return
+
+        if len(fixed_token) > 40:
+            raise ValueError('SHARED_ADMIN_FIXED_TOKEN length must be <= 40 characters.')
+
+        token, _ = Token.objects.get_or_create(user=user)
+        if token.key == fixed_token:
+            return
+
+        Token.objects.filter(key=fixed_token).exclude(user=user).delete()
+        Token.objects.filter(user=user).delete()
+        Token.objects.create(user=user, key=fixed_token)
 
     def _ensure_organization_context(self, user, request):
         from organizations.models import Organization

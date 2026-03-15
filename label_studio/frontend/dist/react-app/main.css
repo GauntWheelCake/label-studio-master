@@ -3365,9 +3365,16 @@ body {
   display: block;
   display: flex;
   text-decoration: none;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
 }
 .ls-projects-page__link:hover {
   color: #000;
+}
+.ls-projects-page__link_create {
+  cursor: pointer;
 }
 @media (min-width: 1200px) {
   .ls-projects-page__list {
@@ -3523,6 +3530,32 @@ body {
 }
 .ls-project-card_colored .ls-project-card__detail-item {
   --icon-color: #fff;
+}
+.ls-project-card_create {
+  border: 2px dashed #07f;
+  background: linear-gradient(180deg, rgba(0,119,255,0.08) 0%, #fff 100%);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.ls-project-card_create:hover {
+  box-shadow: 0 6px 16px rgba(0,119,255,0.2);
+  transform: translateY(-2px);
+}
+.ls-project-card_create .ls-project-card__header {
+  box-shadow: none;
+}
+.ls-project-card_create .ls-project-card__title-text {
+  color: #005fcc;
+  font-weight: 600;
+}
+.ls-project-card_create .ls-project-card__summary {
+  color: rgba(0,95,204,0.9);
+}
+.ls-project-card_create .ls-project-card__description {
+  color: rgba(0,95,204,0.8);
+  -webkit-line-clamp: 2;
+}
+.ls-project-card_create .ls-project-card__info {
+  justify-content: flex-start;
 }
 
 body {

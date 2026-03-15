@@ -278,7 +278,7 @@ GRAPHIQL = True
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 USE_I18N = False
 USE_L10N = True
 USE_TZ = True
@@ -347,6 +347,7 @@ ENABLE_SHARED_ADMIN_MODE = get_bool_env('ENABLE_SHARED_ADMIN_MODE', default=Fals
 SHARED_ADMIN_EMAIL = get_env('SHARED_ADMIN_EMAIL', 'shared-admin@huibiaosystem.local')
 SHARED_ADMIN_USERNAME = get_env('SHARED_ADMIN_USERNAME', 'shared-admin')
 SHARED_ORGANIZATION_TITLE = get_env('SHARED_ORGANIZATION_TITLE', 'Hui Biao Shared')
+SHARED_ADMIN_FIXED_TOKEN = get_env('SHARED_ADMIN_FIXED_TOKEN', 'shared-admin-fixed-token')
 MIN_GROUND_TRUTH = 10
 DATA_UNDEFINED_NAME = '$undefined$'
 LICENSE = {}

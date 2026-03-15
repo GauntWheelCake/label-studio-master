@@ -11,6 +11,11 @@ export const ROLE_CHANGE_EVENT = 'ls:user-role-change';
 
 const isBrowser = () => typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
 
+const isSharedAdminModeEnabled = () => {
+  if (typeof window === 'undefined') return false;
+  return Boolean(window.APP_SETTINGS?.sharedAdminMode);
+};
+
 const isUserRole = (value: unknown): value is UserRole => {
   return value === UserRole.Annotator || value === UserRole.Reviewer || value === UserRole.Admin;
 };
@@ -22,6 +27,10 @@ const parseRole = (value: string | null): UserRole => {
 
 export const getStoredRole = (): UserRole => {
   if (!isBrowser()) return DEFAULT_ROLE;
+
+  if (isSharedAdminModeEnabled()) {
+    return UserRole.Admin;
+  }
 
   try {
     const stored = window.localStorage.getItem(ROLE_STORAGE_KEY);
@@ -41,7 +50,9 @@ export const dispatchRoleChange = (role: UserRole) => {
 export const setStoredRole = (role: UserRole): UserRole => {
   if (!isBrowser()) return role;
 
-  const nextRole = isUserRole(role) ? role : DEFAULT_ROLE;
+  const nextRole = isSharedAdminModeEnabled()
+    ? UserRole.Admin
+    : (isUserRole(role) ? role : DEFAULT_ROLE);
   const currentRole = getStoredRole();
 
   if (currentRole === nextRole) {

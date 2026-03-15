@@ -24,9 +24,16 @@
     display block
     display flex
     text-decoration none
+    border none
+    background transparent
+    width 100%
+    text-align left
 
     &:hover
       color #000
+
+    &_create
+      cursor pointer
 
   @media (min-width 1200px)
     &__list
@@ -176,5 +183,32 @@
     &__detail
       &-item
         --icon-color #fff
+
+  &_create
+    border 2px dashed #0077FF
+    background linear-gradient(180deg, rgba(0, 119, 255, 0.08) 0%, #FFFFFF 100%)
+    transition box-shadow 0.2s ease, transform 0.2s ease
+
+    &:hover
+      box-shadow 0 6px 16px rgba(0, 119, 255, 0.2)
+      transform translateY(-2px)
+
+  &_create ^[0]
+    &__header
+      box-shadow none
+
+    &__title-text
+      color #005FCC
+      font-weight 600
+
+    &__summary
+      color rgba(0, 95, 204, 0.9)
+
+    &__description
+      color rgba(0, 95, 204, 0.8)
+      -webkit-line-clamp 2
+
+    &__info
+      justify-content flex-start
 
 

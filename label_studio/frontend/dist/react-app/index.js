@@ -16369,19 +16369,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _providers_RoutesProvider__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../providers/RoutesProvider */ "./src/providers/RoutesProvider.js");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../utils/bem */ "./src/utils/bem.tsx");
 /* harmony import */ var _utils_helpers__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../utils/helpers */ "./src/utils/helpers.js");
-/* harmony import */ var _utils_roles__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../utils/roles */ "./src/utils/roles.ts");
-/* harmony import */ var _i18n__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../i18n */ "./src/i18n/index.js");
-/* harmony import */ var _Breadcrumbs_Breadcrumbs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../Breadcrumbs/Breadcrumbs */ "./src/components/Breadcrumbs/Breadcrumbs.js");
-/* harmony import */ var _Dropdown_Dropdown__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../Dropdown/Dropdown */ "./src/components/Dropdown/Dropdown.js");
-/* harmony import */ var _Hamburger_Hamburger__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../Hamburger/Hamburger */ "./src/components/Hamburger/Hamburger.js");
-/* harmony import */ var _Menu_Menu__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../Menu/Menu */ "./src/components/Menu/Menu.js");
-/* harmony import */ var _Userpic_Userpic__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../Userpic/Userpic */ "./src/components/Userpic/Userpic.js");
-/* harmony import */ var _VersionNotifier_VersionNotifier__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../VersionNotifier/VersionNotifier */ "./src/components/VersionNotifier/VersionNotifier.js");
-/* harmony import */ var _Menubar_styl__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./Menubar.styl */ "./src/components/Menubar/Menubar.styl");
-/* harmony import */ var _MenuContent_styl__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./MenuContent.styl */ "./src/components/Menubar/MenuContent.styl");
-/* harmony import */ var _MenuSidebar_styl__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./MenuSidebar.styl */ "./src/components/Menubar/MenuSidebar.styl");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
-
+/* harmony import */ var _i18n__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../i18n */ "./src/i18n/index.js");
+/* harmony import */ var _Breadcrumbs_Breadcrumbs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../Breadcrumbs/Breadcrumbs */ "./src/components/Breadcrumbs/Breadcrumbs.js");
+/* harmony import */ var _Dropdown_Dropdown__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../Dropdown/Dropdown */ "./src/components/Dropdown/Dropdown.js");
+/* harmony import */ var _Hamburger_Hamburger__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../Hamburger/Hamburger */ "./src/components/Hamburger/Hamburger.js");
+/* harmony import */ var _Menu_Menu__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../Menu/Menu */ "./src/components/Menu/Menu.js");
+/* harmony import */ var _Userpic_Userpic__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../Userpic/Userpic */ "./src/components/Userpic/Userpic.js");
+/* harmony import */ var _VersionNotifier_VersionNotifier__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../VersionNotifier/VersionNotifier */ "./src/components/VersionNotifier/VersionNotifier.js");
+/* harmony import */ var _Menubar_styl__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./Menubar.styl */ "./src/components/Menubar/Menubar.styl");
+/* harmony import */ var _MenuContent_styl__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./MenuContent.styl */ "./src/components/Menubar/MenuContent.styl");
+/* harmony import */ var _MenuSidebar_styl__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./MenuSidebar.styl */ "./src/components/Menubar/MenuSidebar.styl");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 
 
 
@@ -16405,10 +16403,10 @@ const MenubarContext = /*#__PURE__*/(0,react__WEBPACK_IMPORTED_MODULE_0__.create
 
 const LeftContextMenu = ({
   className
-}) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_app_StaticContent_StaticContent__WEBPACK_IMPORTED_MODULE_1__.StaticContent, {
+}) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_app_StaticContent_StaticContent__WEBPACK_IMPORTED_MODULE_1__.StaticContent, {
   id: "context-menu-left",
   className: className,
-  children: template => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_Breadcrumbs_Breadcrumbs__WEBPACK_IMPORTED_MODULE_9__.Breadcrumbs, {
+  children: template => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_Breadcrumbs_Breadcrumbs__WEBPACK_IMPORTED_MODULE_8__.Breadcrumbs, {
     fromTemplate: template
   })
 });
@@ -16421,12 +16419,12 @@ const RightContextMenu = ({
     ContextComponent,
     contextProps
   } = (0,_providers_RoutesProvider__WEBPACK_IMPORTED_MODULE_4__.useContextComponent)();
-  return ContextComponent ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)("div", {
+  return ContextComponent ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)("div", {
     className: className,
-    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(ContextComponent, { ...props,
+    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(ContextComponent, { ...props,
       ...(contextProps !== null && contextProps !== void 0 ? contextProps : {})
     })
-  }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_app_StaticContent_StaticContent__WEBPACK_IMPORTED_MODULE_1__.StaticContent, {
+  }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_app_StaticContent_StaticContent__WEBPACK_IMPORTED_MODULE_1__.StaticContent, {
     id: "context-menu-right",
     className: className
   });
@@ -16446,7 +16444,6 @@ const Menubar = ({
   const config = (0,_providers_ConfigProvider__WEBPACK_IMPORTED_MODULE_3__.useConfig)();
   const [sidebarOpened, setSidebarOpened] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(defaultOpened !== null && defaultOpened !== void 0 ? defaultOpened : false);
   const [sidebarPinned, setSidebarPinned] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(defaultPinned !== null && defaultPinned !== void 0 ? defaultPinned : false);
-  const [activeRole, setActiveRole] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(() => (0,_utils_roles__WEBPACK_IMPORTED_MODULE_7__.ensureRoleInitialized)());
   const [PageContext, setPageContext] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({
     Component: null,
     props: {}
@@ -16456,31 +16453,6 @@ const Menubar = ({
   const sidebarClass = (0,_utils_bem__WEBPACK_IMPORTED_MODULE_5__.cn)('sidebar');
   const contentClass = (0,_utils_bem__WEBPACK_IMPORTED_MODULE_5__.cn)('content-wrapper');
   const contextItem = menubarClass.elem('context-item');
-  const roleSwitcherClass = menubarClass.elem('role-switcher');
-  const roleLabelClass = menubarClass.elem('role-label');
-  const roleSelectClass = menubarClass.elem('role-select');
-  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
-    const unsubscribe = (0,_utils_roles__WEBPACK_IMPORTED_MODULE_7__.subscribeToRoleChange)(role => setActiveRole(role));
-    return unsubscribe;
-  }, []);
-  const handleRoleChange = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(event => {
-    var _event$target;
-
-    const value = event === null || event === void 0 ? void 0 : (_event$target = event.target) === null || _event$target === void 0 ? void 0 : _event$target.value;
-    const availableRoles = Object.values(_utils_roles__WEBPACK_IMPORTED_MODULE_7__.UserRole);
-    const nextRole = availableRoles.includes(value) ? value : _utils_roles__WEBPACK_IMPORTED_MODULE_7__.DEFAULT_ROLE;
-    (0,_utils_roles__WEBPACK_IMPORTED_MODULE_7__.setStoredRole)(nextRole);
-  }, []);
-  const roleOptions = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => [{
-    label: '批注者',
-    value: _utils_roles__WEBPACK_IMPORTED_MODULE_7__.UserRole.Annotator
-  }, {
-    label: '审阅者',
-    value: _utils_roles__WEBPACK_IMPORTED_MODULE_7__.UserRole.Reviewer
-  }, {
-    label: '管理员',
-    value: _utils_roles__WEBPACK_IMPORTED_MODULE_7__.UserRole.Admin
-  }], []);
   const sidebarPin = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(e => {
     e.preventDefault();
     const newState = !sidebarPinned;
@@ -16527,77 +16499,65 @@ const Menubar = ({
 
     useMenuRef === null || useMenuRef === void 0 ? void 0 : (_useMenuRef$current = useMenuRef.current) === null || _useMenuRef$current === void 0 ? void 0 : _useMenuRef$current.close();
   }, [location]);
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsxs)("div", {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsxs)("div", {
     className: contentClass,
-    children: [enabled && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsxs)("div", {
+    children: [enabled && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsxs)("div", {
       className: menubarClass,
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_Dropdown_Dropdown__WEBPACK_IMPORTED_MODULE_10__.Dropdown.Trigger, {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_Dropdown_Dropdown__WEBPACK_IMPORTED_MODULE_9__.Dropdown.Trigger, {
         dropdown: menuDropdownRef,
         closeOnClickOutside: !sidebarPinned,
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsxs)("div", {
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsxs)("div", {
           className: `${menubarClass.elem('trigger')} main-menu-trigger`,
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)("img", {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)("img", {
             src: (0,_utils_helpers__WEBPACK_IMPORTED_MODULE_6__.absoluteURL)("/static/icons/logo-black.svg"),
-            alt: (0,_i18n__WEBPACK_IMPORTED_MODULE_8__.t)('menubar.logoAlt'),
+            alt: (0,_i18n__WEBPACK_IMPORTED_MODULE_7__.t)('menubar.logoAlt'),
             height: "22"
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_Hamburger_Hamburger__WEBPACK_IMPORTED_MODULE_11__.Hamburger, {
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_Hamburger_Hamburger__WEBPACK_IMPORTED_MODULE_10__.Hamburger, {
             opened: sidebarOpened
           })]
         })
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsxs)("div", {
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsxs)("div", {
         className: menubarContext,
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(LeftContextMenu, {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(LeftContextMenu, {
           className: contextItem.mod({
             left: true
           })
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(RightContextMenu, {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(RightContextMenu, {
           className: contextItem.mod({
             right: true
           })
         })]
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsxs)("div", {
-        className: roleSwitcherClass,
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)("label", {
-          className: roleLabelClass,
-          htmlFor: "ls-role-select",
-          children: "\u5F53\u524D\u8EAB\u4EFD"
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)("select", {
-          id: "ls-role-select",
-          className: roleSelectClass,
-          onChange: handleRoleChange,
-          value: activeRole !== null && activeRole !== void 0 ? activeRole : _utils_roles__WEBPACK_IMPORTED_MODULE_7__.DEFAULT_ROLE,
-          "aria-label": "\u5207\u6362\u5F53\u524D\u8EAB\u4EFD",
-          children: roleOptions.map(option => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)("option", {
-            value: option.value,
-            children: option.label
-          }, option.value))
-        })]
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_Dropdown_Dropdown__WEBPACK_IMPORTED_MODULE_10__.Dropdown.Trigger, {
+      }), config.sharedAdminMode ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)("div", {
+        className: menubarClass.elem('user'),
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_Userpic_Userpic__WEBPACK_IMPORTED_MODULE_12__.Userpic, {
+          user: config.user
+        })
+      }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_Dropdown_Dropdown__WEBPACK_IMPORTED_MODULE_9__.Dropdown.Trigger, {
         ref: useMenuRef,
         align: "right",
-        content: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsxs)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_12__.Menu, {
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_12__.Menu.Item, {
-            icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_assets_icons__WEBPACK_IMPORTED_MODULE_2__.LsSettings, {}),
-            label: (0,_i18n__WEBPACK_IMPORTED_MODULE_8__.t)('menubar.menu.accountAndSettings'),
+        content: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsxs)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_11__.Menu, {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_11__.Menu.Item, {
+            icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_assets_icons__WEBPACK_IMPORTED_MODULE_2__.LsSettings, {}),
+            label: (0,_i18n__WEBPACK_IMPORTED_MODULE_7__.t)('menubar.menu.accountAndSettings'),
             href: "/user/account"
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_12__.Menu.Item, {
-            icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_assets_icons__WEBPACK_IMPORTED_MODULE_2__.LsDoor, {}),
-            label: (0,_i18n__WEBPACK_IMPORTED_MODULE_8__.t)('menubar.menu.logout'),
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_11__.Menu.Item, {
+            icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_assets_icons__WEBPACK_IMPORTED_MODULE_2__.LsDoor, {}),
+            label: (0,_i18n__WEBPACK_IMPORTED_MODULE_7__.t)('menubar.menu.logout'),
             href: (0,_utils_helpers__WEBPACK_IMPORTED_MODULE_6__.absoluteURL)("/logout"),
             forceReload: true
           })]
         }),
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)("div", {
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)("div", {
           className: menubarClass.elem('user'),
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_Userpic_Userpic__WEBPACK_IMPORTED_MODULE_13__.Userpic, {
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_Userpic_Userpic__WEBPACK_IMPORTED_MODULE_12__.Userpic, {
             user: config.user
           })
         })
       })]
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_VersionNotifier_VersionNotifier__WEBPACK_IMPORTED_MODULE_14__.VersionProvider, {
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsxs)("div", {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_VersionNotifier_VersionNotifier__WEBPACK_IMPORTED_MODULE_13__.VersionProvider, {
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsxs)("div", {
         className: contentClass.elem('body'),
-        children: [enabled && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_Dropdown_Dropdown__WEBPACK_IMPORTED_MODULE_10__.Dropdown, {
+        children: [enabled && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_Dropdown_Dropdown__WEBPACK_IMPORTED_MODULE_9__.Dropdown, {
           ref: menuDropdownRef,
           onToggle: sidebarToggle,
           onVisibilityChanged: () => window.dispatchEvent(new Event('resize')),
@@ -16608,28 +16568,28 @@ const Menubar = ({
           style: {
             width: 240
           },
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsxs)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_12__.Menu, {
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_12__.Menu.Item, {
-              label: (0,_i18n__WEBPACK_IMPORTED_MODULE_8__.t)('menubar.menu.projects'),
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsxs)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_11__.Menu, {
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_11__.Menu.Item, {
+              label: (0,_i18n__WEBPACK_IMPORTED_MODULE_7__.t)('menubar.menu.projects'),
               to: "/projects",
-              icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_assets_icons__WEBPACK_IMPORTED_MODULE_2__.IconFolder, {}),
+              icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_assets_icons__WEBPACK_IMPORTED_MODULE_2__.IconFolder, {}),
               exact: true
-            }), !config.sharedAdminMode && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_12__.Menu.Item, {
-              label: (0,_i18n__WEBPACK_IMPORTED_MODULE_8__.t)('menubar.menu.organization'),
+            }), !config.sharedAdminMode && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_11__.Menu.Item, {
+              label: (0,_i18n__WEBPACK_IMPORTED_MODULE_7__.t)('menubar.menu.organization'),
               to: "/people",
-              icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_assets_icons__WEBPACK_IMPORTED_MODULE_2__.IconPersonInCircle, {}),
+              icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_assets_icons__WEBPACK_IMPORTED_MODULE_2__.IconPersonInCircle, {}),
               exact: true
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_12__.Menu.Spacer, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_12__.Menu.Divider, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_12__.Menu.Item, {
-              icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(_assets_icons__WEBPACK_IMPORTED_MODULE_2__.IconPin, {}),
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_11__.Menu.Spacer, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_11__.Menu.Divider, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_Menu_Menu__WEBPACK_IMPORTED_MODULE_11__.Menu.Item, {
+              icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_assets_icons__WEBPACK_IMPORTED_MODULE_2__.IconPin, {}),
               className: sidebarClass.elem('pin'),
               onClick: sidebarPin,
               active: sidebarPinned,
-              children: sidebarPinned ? (0,_i18n__WEBPACK_IMPORTED_MODULE_8__.t)('menubar.menu.unpin') : (0,_i18n__WEBPACK_IMPORTED_MODULE_8__.t)('menubar.menu.pin')
+              children: sidebarPinned ? (0,_i18n__WEBPACK_IMPORTED_MODULE_7__.t)('menubar.menu.unpin') : (0,_i18n__WEBPACK_IMPORTED_MODULE_7__.t)('menubar.menu.pin')
             })]
           })
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)(MenubarContext.Provider, {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(MenubarContext.Provider, {
           value: providerValue,
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsx)("div", {
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)("div", {
             className: contentClass.elem('content').mod({
               withSidebar: sidebarPinned && sidebarOpened
             }),
@@ -18094,7 +18054,10 @@ const zhCN = {
   'createProject.templates.footer.linkText': '贡献模板',
   'createProject.templates.footer.suffix': '。',
   'createProject.preview.title': '界面预览',
-  'projectsPage.context.createButton': '创建',
+  'projectsPage.context.createButton': '创建项目',
+  'projectsPage.createCard.title': '创建项目',
+  'projectsPage.createCard.description': '新建项目并开始标注流程',
+  'projectsPage.createCard.hint': '支持与现有项目卡一致的入口体验，点击即可进入创建向导。',
   'projectsPage.empty.title': '您还没有任何项目',
   'projectsPage.empty.description': '创建一个新项目来开始标注工作。',
   'projectsPage.empty.action': '创建项目',
@@ -22783,11 +22746,9 @@ const ProjectsPage = () => {
     fetchProjects();
   }, []);
   react__WEBPACK_IMPORTED_MODULE_0__.useEffect(() => {
-    // there is a nice page with Create button when list is empty
-    // so don't show the context button in that case
     setContextProps({
       openModal,
-      showButton: projectsList.length > 0
+      showButton: true
     });
   }, [projectsList.length]);
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_7__.Block, {
@@ -22803,9 +22764,8 @@ const ProjectsPage = () => {
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(_utils_bem__WEBPACK_IMPORTED_MODULE_7__.Elem, {
         name: "content",
         case: "loaded",
-        children: [projectsList.length ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_ProjectsList__WEBPACK_IMPORTED_MODULE_12__.ProjectsList, {
-          projects: projectsList
-        }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_ProjectsList__WEBPACK_IMPORTED_MODULE_12__.EmptyProjectsList, {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_ProjectsList__WEBPACK_IMPORTED_MODULE_12__.ProjectsList, {
+          projects: projectsList,
           openModal: openModal
         }), modal && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_CreateProject_CreateProject__WEBPACK_IMPORTED_MODULE_8__.CreateProject, {
           onClose: closeModal
@@ -22890,13 +22850,16 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const ProjectsList = ({
-  projects
+  projects,
+  openModal
 }) => {
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_4__.Elem, {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)(_utils_bem__WEBPACK_IMPORTED_MODULE_4__.Elem, {
     name: "list",
-    children: projects.map(project => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(ProjectCard, {
+    children: [projects.map(project => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(ProjectCard, {
       project: project
-    }, project.id))
+    }, project.id)), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(CreateProjectCard, {
+      onClick: openModal
+    })]
   });
 };
 const EmptyProjectsList = ({
@@ -22921,6 +22884,48 @@ const EmptyProjectsList = ({
       look: "primary",
       children: (0,_i18n__WEBPACK_IMPORTED_MODULE_6__.t)('projectsPage.empty.action')
     })]
+  });
+};
+
+const CreateProjectCard = ({
+  onClick
+}) => {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_4__.Elem, {
+    name: "link",
+    tag: "button",
+    type: "button",
+    mod: {
+      create: true
+    },
+    onClick: onClick,
+    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)(_utils_bem__WEBPACK_IMPORTED_MODULE_4__.Block, {
+      name: "project-card",
+      mod: {
+        create: true
+      },
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)(_utils_bem__WEBPACK_IMPORTED_MODULE_4__.Elem, {
+        name: "header",
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_4__.Elem, {
+          name: "title",
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_4__.Elem, {
+            name: "title-text",
+            children: (0,_i18n__WEBPACK_IMPORTED_MODULE_6__.t)('projectsPage.createCard.title')
+          })
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_4__.Elem, {
+          name: "summary",
+          children: (0,_i18n__WEBPACK_IMPORTED_MODULE_6__.t)('projectsPage.createCard.description')
+        })]
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_4__.Elem, {
+        name: "description",
+        children: (0,_i18n__WEBPACK_IMPORTED_MODULE_6__.t)('projectsPage.createCard.hint')
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_4__.Elem, {
+        name: "info",
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_components__WEBPACK_IMPORTED_MODULE_3__.Button, {
+          look: "primary",
+          children: (0,_i18n__WEBPACK_IMPORTED_MODULE_6__.t)('projectsPage.context.createButton')
+        })
+      })]
+    })
   });
 };
 
@@ -26082,6 +26087,13 @@ const ROLE_CHANGE_EVENT = 'ls:user-role-change';
 
 const isBrowser = () => typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
 
+const isSharedAdminModeEnabled = () => {
+  var _window$APP_SETTINGS;
+
+  if (typeof window === 'undefined') return false;
+  return Boolean((_window$APP_SETTINGS = window.APP_SETTINGS) === null || _window$APP_SETTINGS === void 0 ? void 0 : _window$APP_SETTINGS.sharedAdminMode);
+};
+
 const isUserRole = value => {
   return value === UserRole.Annotator || value === UserRole.Reviewer || value === UserRole.Admin;
 };
@@ -26093,6 +26105,10 @@ const parseRole = value => {
 
 const getStoredRole = () => {
   if (!isBrowser()) return DEFAULT_ROLE;
+
+  if (isSharedAdminModeEnabled()) {
+    return UserRole.Admin;
+  }
 
   try {
     const stored = window.localStorage.getItem(ROLE_STORAGE_KEY);
@@ -26110,7 +26126,7 @@ const dispatchRoleChange = role => {
 };
 const setStoredRole = role => {
   if (!isBrowser()) return role;
-  const nextRole = isUserRole(role) ? role : DEFAULT_ROLE;
+  const nextRole = isSharedAdminModeEnabled() ? UserRole.Admin : isUserRole(role) ? role : DEFAULT_ROLE;
   const currentRole = getStoredRole();
 
   if (currentRole === nextRole) {
@@ -88236,7 +88252,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // extracted by mini-css-extract-plugin
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({"projects-page":"ls-projects-page","projects-page__loading":"ls-projects-page__loading","projects-page__list":"ls-projects-page__list","projects-page__link":"ls-projects-page__link","empty-projects-page":"ls-empty-projects-page","empty-projects-page__heidi":"ls-empty-projects-page__heidi","empty-projects-page__header":"ls-empty-projects-page__header","empty-projects-page__action":"ls-empty-projects-page__action","project-card":"ls-project-card","project-card__header":"ls-project-card__header","project-card__menu":"ls-project-card__menu","button":"ls-button","button__icon":"ls-button__icon","project-card__title":"ls-project-card__title","project-card__title-text":"ls-project-card__title-text","project-card__summary":"ls-project-card__summary","project-card__total":"ls-project-card__total","project-card__annotation":"ls-project-card__annotation","project-card__detail":"ls-project-card__detail","project-card__detail-item":"ls-project-card__detail-item","project-card__icon":"ls-project-card__icon","project-card__detail-item_type_completed":"ls-project-card__detail-item_type_completed","project-card__detail-item_type_rejected":"ls-project-card__detail-item_type_rejected","project-card__detail-item_type_predictions":"ls-project-card__detail-item_type_predictions","project-card__description":"ls-project-card__description","project-card__info":"ls-project-card__info","project-card__created-date":"ls-project-card__created-date","project-card_colored":"ls-project-card_colored"});
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({"projects-page":"ls-projects-page","projects-page__loading":"ls-projects-page__loading","projects-page__list":"ls-projects-page__list","projects-page__link":"ls-projects-page__link","projects-page__link_create":"ls-projects-page__link_create","empty-projects-page":"ls-empty-projects-page","empty-projects-page__heidi":"ls-empty-projects-page__heidi","empty-projects-page__header":"ls-empty-projects-page__header","empty-projects-page__action":"ls-empty-projects-page__action","project-card":"ls-project-card","project-card__header":"ls-project-card__header","project-card__menu":"ls-project-card__menu","button":"ls-button","button__icon":"ls-button__icon","project-card__title":"ls-project-card__title","project-card__title-text":"ls-project-card__title-text","project-card__summary":"ls-project-card__summary","project-card__total":"ls-project-card__total","project-card__annotation":"ls-project-card__annotation","project-card__detail":"ls-project-card__detail","project-card__detail-item":"ls-project-card__detail-item","project-card__icon":"ls-project-card__icon","project-card__detail-item_type_completed":"ls-project-card__detail-item_type_completed","project-card__detail-item_type_rejected":"ls-project-card__detail-item_type_rejected","project-card__detail-item_type_predictions":"ls-project-card__detail-item_type_predictions","project-card__description":"ls-project-card__description","project-card__info":"ls-project-card__info","project-card__created-date":"ls-project-card__created-date","project-card_colored":"ls-project-card_colored","project-card_create":"ls-project-card_create"});
 
 /***/ }),
 

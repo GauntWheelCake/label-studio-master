@@ -35,6 +35,7 @@ services:
       - SHARED_ADMIN_EMAIL=${SHARED_ADMIN_EMAIL:-shared-admin@huibiaosystem.local}
       - SHARED_ADMIN_USERNAME=${SHARED_ADMIN_USERNAME:-shared-admin}
       - SHARED_ORGANIZATION_TITLE=${SHARED_ORGANIZATION_TITLE:-Hui Biao Shared}
+      - SHARED_ADMIN_FIXED_TOKEN=${SHARED_ADMIN_FIXED_TOKEN:-shared-admin-fixed-token}
     volumes:
       - ./mydata:/label-studio/data:rw
       - static:/label-studio/label_studio:rw
