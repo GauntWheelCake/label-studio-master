@@ -7,15 +7,24 @@ import argparse
 import requests
 import json
 import sys
+import os
 
 # 配置
-LABEL_STUDIO_URL = "http://localhost:8080"
-ML_BACKEND_URL = "http://localhost:9090"
-API_TOKEN = "6e3c52b71360a92c864bacad751fabe0a8d19c90"
+LABEL_STUDIO_URL = os.getenv("LABEL_STUDIO_URL", "http://localhost:8080")
+ML_BACKEND_URL = os.getenv("ML_BACKEND_URL", "http://localhost:9090")
+API_TOKEN = os.getenv("LABEL_STUDIO_API_TOKEN", "")
+MODEL_VERSION = os.getenv("MODEL_VERSION", "faster-rcnn-resnet50-v1.0")
+
+
+def build_headers():
+    headers = {"Content-Type": "application/json"}
+    if API_TOKEN:
+        headers["Authorization"] = f"Token {API_TOKEN}"
+    return headers
 
 def get_tasks(project_id):
     """获取项目中的所有任务"""
-    headers = {"Authorization": f"Token {API_TOKEN}"}
+    headers = build_headers()
     # 正确的 API: /api/projects/{id}/tasks 只返回该项目的任务
     # 错误的 API: /api/tasks?project={id} 会返回所有项目的任务
     url = f"{LABEL_STUDIO_URL}/api/projects/{project_id}/tasks"
@@ -25,7 +34,7 @@ def get_tasks(project_id):
 
 def get_tasks_with_predictions(project_id):
     """获取项目中已有预测的任务ID集合"""
-    headers = {"Authorization": f"Token {API_TOKEN}"}
+    headers = build_headers()
     # 获取项目的任务ID列表
     tasks = get_tasks(project_id)
     task_ids = {t["id"] for t in tasks}
@@ -54,16 +63,13 @@ def get_predictions(tasks):
 
 def save_prediction(task_id, prediction, project_id):
     """保存单个预测到 Label Studio"""
-    headers = {
-        "Authorization": f"Token {API_TOKEN}",
-        "Content-Type": "application/json"
-    }
+    headers = build_headers()
     
     data = {
         "task": task_id,
         "result": prediction.get("result", []),
         "score": prediction.get("score", 0),
-        "model_version": "faster-rcnn-resnet50-v1.0"
+        "model_version": MODEL_VERSION
     }
     
     response = requests.post(

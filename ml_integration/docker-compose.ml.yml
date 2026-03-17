@@ -1,0 +1,16 @@
+version: '3.3'
+
+services:
+  ml-backend:
+    build:
+      context: .
+      dockerfile: ml_integration/Dockerfile
+    image: huibiao/ml-backend:faster-rcnn-v1
+    container_name: ml-backend
+    env_file:
+      - ml_integration/.env
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./ml_integration/weights:/app/weights:ro
+    restart: unless-stopped

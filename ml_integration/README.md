@@ -17,6 +17,12 @@ ml_integration/
 
 ## 🚀 快速开始
 
+### 0. 容器化部署（推荐）
+
+如果你要把模型服务交付给他人，建议直接打包成镜像文件（tar）进行分发。
+
+详细步骤见：`ml_integration/DEPLOYMENT.md`（包含 `docker build`、`docker save`、`docker load`、`docker run`）。
+
 ### 1. 安装依赖
 
 ```bash

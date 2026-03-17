@@ -7,6 +7,7 @@ import io
 import base64
 import logging
 import xml.etree.ElementTree as ET
+import os
 from abc import ABC
 from PIL import Image
 import numpy as np
@@ -22,8 +23,11 @@ logger = logging.getLogger(__name__)
 
 # COCO类别
 # Label Studio API配置
-LABEL_STUDIO_URL = "http://localhost:8080"  # Label Studio服务地址
-LABEL_STUDIO_API_TOKEN = "6e3c52b71360a92c864bacad751fabe0a8d19c90"  # 你的API Token
+LABEL_STUDIO_URL = os.getenv("LABEL_STUDIO_URL", "http://localhost:8080")
+LABEL_STUDIO_API_TOKEN = os.getenv("LABEL_STUDIO_API_TOKEN", "")
+CONFIDENCE_THRESHOLD = float(os.getenv("CONFIDENCE_THRESHOLD", "0.7"))
+ML_BACKEND_PORT = int(os.getenv("ML_BACKEND_PORT", "9090"))
+MODEL_VERSION = os.getenv("MODEL_VERSION", "faster-rcnn-resnet50-v1.0")
 
 COCO_CLASSES = [
     'background', 'person', 'bicycle', 'car', 'motorcycle', 'airplane',
@@ -42,7 +46,6 @@ COCO_CLASSES = [
 ]
 
 # 获取当前脚本所在目录
-import os
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # 本地权重文件路径（离线环境使用）
@@ -89,7 +92,7 @@ class FasterRCNNBackend(ABC):
         ])
         
         logger.info("Model loaded successfully!")
-        self.model_version = 'faster-rcnn-resnet50-v1.0'
+        self.model_version = MODEL_VERSION
     
     def predict(self, tasks, **kwargs):
         """
@@ -103,6 +106,8 @@ class FasterRCNNBackend(ABC):
         """
         # 动态解析label_config中的Image字段名和允许的标签
         image_field_name = 'image'  # 默认字段名
+        from_name = 'label'
+        to_name = image_field_name
         allowed_labels = None  # None 表示允许所有标签
         
         if 'label_config' in kwargs:
@@ -113,6 +118,13 @@ class FasterRCNNBackend(ABC):
                 # 获取图像字段名
                 for img_tag in root.iter('Image'):
                     image_field_name = img_tag.get('name', 'image')
+                    to_name = image_field_name
+                    break
+
+                # 获取标注控件字段映射
+                for rect_tag in root.iter('RectangleLabels'):
+                    from_name = rect_tag.get('name', 'label')
+                    to_name = rect_tag.get('toName', image_field_name)
                     break
                 
                 # 获取项目中定义的标签列表
@@ -197,7 +209,9 @@ class FasterRCNNBackend(ABC):
                     predictions,
                     img_width,
                     img_height,
-                    allowed_labels=allowed_labels
+                    allowed_labels=allowed_labels,
+                    from_name=from_name,
+                    to_name=to_name
                 )
                 
                 # 计算平均置信度
@@ -238,7 +252,7 @@ class FasterRCNNBackend(ABC):
             # Label Studio 内部路径
             elif isinstance(image_data, str) and image_data.startswith('/data/'):
                 image_url = f"{LABEL_STUDIO_URL}{image_data}"
-                headers = {"Authorization": f"Token {LABEL_STUDIO_API_TOKEN}"}
+                headers = {"Authorization": f"Token {LABEL_STUDIO_API_TOKEN}"} if LABEL_STUDIO_API_TOKEN else {}
                 response = requests.get(image_url, headers=headers, timeout=10)
                 if response.status_code != 200:
                     raise Exception(f"HTTP {response.status_code}")
@@ -278,7 +292,7 @@ class FasterRCNNBackend(ABC):
             logger.error(f"Error parsing image: {str(e)}")
             return None
     
-    def _process_predictions(self, predictions, img_width, img_height, allowed_labels=None):
+    def _process_predictions(self, predictions, img_width, img_height, allowed_labels=None, from_name='label', to_name='image'):
         """
         将模型预测结果转换为Label Studio格式
         
@@ -295,7 +309,7 @@ class FasterRCNNBackend(ABC):
         labels = predictions['labels'].cpu().numpy()
         scores = predictions['scores'].cpu().numpy()
         
-        confidence_threshold = 0.7  # 调整此值：0.3(多) ~ 0.7(少但准确)
+        confidence_threshold = CONFIDENCE_THRESHOLD
         
         for box, label, score in zip(boxes, labels, scores):
             if score < confidence_threshold:
@@ -327,8 +341,8 @@ class FasterRCNNBackend(ABC):
                     'rotation': 0,
                     'rectanglelabels': [class_name]
                 },
-                'from_name': 'label',
-                'to_name': 'image',
+                'from_name': from_name,
+                'to_name': to_name,
                 'type': 'rectanglelabels',
                 'original_width': img_width,
                 'original_height': img_height,
@@ -436,7 +450,7 @@ def validate():
 if __name__ == '__main__':
     logger.info("Starting Faster RCNN ML Backend...")
     logger.info(f"GPU Available: {torch.cuda.is_available()}")
-    logger.info("Server running on http://0.0.0.0:9090")
+    logger.info(f"Server running on http://0.0.0.0:{ML_BACKEND_PORT}")
     logger.info("")
     logger.info("=" * 60)
     logger.info("如果 Label Studio 运行在 Docker 容器中，请使用以下地址连接：")
@@ -447,7 +461,7 @@ if __name__ == '__main__':
     
     app.run(
         host='0.0.0.0',
-        port=9090,
+        port=ML_BACKEND_PORT,
         debug=False,
         threaded=True
     )
