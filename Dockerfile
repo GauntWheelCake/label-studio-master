@@ -7,9 +7,9 @@ WORKDIR /label-studio
 ENV TZ=Asia/Shanghai
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-# 系统依赖（包含 PostgreSQL Server）
+# 系统依赖
 RUN apt-get update && apt-get install -y \
-    build-essential postgresql postgresql-contrib python3.8 python3-pip python3.8-dev \
+    build-essential postgresql postgresql-client python3.8 python3-pip python3.8-dev \
     uwsgi git libxml2-dev libxslt-dev zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 
@@ -26,20 +26,13 @@ RUN python3 -m pip install --upgrade pip \
 
 # 运行所需环境变量
 ENV DJANGO_SETTINGS_MODULE=core.settings.label_studio
+ENV DJANGO_DB=default
 ENV LABEL_STUDIO_BASE_DATA_DIR=/label-studio/data
-
-# 共享管理员模式配置（烧入镜像）
-ENV ENABLE_SHARED_ADMIN_MODE=true \
-    SHARED_ADMIN_EMAIL=shared-admin@huibiaosystem.local \
-    SHARED_ADMIN_USERNAME=shared-admin \
-    SHARED_ORGANIZATION_TITLE="Hui Biao Shared" \
-    SHARED_ADMIN_FIXED_TOKEN=asldjfklawdkgnakjhjdfoijgp; \
-    DJANGO_DB=postgres \
-    POSTGRE_HOST=localhost \
-    POSTGRE_PORT=5432 \
-    POSTGRE_USER=label_studio \
-    POSTGRE_PASSWORD=label_studio_pwd \
-    POSTGRE_NAME=label_studio_db
+ENV POSTGRE_HOST=localhost
+ENV POSTGRE_PORT=5432
+ENV POSTGRE_USER=postgres
+ENV POSTGRE_PASSWORD=postgres
+ENV POSTGRE_NAME=postgres
 
 # 复制源码
 COPY . /label-studio

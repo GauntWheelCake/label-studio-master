@@ -8,8 +8,8 @@ config: '
 <View>
   <Image name="image" value="$image"/>
   <RectangleLabels name="label" toName="image">
-    <Label value="Airplane" background="green"/>
-    <Label value="Car" background="blue"/>
+        <Label value="airplane" background="green"/>
+        <Label value="car" background="blue"/>
   </RectangleLabels>
 </View>
 
@@ -26,7 +26,7 @@ config: '
             "height": 46.285714285714285,
             "rotation": 0,
             "rectanglelabels": [
-                "Airplane"
+                "airplane"
             ]
         },
         "id": "PIhJM1YYpH",
@@ -45,7 +45,7 @@ config: '
             "height": 46,
             "rotation": 0,
             "rectanglelabels": [
-                "Airplane"
+                "airplane"
             ]
         },
         "id": "lnimBBYxMU",
@@ -64,7 +64,7 @@ config: '
             "height": 43.714285714285715,
             "rotation": 0,
             "rectanglelabels": [
-                "Airplane"
+                "airplane"
             ]
         },
         "id": "sBjX3KteGU",
@@ -83,7 +83,7 @@ config: '
             "height": 5.142857142857142,
             "rotation": 0,
             "rectanglelabels": [
-                "Car"
+                "car"
             ]
         },
         "id": "TIYiC1Bh67",
@@ -102,7 +102,7 @@ config: '
             "height": 4.857142857142856,
             "rotation": 0,
             "rectanglelabels": [
-                "Car"
+                "car"
             ]
         },
         "id": "mL8hEBkvJt",
@@ -121,7 +121,7 @@ config: '
             "height": 7.142857142857142,
             "rotation": 0,
             "rectanglelabels": [
-                "Car"
+                "car"
             ]
         },
         "id": "3gpRfF9MkN",
