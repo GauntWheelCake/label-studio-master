@@ -121,18 +121,9 @@ class ViewAPI(viewsets.ModelViewSet):
         self.pagination_class = TaskPagination
         page = self.paginate_queryset(queryset)
         if page is not None:
-            # retrieve ML predictions if tasks don't have them
-            if project.evaluate_predictions_automatically:
-                ids = [task.id for task in page]  # page is a list already
-                tasks_for_predictions = Task.objects.filter(id__in=ids, predictions__isnull=True)
-                evaluate_predictions(tasks_for_predictions)
-
             serializer = self.task_serializer_class(page, many=True, context=context)
             return self.get_paginated_response(serializer.data)
 
-        # all tasks
-        if project.evaluate_predictions_automatically:
-            evaluate_predictions(queryset.filter(predictions__isnull=True))
         serializer = self.task_serializer_class(queryset, many=True, context=context)
         return Response(serializer.data)
 
@@ -224,10 +215,6 @@ class TaskAPI(APIView):
             'completed_by': 'full',
             'request': request
         }
-
-        # get prediction
-        if task.project.evaluate_predictions_automatically and not task.predictions.exists():
-            evaluate_predictions([task])
 
         serializer = self.get_serializer_class()(task, many=False, context=context)
         data = serializer.data

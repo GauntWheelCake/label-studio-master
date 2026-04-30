@@ -1063,6 +1063,13 @@ DataManagerPage.context = ({dmRef}) => {
     };
   }, [getSmartLabelingSelection]);
 
+  const buildCurrentTaskSmartLabelingRequest = useCallback(() => ({
+    selectedItems: {
+      all: false,
+      included: [currentTaskId],
+    },
+  }), [currentTaskId]);
+
   const loadSmartLabelingBackends = useCallback(async () => {
     if (!dmRef || !project?.id) return [];
 
@@ -1089,7 +1096,7 @@ DataManagerPage.context = ({dmRef}) => {
     }).join('\n');
   }, []);
 
-  const runSmartLabeling = useCallback(async () => {
+  const runSmartLabeling = useCallback(async (requestBody) => {
     if (!dmRef || !project?.id || smartLabeling) return;
 
     setSmartLabeling(true);
@@ -1100,7 +1107,7 @@ DataManagerPage.context = ({dmRef}) => {
         project: project.id,
         id: 'retrieve_tasks_predictions',
       }, {
-        body: buildSmartLabelingRequest(),
+        body: requestBody ?? buildSmartLabelingRequest(),
       });
 
       if (result?.error || result?.response?.detail) {
@@ -1108,7 +1115,16 @@ DataManagerPage.context = ({dmRef}) => {
         throw new Error(detail || '\u0041\u0049 \u521d\u7a3f\u751f\u6210\u5931\u8d25\uff0c\u8bf7\u68c0\u67e5\u667a\u80fd\u6807\u6ce8\u6a21\u578b\u662f\u5426\u5df2\u8fde\u63a5\u3002');
       }
 
-      await refreshCurrentView();
+      if (mode !== 'explorer' && currentTaskId && typeof dmRef.lsf?.loadTask === 'function') {
+        await dmRef.lsf.loadTask(currentTaskId);
+        extractTaskInfo();
+      } else if (mode !== 'explorer' && currentTaskId && typeof dmRef.store?.taskStore?.loadTask === 'function') {
+        const task = await dmRef.store.taskStore.loadTask.call(dmRef.store.taskStore, currentTaskId, { select: true });
+        dmRef.store.taskStore?.setSelected?.(task ?? currentTaskId);
+        extractTaskInfo();
+      } else {
+        await refreshCurrentView();
+      }
       showSmartLabelingResult('\u0041\u0049 \u521d\u7a3f\u751f\u6210\u5b8c\u6210', result?.detail || '\u0041\u0049 \u521d\u7a3f\u5df2\u751f\u6210\uff0c\u8bf7\u8fdb\u5165\u6807\u6ce8\u9875\u786e\u8ba4\u6216\u4fee\u6539\u3002');
     } catch (error) {
       console.error('[smart-labeling] Failed to generate AI drafts', error);
@@ -1117,10 +1133,21 @@ DataManagerPage.context = ({dmRef}) => {
       closeSmartLabelingProgress();
       setSmartLabeling(false);
     }
-  }, [buildSmartLabelingRequest, closeSmartLabelingProgress, dmRef, project?.id, refreshCurrentView, showSmartLabelingProgress, showSmartLabelingResult, smartLabeling]);
+  }, [buildSmartLabelingRequest, closeSmartLabelingProgress, currentTaskId, dmRef, extractTaskInfo, mode, project?.id, refreshCurrentView, showSmartLabelingProgress, showSmartLabelingResult, smartLabeling]);
 
   const confirmSmartLabeling = useCallback(async () => {
-    if (!hasSmartLabelingSelection()) {
+    const isCurrentTaskMode = mode !== 'explorer';
+    const requestBody = isCurrentTaskMode ? buildCurrentTaskSmartLabelingRequest() : buildSmartLabelingRequest();
+
+    if (isCurrentTaskMode && !currentTaskId) {
+      showSmartLabelingResult(
+        '\u8bf7\u5148\u6253\u5f00\u4efb\u52a1',
+        '\u8bf7\u5148\u6253\u5f00\u9700\u8981\u667a\u80fd\u9884\u6807\u6ce8\u7684\u4efb\u52a1\uff0c\u7136\u540e\u518d\u70b9\u51fb\u201c\u667a\u80fd\u9884\u6807\u6ce8\u201d\u3002'
+      );
+      return;
+    }
+
+    if (!isCurrentTaskMode && !hasSmartLabelingSelection()) {
       showSmartLabelingResult(
         '\u8bf7\u5148\u9009\u62e9\u6570\u636e',
         '\u8bf7\u5148\u5728\u6570\u636e\u5217\u8868\u4e2d\u52fe\u9009\u9700\u8981\u667a\u80fd\u9884\u6807\u6ce8\u7684\u4efb\u52a1\uff0c\u7136\u540e\u518d\u70b9\u51fb\u201c\u667a\u80fd\u9884\u6807\u6ce8\u201d\u3002'
@@ -1160,7 +1187,7 @@ DataManagerPage.context = ({dmRef}) => {
             look="primary"
             onClick={() => {
               modalInstance?.close();
-              runSmartLabeling();
+              runSmartLabeling(requestBody);
             }}
           >
             {'\u5f00\u59cb\u751f\u6210'}
@@ -1168,7 +1195,7 @@ DataManagerPage.context = ({dmRef}) => {
         </Space>
       ),
     });
-  }, [formatBackendList, hasSmartLabelingSelection, loadSmartLabelingBackends, runSmartLabeling, showSmartLabelingResult]);
+  }, [buildCurrentTaskSmartLabelingRequest, buildSmartLabelingRequest, currentTaskId, formatBackendList, hasSmartLabelingSelection, loadSmartLabelingBackends, mode, runSmartLabeling, showSmartLabelingResult]);
 
   const reviewStatusTranslations = createReviewStatusTranslations();
   const statusText = localizeReviewStatus({
@@ -1190,7 +1217,7 @@ DataManagerPage.context = ({dmRef}) => {
 
   return project && project.id ? (
     <Space size="small">
-      {mode === 'explorer' && (
+      {(mode === 'explorer' || currentTaskId) && (
         <Button
           size="compact"
           look="primary"

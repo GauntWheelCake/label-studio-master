@@ -26,7 +26,6 @@ const text = {
   saveError: '\u667a\u80fd\u6807\u6ce8\u6a21\u578b\u4fdd\u5b58\u5931\u8d25\u3002',
   addError: '\u667a\u80fd\u6807\u6ce8\u6a21\u578b\u8fde\u63a5\u5931\u8d25\u3002',
   settings: '\u667a\u80fd\u6807\u6ce8\u4f7f\u7528\u8bbe\u7f6e',
-  autoDraft: '\u6253\u5f00\u4efb\u52a1\u65f6\u81ea\u52a8\u751f\u6210 AI \u521d\u7a3f',
   showDrafts: '\u6807\u6ce8\u65f6\u663e\u793a AI \u521d\u7a3f',
   modelVersion: '\u6a21\u578b\u7248\u672c',
   modelVersionDescription: '\u9009\u62e9\u5411\u6807\u6ce8\u5458\u5c55\u793a\u54ea\u4e00\u4e2a\u6a21\u578b\u7248\u672c\u751f\u6210\u7684 AI \u521d\u7a3f\u3002',
@@ -35,6 +34,7 @@ const text = {
   connecting: '\u6b63\u5728\u5c1d\u8bd5\u8fde\u63a5\u9ed8\u8ba4\u667a\u80fd\u6807\u6ce8\u6a21\u578b...',
   defaultConnected: '\u9ed8\u8ba4\u667a\u80fd\u6807\u6ce8\u6a21\u578b\u5df2\u8fde\u63a5',
   defaultFailed: '\u672a\u80fd\u81ea\u52a8\u8fde\u63a5\u9ed8\u8ba4\u667a\u80fd\u6807\u6ce8\u6a21\u578b',
+  backendConsoleHint: '\u8bf7\u540c\u65f6\u786e\u8ba4 ML \u540e\u7aef\u63a7\u5236\u53f0\u5df2\u8fde\u63a5\u6167\u6807\u7cfb\u7edf\uff0c\u5426\u5219\u53ef\u80fd\u53ea\u80fd\u4fdd\u5b58\u8fde\u63a5\uff0c\u65e0\u6cd5\u6b63\u5e38\u63a8\u7406\u3002',
   ok: '\u77e5\u9053\u4e86',
 };
 
@@ -52,30 +52,22 @@ const getDefaultBackendCandidates = () => {
   if (hostLike) {
     // Local dev on host machine: prefer host mapped port first.
     return uniq([
+      `${protocol}//127.0.0.1:9091`,
+      `${protocol}//localhost:9091`,
+      `${protocol}//${hostname}:9091`,
       `${protocol}//127.0.0.1:9090`,
       `${protocol}//localhost:9090`,
       `${protocol}//${hostname}:9090`,
-      `${protocol}//127.0.0.1:9091`,
     ]);
   }
 
   // Non-localhost hostnames are usually containerized or remote setups.
   return uniq([
-    'http://ml-backend:9091',
     `${protocol}//${hostname}:9091`,
-    'http://host.docker.internal:9090',
     'http://host.docker.internal:9091',
+    'http://ml-backend:9091',
+    'http://host.docker.internal:9090',
   ]);
-};
-
-const checkBackendHealth = async (url) => {
-  const normalized = url.endsWith('/') ? url.slice(0, -1) : url;
-  try {
-    const response = await fetch(`${normalized}/health`, { method: 'GET' });
-    return response.ok;
-  } catch (error) {
-    return false;
-  }
 };
 
 const showInfoModal = (title, body) => {
@@ -137,57 +129,47 @@ export const MachineLearningSettings = () => {
     const failures = [];
 
     try {
-      let reachableUrl = null;
+      let connectedUrl = null;
       for (const url of defaultCandidates) {
-        // Do a silent health check first to avoid noisy global request errors.
-        // Only the first healthy candidate will be used for backend creation.
+        const existing = backends.find((backend) => backend.url === url);
+        if (existing) {
+          showInfoModal(text.defaultConnected, `${existing.title || DEFAULT_BACKEND_TITLE}\n${url}\n\n${text.backendConsoleHint}`);
+          return;
+        }
+
+        // Let the Label Studio backend validate health/setup. Browser-side checks can fail on CORS.
         // eslint-disable-next-line no-await-in-loop
-        const healthy = await checkBackendHealth(url);
-        if (healthy) {
-          reachableUrl = url;
+        const response = await api.callApi('addMLBackend', {
+          params: {},
+          body: {
+            project: project.id,
+            title: DEFAULT_BACKEND_TITLE,
+            url,
+            description: DEFAULT_BACKEND_DESCRIPTION,
+          },
+          errorFilter: () => true,
+        });
+
+        if (response && !response.error && !response.error_message) {
+          connectedUrl = url;
           break;
         }
-        failures.push(`${url}: health check failed`);
-      }
 
-      if (!reachableUrl) {
-        showInfoModal(
-          text.defaultFailed,
-          `${text.defaultFailed}\n\n${failures.join('\n')}\n\nYou can still use "${text.connectCustom}" and enter the backend URL manually.`
+        failures.push(
+          `${url}: ${response?.response?.detail || response?.error || response?.error_message || 'failed'}`
         );
-        return;
       }
 
-      const existing = backends.find((backend) => backend.url === reachableUrl);
-      if (existing) {
-        showInfoModal(text.defaultConnected, `${existing.title || DEFAULT_BACKEND_TITLE}\n${reachableUrl}`);
-        return;
-      }
-
-      const response = await api.callApi('addMLBackend', {
-        params: {},
-        body: {
-          project: project.id,
-          title: DEFAULT_BACKEND_TITLE,
-          url: reachableUrl,
-          description: DEFAULT_BACKEND_DESCRIPTION,
-        },
-        errorFilter: () => true,
-      });
-
-      if (response && !response.error && !response.error_message) {
+      if (connectedUrl) {
         await fetchBackends();
         await fetchMLVersions();
-        showInfoModal(text.defaultConnected, `${DEFAULT_BACKEND_TITLE}\n${reachableUrl}`);
+        showInfoModal(text.defaultConnected, `${DEFAULT_BACKEND_TITLE}\n${connectedUrl}\n\n${text.backendConsoleHint}`);
         return;
       }
 
-      failures.push(
-        `${reachableUrl}: ${response?.response?.detail || response?.error || response?.error_message || 'failed'}`
-      );
       showInfoModal(
         text.defaultFailed,
-        `${text.defaultFailed}\n\n${failures.join('\n')}\n\nYou can still use "${text.connectCustom}" and enter the backend URL manually.`
+        `${text.defaultFailed}\n\n${failures.join('\n')}\n\n${text.backendConsoleHint}\n\nYou can still use "${text.connectCustom}" and enter the backend URL manually.`
       );
     } finally {
       setConnectingDefault(false);
@@ -282,13 +264,6 @@ export const MachineLearningSettings = () => {
       >
         <Form.Row columnCount={1}>
           <Label text={text.settings} large/>
-
-          <div style={{paddingLeft: 16}}>
-            <Toggle
-              label={text.autoDraft}
-              name="evaluate_predictions_automatically"
-            />
-          </div>
 
           <div style={{paddingLeft: 16}}>
             <Toggle

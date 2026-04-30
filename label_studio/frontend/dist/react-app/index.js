@@ -21647,6 +21647,12 @@ DataManagerPage.context = ({
       }
     };
   }, [getSmartLabelingSelection]);
+  const buildCurrentTaskSmartLabelingRequest = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => ({
+    selectedItems: {
+      all: false,
+      included: [currentTaskId]
+    }
+  }), [currentTaskId]);
   const loadSmartLabelingBackends = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async () => {
     var _dmRef$apiCall3;
 
@@ -21665,19 +21671,19 @@ DataManagerPage.context = ({
       return `${title}${url} - ${state}`;
     }).join('\n');
   }, []);
-  const runSmartLabeling = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async () => {
+  const runSmartLabeling = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async requestBody => {
     if (!dmRef || !(project !== null && project !== void 0 && project.id) || smartLabeling) return;
     setSmartLabeling(true);
     showSmartLabelingProgress();
 
     try {
-      var _dmRef$apiCall4, _result$response3;
+      var _dmRef$apiCall4, _result$response3, _dmRef$lsf, _dmRef$store13, _dmRef$store13$taskSt;
 
       const result = await ((_dmRef$apiCall4 = dmRef.apiCall) === null || _dmRef$apiCall4 === void 0 ? void 0 : _dmRef$apiCall4.call(dmRef, 'invokeAction', {
         project: project.id,
         id: 'retrieve_tasks_predictions'
       }, {
-        body: buildSmartLabelingRequest()
+        body: requestBody !== null && requestBody !== void 0 ? requestBody : buildSmartLabelingRequest()
       }));
 
       if (result !== null && result !== void 0 && result.error || result !== null && result !== void 0 && (_result$response3 = result.response) !== null && _result$response3 !== void 0 && _result$response3.detail) {
@@ -21687,7 +21693,21 @@ DataManagerPage.context = ({
         throw new Error(detail || '\u0041\u0049 \u521d\u7a3f\u751f\u6210\u5931\u8d25\uff0c\u8bf7\u68c0\u67e5\u667a\u80fd\u6807\u6ce8\u6a21\u578b\u662f\u5426\u5df2\u8fde\u63a5\u3002');
       }
 
-      await refreshCurrentView();
+      if (mode !== 'explorer' && currentTaskId && typeof ((_dmRef$lsf = dmRef.lsf) === null || _dmRef$lsf === void 0 ? void 0 : _dmRef$lsf.loadTask) === 'function') {
+        await dmRef.lsf.loadTask(currentTaskId);
+        extractTaskInfo();
+      } else if (mode !== 'explorer' && currentTaskId && typeof ((_dmRef$store13 = dmRef.store) === null || _dmRef$store13 === void 0 ? void 0 : (_dmRef$store13$taskSt = _dmRef$store13.taskStore) === null || _dmRef$store13$taskSt === void 0 ? void 0 : _dmRef$store13$taskSt.loadTask) === 'function') {
+        var _dmRef$store$taskStor2, _dmRef$store$taskStor3;
+
+        const task = await dmRef.store.taskStore.loadTask.call(dmRef.store.taskStore, currentTaskId, {
+          select: true
+        });
+        (_dmRef$store$taskStor2 = dmRef.store.taskStore) === null || _dmRef$store$taskStor2 === void 0 ? void 0 : (_dmRef$store$taskStor3 = _dmRef$store$taskStor2.setSelected) === null || _dmRef$store$taskStor3 === void 0 ? void 0 : _dmRef$store$taskStor3.call(_dmRef$store$taskStor2, task !== null && task !== void 0 ? task : currentTaskId);
+        extractTaskInfo();
+      } else {
+        await refreshCurrentView();
+      }
+
       showSmartLabelingResult('\u0041\u0049 \u521d\u7a3f\u751f\u6210\u5b8c\u6210', (result === null || result === void 0 ? void 0 : result.detail) || '\u0041\u0049 \u521d\u7a3f\u5df2\u751f\u6210\uff0c\u8bf7\u8fdb\u5165\u6807\u6ce8\u9875\u786e\u8ba4\u6216\u4fee\u6539\u3002');
     } catch (error) {
       console.error('[smart-labeling] Failed to generate AI drafts', error);
@@ -21696,9 +21716,17 @@ DataManagerPage.context = ({
       closeSmartLabelingProgress();
       setSmartLabeling(false);
     }
-  }, [buildSmartLabelingRequest, closeSmartLabelingProgress, dmRef, project === null || project === void 0 ? void 0 : project.id, refreshCurrentView, showSmartLabelingProgress, showSmartLabelingResult, smartLabeling]);
+  }, [buildSmartLabelingRequest, closeSmartLabelingProgress, currentTaskId, dmRef, extractTaskInfo, mode, project === null || project === void 0 ? void 0 : project.id, refreshCurrentView, showSmartLabelingProgress, showSmartLabelingResult, smartLabeling]);
   const confirmSmartLabeling = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async () => {
-    if (!hasSmartLabelingSelection()) {
+    const isCurrentTaskMode = mode !== 'explorer';
+    const requestBody = isCurrentTaskMode ? buildCurrentTaskSmartLabelingRequest() : buildSmartLabelingRequest();
+
+    if (isCurrentTaskMode && !currentTaskId) {
+      showSmartLabelingResult('\u8bf7\u5148\u6253\u5f00\u4efb\u52a1', '\u8bf7\u5148\u6253\u5f00\u9700\u8981\u667a\u80fd\u9884\u6807\u6ce8\u7684\u4efb\u52a1\uff0c\u7136\u540e\u518d\u70b9\u51fb\u201c\u667a\u80fd\u9884\u6807\u6ce8\u201d\u3002');
+      return;
+    }
+
+    if (!isCurrentTaskMode && !hasSmartLabelingSelection()) {
       showSmartLabelingResult('\u8bf7\u5148\u9009\u62e9\u6570\u636e', '\u8bf7\u5148\u5728\u6570\u636e\u5217\u8868\u4e2d\u52fe\u9009\u9700\u8981\u667a\u80fd\u9884\u6807\u6ce8\u7684\u4efb\u52a1\uff0c\u7136\u540e\u518d\u70b9\u51fb\u201c\u667a\u80fd\u9884\u6807\u6ce8\u201d\u3002');
       return;
     }
@@ -21748,13 +21776,13 @@ DataManagerPage.context = ({
             var _modalInstance5;
 
             (_modalInstance5 = modalInstance) === null || _modalInstance5 === void 0 ? void 0 : _modalInstance5.close();
-            runSmartLabeling();
+            runSmartLabeling(requestBody);
           },
           children: '\u5f00\u59cb\u751f\u6210'
         })]
       })
     });
-  }, [formatBackendList, hasSmartLabelingSelection, loadSmartLabelingBackends, runSmartLabeling, showSmartLabelingResult]);
+  }, [buildCurrentTaskSmartLabelingRequest, buildSmartLabelingRequest, currentTaskId, formatBackendList, hasSmartLabelingSelection, loadSmartLabelingBackends, mode, runSmartLabeling, showSmartLabelingResult]);
   const reviewStatusTranslations = createReviewStatusTranslations();
   const statusText = (0,_reviewStatus__WEBPACK_IMPORTED_MODULE_15__.localizeReviewStatus)({
     translations: reviewStatusTranslations,
@@ -21770,7 +21798,7 @@ DataManagerPage.context = ({
   const showReviewControls = mode !== 'explorer';
   return project && project.id ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsxs)(_components_Space_Space__WEBPACK_IMPORTED_MODULE_3__.Space, {
     size: "small",
-    children: [mode === 'explorer' && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_components_Button_Button__WEBPACK_IMPORTED_MODULE_1__.Button, {
+    children: [(mode === 'explorer' || currentTaskId) && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_components_Button_Button__WEBPACK_IMPORTED_MODULE_1__.Button, {
       size: "compact",
       look: "primary",
       waiting: smartLabeling,
@@ -23806,19 +23834,10 @@ const MachineLearningList = ({
     });
     await fetchBackends();
   }, [fetchBackends, api]);
-  const onStartTraining = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async backend => {
-    await api.callApi('trainMLBackend', {
-      params: {
-        pk: backend.id
-      }
-    });
-    await fetchBackends();
-  }, [fetchBackends, api]);
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("div", {
     className: rootClass,
     children: backends.map(backend => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(BackendCard, {
       backend: backend,
-      onStartTrain: onStartTraining,
       onDelete: onDeleteModel,
       onEdit: onEdit
     }, backend.id))
@@ -23827,7 +23846,6 @@ const MachineLearningList = ({
 
 const BackendCard = ({
   backend,
-  onStartTrain,
   onEdit,
   onDelete
 }) => {
@@ -23843,7 +23861,7 @@ const BackendCard = ({
 
     });
   }, [backend, onDelete]);
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)(_components__WEBPACK_IMPORTED_MODULE_2__.Card, {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_components__WEBPACK_IMPORTED_MODULE_2__.Card, {
     style: {
       marginTop: 0
     },
@@ -23870,7 +23888,7 @@ const BackendCard = ({
         })
       })]
     }),
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)(_components_DescriptionList_DescriptionList__WEBPACK_IMPORTED_MODULE_3__.DescriptionList, {
+    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)(_components_DescriptionList_DescriptionList__WEBPACK_IMPORTED_MODULE_3__.DescriptionList, {
       className: (0,_utils_bem__WEBPACK_IMPORTED_MODULE_7__.cn)('ml').elem('summary'),
       children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_components_DescriptionList_DescriptionList__WEBPACK_IMPORTED_MODULE_3__.DescriptionList.Item, {
         term: "\u670D\u52A1\u5730\u5740",
@@ -23885,11 +23903,7 @@ const BackendCard = ({
         term: "\u6A21\u578B\u7248\u672C",
         children: backend.version ? (0,date_fns__WEBPACK_IMPORTED_MODULE_10__.default)(new Date(backend.version), 'yyyy-MM-dd HH:mm:ss') : '未知'
       })]
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
-      disabled: backend.state !== 'CO',
-      onClick: () => onStartTrain(backend),
-      children: "\u5F00\u59CB\u8BAD\u7EC3"
-    })]
+    })
   });
 };
 
@@ -23984,7 +23998,6 @@ const text = {
   saveError: '\u667a\u80fd\u6807\u6ce8\u6a21\u578b\u4fdd\u5b58\u5931\u8d25\u3002',
   addError: '\u667a\u80fd\u6807\u6ce8\u6a21\u578b\u8fde\u63a5\u5931\u8d25\u3002',
   settings: '\u667a\u80fd\u6807\u6ce8\u4f7f\u7528\u8bbe\u7f6e',
-  autoDraft: '\u6253\u5f00\u4efb\u52a1\u65f6\u81ea\u52a8\u751f\u6210 AI \u521d\u7a3f',
   showDrafts: '\u6807\u6ce8\u65f6\u663e\u793a AI \u521d\u7a3f',
   modelVersion: '\u6a21\u578b\u7248\u672c',
   modelVersionDescription: '\u9009\u62e9\u5411\u6807\u6ce8\u5458\u5c55\u793a\u54ea\u4e00\u4e2a\u6a21\u578b\u7248\u672c\u751f\u6210\u7684 AI \u521d\u7a3f\u3002',
@@ -23993,6 +24006,7 @@ const text = {
   connecting: '\u6b63\u5728\u5c1d\u8bd5\u8fde\u63a5\u9ed8\u8ba4\u667a\u80fd\u6807\u6ce8\u6a21\u578b...',
   defaultConnected: '\u9ed8\u8ba4\u667a\u80fd\u6807\u6ce8\u6a21\u578b\u5df2\u8fde\u63a5',
   defaultFailed: '\u672a\u80fd\u81ea\u52a8\u8fde\u63a5\u9ed8\u8ba4\u667a\u80fd\u6807\u6ce8\u6a21\u578b',
+  backendConsoleHint: '\u8bf7\u540c\u65f6\u786e\u8ba4 ML \u540e\u7aef\u63a7\u5236\u53f0\u5df2\u8fde\u63a5\u6167\u6807\u7cfb\u7edf\uff0c\u5426\u5219\u53ef\u80fd\u53ea\u80fd\u4fdd\u5b58\u8fde\u63a5\uff0c\u65e0\u6cd5\u6b63\u5e38\u63a8\u7406\u3002',
   ok: '\u77e5\u9053\u4e86'
 };
 const DEFAULT_BACKEND_TITLE = 'Default Smart Labeling Backend';
@@ -24008,24 +24022,11 @@ const getDefaultBackendCandidates = () => {
 
   if (hostLike) {
     // Local dev on host machine: prefer host mapped port first.
-    return uniq([`${protocol}//127.0.0.1:9090`, `${protocol}//localhost:9090`, `${protocol}//${hostname}:9090`, `${protocol}//127.0.0.1:9091`]);
+    return uniq([`${protocol}//127.0.0.1:9091`, `${protocol}//localhost:9091`, `${protocol}//${hostname}:9091`, `${protocol}//127.0.0.1:9090`, `${protocol}//localhost:9090`, `${protocol}//${hostname}:9090`]);
   } // Non-localhost hostnames are usually containerized or remote setups.
 
 
-  return uniq(['http://ml-backend:9091', `${protocol}//${hostname}:9091`, 'http://host.docker.internal:9090', 'http://host.docker.internal:9091']);
-};
-
-const checkBackendHealth = async url => {
-  const normalized = url.endsWith('/') ? url.slice(0, -1) : url;
-
-  try {
-    const response = await fetch(`${normalized}/health`, {
-      method: 'GET'
-    });
-    return response.ok;
-  } catch (error) {
-    return false;
-  }
+  return uniq([`${protocol}//${hostname}:9091`, 'http://host.docker.internal:9091', 'http://ml-backend:9091', 'http://host.docker.internal:9090']);
 };
 
 const showInfoModal = (title, body) => {
@@ -24091,56 +24092,47 @@ const MachineLearningSettings = () => {
     const failures = [];
 
     try {
-      var _response$response;
-
-      let reachableUrl = null;
+      let connectedUrl = null;
 
       for (const url of defaultCandidates) {
-        // Do a silent health check first to avoid noisy global request errors.
-        // Only the first healthy candidate will be used for backend creation.
-        // eslint-disable-next-line no-await-in-loop
-        const healthy = await checkBackendHealth(url);
+        var _response$response;
 
-        if (healthy) {
-          reachableUrl = url;
+        const existing = backends.find(backend => backend.url === url);
+
+        if (existing) {
+          showInfoModal(text.defaultConnected, `${existing.title || DEFAULT_BACKEND_TITLE}\n${url}\n\n${text.backendConsoleHint}`);
+          return;
+        } // Let the Label Studio backend validate health/setup. Browser-side checks can fail on CORS.
+        // eslint-disable-next-line no-await-in-loop
+
+
+        const response = await api.callApi('addMLBackend', {
+          params: {},
+          body: {
+            project: project.id,
+            title: DEFAULT_BACKEND_TITLE,
+            url,
+            description: DEFAULT_BACKEND_DESCRIPTION
+          },
+          errorFilter: () => true
+        });
+
+        if (response && !response.error && !response.error_message) {
+          connectedUrl = url;
           break;
         }
 
-        failures.push(`${url}: health check failed`);
+        failures.push(`${url}: ${(response === null || response === void 0 ? void 0 : (_response$response = response.response) === null || _response$response === void 0 ? void 0 : _response$response.detail) || (response === null || response === void 0 ? void 0 : response.error) || (response === null || response === void 0 ? void 0 : response.error_message) || 'failed'}`);
       }
 
-      if (!reachableUrl) {
-        showInfoModal(text.defaultFailed, `${text.defaultFailed}\n\n${failures.join('\n')}\n\nYou can still use "${text.connectCustom}" and enter the backend URL manually.`);
-        return;
-      }
-
-      const existing = backends.find(backend => backend.url === reachableUrl);
-
-      if (existing) {
-        showInfoModal(text.defaultConnected, `${existing.title || DEFAULT_BACKEND_TITLE}\n${reachableUrl}`);
-        return;
-      }
-
-      const response = await api.callApi('addMLBackend', {
-        params: {},
-        body: {
-          project: project.id,
-          title: DEFAULT_BACKEND_TITLE,
-          url: reachableUrl,
-          description: DEFAULT_BACKEND_DESCRIPTION
-        },
-        errorFilter: () => true
-      });
-
-      if (response && !response.error && !response.error_message) {
+      if (connectedUrl) {
         await fetchBackends();
         await fetchMLVersions();
-        showInfoModal(text.defaultConnected, `${DEFAULT_BACKEND_TITLE}\n${reachableUrl}`);
+        showInfoModal(text.defaultConnected, `${DEFAULT_BACKEND_TITLE}\n${connectedUrl}\n\n${text.backendConsoleHint}`);
         return;
       }
 
-      failures.push(`${reachableUrl}: ${(response === null || response === void 0 ? void 0 : (_response$response = response.response) === null || _response$response === void 0 ? void 0 : _response$response.detail) || (response === null || response === void 0 ? void 0 : response.error) || (response === null || response === void 0 ? void 0 : response.error_message) || 'failed'}`);
-      showInfoModal(text.defaultFailed, `${text.defaultFailed}\n\n${failures.join('\n')}\n\nYou can still use "${text.connectCustom}" and enter the backend URL manually.`);
+      showInfoModal(text.defaultFailed, `${text.defaultFailed}\n\n${failures.join('\n')}\n\n${text.backendConsoleHint}\n\nYou can still use "${text.connectCustom}" and enter the backend URL manually.`);
     } finally {
       setConnectingDefault(false);
     }
@@ -24257,14 +24249,6 @@ const MachineLearningSettings = () => {
         children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Label, {
           text: text.settings,
           large: true
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)("div", {
-          style: {
-            paddingLeft: 16
-          },
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Toggle, {
-            label: text.autoDraft,
-            name: "evaluate_predictions_automatically"
-          })
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)("div", {
           style: {
             paddingLeft: 16

@@ -22,22 +22,12 @@ export const MachineLearningList = ({ backends, fetchBackends, onEdit }) => {
     await fetchBackends();
   }, [fetchBackends, api]);
 
-  const onStartTraining = useCallback(async (backend) => {
-    await api.callApi('trainMLBackend', {
-      params: {
-        pk: backend.id,
-      },
-    });
-    await fetchBackends();
-  }, [fetchBackends, api]);
-
   return (
     <div className={rootClass}>
       {backends.map(backend => (
         <BackendCard
           key={backend.id}
           backend={backend}
-          onStartTrain={onStartTraining}
           onDelete={onDeleteModel}
           onEdit={onEdit}
         />
@@ -46,7 +36,7 @@ export const MachineLearningList = ({ backends, fetchBackends, onEdit }) => {
   );
 };
 
-const BackendCard = ({ backend, onStartTrain, onEdit, onDelete }) => {
+const BackendCard = ({ backend, onEdit, onDelete }) => {
   const confirmDelete = useCallback((backend) => {
     confirm({
       title: '删除智能标注模型',
@@ -88,9 +78,6 @@ const BackendCard = ({ backend, onStartTrain, onEdit, onDelete }) => {
         </DescriptionList.Item>
       </DescriptionList>
 
-      <Button disabled={backend.state !== 'CO'} onClick={() => onStartTrain(backend)}>
-        开始训练
-      </Button>
     </Card>
   );
 };

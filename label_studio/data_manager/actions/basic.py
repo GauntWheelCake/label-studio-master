@@ -93,10 +93,6 @@ def delete_tasks_annotations(project, queryset, **kwargs):
 
 def delete_tasks_predictions(project, queryset, **kwargs):
     """Delete all predictions by task ids."""
-    if project.evaluate_predictions_automatically:
-        project.evaluate_predictions_automatically = False
-        project.save(update_fields=['evaluate_predictions_automatically'])
-
     task_ids = queryset.values_list('id', flat=True)
     predictions = Prediction.objects.filter(task__id__in=task_ids)
     count = predictions.count()

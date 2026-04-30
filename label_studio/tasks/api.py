@@ -93,11 +93,6 @@ class TaskAPI(generics.RetrieveUpdateDestroyAPIView):
     def retrieve(self, request, *args, **kwargs):
         task = self.get_object()
 
-        # call machine learning api and format response
-        if task.project.evaluate_predictions_automatically:
-            for ml_backend in task.project.ml_backends.all():
-                ml_backend.predict_one_task(task)
-
         result = self.get_serializer(task).data
 
         # use proxy inlining to task data (for credential access)
@@ -432,11 +427,3 @@ class PredictionAPI(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Prediction.objects.filter(task__project__organization=self.request.user.active_organization)
-
-    def perform_destroy(self, instance):
-        project = instance.task.project
-        if project.evaluate_predictions_automatically:
-            project.evaluate_predictions_automatically = False
-            project.save(update_fields=['evaluate_predictions_automatically'])
-
-        super().perform_destroy(instance)
