@@ -432,3 +432,11 @@ class PredictionAPI(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Prediction.objects.filter(task__project__organization=self.request.user.active_organization)
+
+    def perform_destroy(self, instance):
+        project = instance.task.project
+        if project.evaluate_predictions_automatically:
+            project.evaluate_predictions_automatically = False
+            project.save(update_fields=['evaluate_predictions_automatically'])
+
+        super().perform_destroy(instance)

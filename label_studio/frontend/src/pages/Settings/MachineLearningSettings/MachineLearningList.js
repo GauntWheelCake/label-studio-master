@@ -8,7 +8,6 @@ import { confirm } from '../../../components/Modal/Modal';
 import { Oneof } from '../../../components/Oneof/Oneof';
 import { ApiContext } from '../../../providers/ApiProvider';
 import { cn } from '../../../utils/bem';
-import { t } from '../../../i18n';
 
 export const MachineLearningList = ({ backends, fetchBackends, onEdit }) => {
   const rootClass = cn('ml');
@@ -47,25 +46,27 @@ export const MachineLearningList = ({ backends, fetchBackends, onEdit }) => {
   );
 };
 
-const BackendCard = ({backend, onStartTrain, onEdit, onDelete}) => {
+const BackendCard = ({ backend, onStartTrain, onEdit, onDelete }) => {
   const confirmDelete = useCallback((backend) => {
     confirm({
-      title: t('projectSettings.machineLearning.list.confirm.title'),
-      body: t('projectSettings.machineLearning.list.confirm.body'),
-      buttonLook: "destructive",
-      onOk(){ onDelete?.(backend); },
+      title: '删除智能标注模型',
+      body: '此操作无法撤销，确定继续吗？',
+      buttonLook: 'destructive',
+      onOk() {
+        onDelete?.(backend);
+      },
     });
   }, [backend, onDelete]);
 
   return (
-    <Card style={{marginTop: 0}} header={backend.title} extra={(
+    <Card style={{ marginTop: 0 }} header={backend.title} extra={(
       <div className={cn('ml').elem('info')}>
         <BackendState backend={backend}/>
 
         <Dropdown.Trigger align="right" content={(
           <Menu size="small">
-            <Menu.Item onClick={() => onEdit(backend)}>{t('projectSettings.machineLearning.list.actions.edit')}</Menu.Item>
-            <Menu.Item onClick={() => confirmDelete(backend)}>{t('projectSettings.machineLearning.list.actions.delete')}</Menu.Item>
+            <Menu.Item onClick={() => onEdit(backend)}>编辑</Menu.Item>
+            <Menu.Item onClick={() => confirmDelete(backend)}>删除</Menu.Item>
           </Menu>
         )}>
           <Button type="link" icon={<FaEllipsisV/>}/>
@@ -73,38 +74,39 @@ const BackendCard = ({backend, onStartTrain, onEdit, onDelete}) => {
       </div>
     )}>
       <DescriptionList className={cn('ml').elem('summary')}>
-        <DescriptionList.Item term={t('projectSettings.machineLearning.list.fields.url')} termStyle={{whiteSpace: 'nowrap'}}>
+        <DescriptionList.Item term="服务地址" termStyle={{ whiteSpace: 'nowrap' }}>
           {truncate(backend.url, 20, 10, '...')}
         </DescriptionList.Item>
         {backend.description && (
           <DescriptionList.Item
-            term={t('projectSettings.machineLearning.list.fields.description')}
+            term="说明"
             children={backend.description}
           />
         )}
-        <DescriptionList.Item term={t('projectSettings.machineLearning.list.fields.version')}>
-          {backend.version ? format(new Date(backend.version), 'yyyy年MM月dd日 HH:mm:ss') : t('projectSettings.machineLearning.list.fields.unknown')}
+        <DescriptionList.Item term="模型版本">
+          {backend.version ? format(new Date(backend.version), 'yyyy-MM-dd HH:mm:ss') : '未知'}
         </DescriptionList.Item>
       </DescriptionList>
 
-      <Button disabled={backend.state !== "CO"} onClick={() => onStartTrain(backend)}>
-        {t('projectSettings.machineLearning.list.actions.startTraining')}
+      <Button disabled={backend.state !== 'CO'} onClick={() => onStartTrain(backend)}>
+        开始训练
       </Button>
     </Card>
   );
 };
 
-const BackendState = ({backend}) => {
+const BackendState = ({ backend }) => {
   const { state } = backend;
+
   return (
     <div className={cn('ml').elem('status')}>
-      <span className={cn('ml').elem('indicator').mod({state})}></span>
+      <span className={cn('ml').elem('indicator').mod({ state })}></span>
       <Oneof value={state} className={cn('ml').elem('status-label')}>
-        <span case="DI">{t('projectSettings.machineLearning.list.status.disconnected')}</span>
-        <span case="CO">{t('projectSettings.machineLearning.list.status.connected')}</span>
-        <span case="ER">{t('projectSettings.machineLearning.list.status.error')}</span>
-        <span case="TR">{t('projectSettings.machineLearning.list.status.training')}</span>
-        <span case="PR">{t('projectSettings.machineLearning.list.status.predicting')}</span>
+        <span case="DI">未连接</span>
+        <span case="CO">已连接</span>
+        <span case="ER">连接异常</span>
+        <span case="TR">训练中</span>
+        <span case="PR">生成中</span>
       </Oneof>
     </div>
   );

@@ -68,6 +68,9 @@ export const APIConfig = {
     /** List of available actions */
     actions: "/actions",
 
+    /** ML backends connected to the current project */
+    mlBackends: "/../ml",
+
     /** Subtract item from the current selection */
     deleteSelectedItem: "DELETE:/views/:tabID/selected-items",
 

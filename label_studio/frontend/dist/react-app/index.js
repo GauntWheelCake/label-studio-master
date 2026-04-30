@@ -21087,7 +21087,9 @@ DataManagerPage.context = ({
   const [currentTaskId, setCurrentTaskId] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
   const [currentReviewStatus, setCurrentReviewStatus] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)('pending');
   const [pendingDecision, setPendingDecision] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  const [smartLabeling, setSmartLabeling] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
   const isSwitchingTaskRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(false);
+  const smartLabelingModalRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
   const showReviewError = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(message => {
     let modalInstance;
 
@@ -21542,6 +21544,217 @@ DataManagerPage.context = ({
       comment
     });
   }, [requestRejectComment, sendReviewDecision]);
+  const refreshCurrentView = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async () => {
+    var _dmRef$store$currentV2, _dmRef$store8, _dmRef$store9, _dmRef$store9$viewsSt, _dmRef$store10, _dmRef$store10$taskSt;
+
+    const view = (_dmRef$store$currentV2 = dmRef === null || dmRef === void 0 ? void 0 : (_dmRef$store8 = dmRef.store) === null || _dmRef$store8 === void 0 ? void 0 : _dmRef$store8.currentView) !== null && _dmRef$store$currentV2 !== void 0 ? _dmRef$store$currentV2 : dmRef === null || dmRef === void 0 ? void 0 : (_dmRef$store9 = dmRef.store) === null || _dmRef$store9 === void 0 ? void 0 : (_dmRef$store9$viewsSt = _dmRef$store9.viewsStore) === null || _dmRef$store9$viewsSt === void 0 ? void 0 : _dmRef$store9$viewsSt.selected;
+
+    if (typeof (view === null || view === void 0 ? void 0 : view.reload) === 'function') {
+      await view.reload();
+      return;
+    }
+
+    if (typeof (view === null || view === void 0 ? void 0 : view.fetchTasks) === 'function') {
+      await view.fetchTasks();
+      return;
+    }
+
+    if (typeof (dmRef === null || dmRef === void 0 ? void 0 : (_dmRef$store10 = dmRef.store) === null || _dmRef$store10 === void 0 ? void 0 : (_dmRef$store10$taskSt = _dmRef$store10.taskStore) === null || _dmRef$store10$taskSt === void 0 ? void 0 : _dmRef$store10$taskSt.reload) === 'function') {
+      await dmRef.store.taskStore.reload();
+    }
+  }, [dmRef]);
+  const showSmartLabelingResult = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)((title, message) => {
+    let modalInstance;
+    modalInstance = (0,_components_Modal_Modal__WEBPACK_IMPORTED_MODULE_2__.modal)({
+      title,
+      body: () => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)("div", {
+        children: message
+      }),
+      footer: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_components_Space_Space__WEBPACK_IMPORTED_MODULE_3__.Space, {
+        align: "end",
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_components_Button_Button__WEBPACK_IMPORTED_MODULE_1__.Button, {
+          size: "compact",
+          look: "primary",
+          onClick: () => {
+            var _modalInstance3;
+
+            return (_modalInstance3 = modalInstance) === null || _modalInstance3 === void 0 ? void 0 : _modalInstance3.close();
+          },
+          children: '\u77e5\u9053\u4e86'
+        })
+      })
+    });
+  }, []);
+  const showSmartLabelingProgress = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => {
+    var _smartLabelingModalRe, _smartLabelingModalRe2;
+
+    (_smartLabelingModalRe = smartLabelingModalRef.current) === null || _smartLabelingModalRe === void 0 ? void 0 : (_smartLabelingModalRe2 = _smartLabelingModalRe.close) === null || _smartLabelingModalRe2 === void 0 ? void 0 : _smartLabelingModalRe2.call(_smartLabelingModalRe);
+    smartLabelingModalRef.current = (0,_components_Modal_Modal__WEBPACK_IMPORTED_MODULE_2__.modal)({
+      title: '\u6b63\u5728\u8fdb\u884c\u667a\u80fd\u6807\u6ce8',
+      allowClose: false,
+      closeOnClickOutside: false,
+      body: () => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)("div", {
+        children: '\u6b63\u5728\u751f\u6210 AI \u521d\u7a3f\uff0c\u8bf7\u52ff\u8df3\u8f6c\u5230\u5176\u4ed6\u9875\u9762\u6216\u5237\u65b0\u6d4f\u89c8\u5668\uff0c\u4ee5\u514d\u4e2d\u65ad\u672c\u6b21\u667a\u80fd\u6807\u6ce8\u3002'
+      })
+    });
+  }, []);
+  const closeSmartLabelingProgress = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => {
+    var _smartLabelingModalRe3, _smartLabelingModalRe4;
+
+    (_smartLabelingModalRe3 = smartLabelingModalRef.current) === null || _smartLabelingModalRe3 === void 0 ? void 0 : (_smartLabelingModalRe4 = _smartLabelingModalRe3.close) === null || _smartLabelingModalRe4 === void 0 ? void 0 : _smartLabelingModalRe4.call(_smartLabelingModalRe3);
+    smartLabelingModalRef.current = null;
+  }, []);
+  const getSmartLabelingSelection = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => {
+    var _dmRef$store$currentV3, _dmRef$store11, _dmRef$store12, _dmRef$store12$viewsS, _view$selected3, _view$selected4;
+
+    const view = (_dmRef$store$currentV3 = dmRef === null || dmRef === void 0 ? void 0 : (_dmRef$store11 = dmRef.store) === null || _dmRef$store11 === void 0 ? void 0 : _dmRef$store11.currentView) !== null && _dmRef$store$currentV3 !== void 0 ? _dmRef$store$currentV3 : dmRef === null || dmRef === void 0 ? void 0 : (_dmRef$store12 = dmRef.store) === null || _dmRef$store12 === void 0 ? void 0 : (_dmRef$store12$viewsS = _dmRef$store12.viewsStore) === null || _dmRef$store12$viewsS === void 0 ? void 0 : _dmRef$store12$viewsS.selected;
+    const hasSelectedItems = view === null || view === void 0 ? void 0 : (_view$selected3 = view.selected) === null || _view$selected3 === void 0 ? void 0 : _view$selected3.hasSelected;
+    const selectedItems = hasSelectedItems && view !== null && view !== void 0 && (_view$selected4 = view.selected) !== null && _view$selected4 !== void 0 && _view$selected4.snapshot ? view.selected.snapshot : null;
+    return {
+      view,
+      hasSelectedItems: Boolean(hasSelectedItems),
+      selectedItems
+    };
+  }, [dmRef]);
+  const hasSmartLabelingSelection = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => {
+    var _selectedItems$includ, _selectedItems$exclud;
+
+    const {
+      hasSelectedItems,
+      selectedItems
+    } = getSmartLabelingSelection();
+    const included = (_selectedItems$includ = selectedItems === null || selectedItems === void 0 ? void 0 : selectedItems.included) !== null && _selectedItems$includ !== void 0 ? _selectedItems$includ : [];
+    const excluded = (_selectedItems$exclud = selectedItems === null || selectedItems === void 0 ? void 0 : selectedItems.excluded) !== null && _selectedItems$exclud !== void 0 ? _selectedItems$exclud : [];
+    return hasSelectedItems && ((selectedItems === null || selectedItems === void 0 ? void 0 : selectedItems.all) === true || included.length > 0 || excluded.length > 0);
+  }, [getSmartLabelingSelection]);
+  const buildSmartLabelingRequest = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => {
+    var _view$conjunction2, _view$serializedFilte2;
+
+    const {
+      view,
+      selectedItems
+    } = getSmartLabelingSelection();
+    return { ...(view !== null && view !== void 0 && view.ordering ? {
+        ordering: view.ordering
+      } : {}),
+      selectedItems: selectedItems !== null && selectedItems !== void 0 ? selectedItems : {
+        all: false,
+        included: []
+      },
+      filters: {
+        conjunction: (_view$conjunction2 = view === null || view === void 0 ? void 0 : view.conjunction) !== null && _view$conjunction2 !== void 0 ? _view$conjunction2 : 'and',
+        items: (_view$serializedFilte2 = view === null || view === void 0 ? void 0 : view.serializedFilters) !== null && _view$serializedFilte2 !== void 0 ? _view$serializedFilte2 : []
+      }
+    };
+  }, [getSmartLabelingSelection]);
+  const loadSmartLabelingBackends = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async () => {
+    var _dmRef$apiCall3;
+
+    if (!dmRef || !(project !== null && project !== void 0 && project.id)) return [];
+    const result = await ((_dmRef$apiCall3 = dmRef.apiCall) === null || _dmRef$apiCall3 === void 0 ? void 0 : _dmRef$apiCall3.call(dmRef, 'mlBackends', {
+      project: project.id
+    }));
+    return Array.isArray(result) ? result : [];
+  }, [dmRef, project === null || project === void 0 ? void 0 : project.id]);
+  const formatBackendList = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)((backends = []) => {
+    if (!backends.length) return '\u672a\u8fde\u63a5\u667a\u80fd\u6807\u6ce8\u6a21\u578b';
+    return backends.map(backend => {
+      const title = backend.title || `\u6a21\u578b ${backend.id}`;
+      const state = backend.state === 'CO' ? '\u5df2\u8fde\u63a5' : backend.state === 'ER' ? '\u8fde\u63a5\u5f02\u5e38' : '\u672a\u8fde\u63a5';
+      const url = backend.url ? `\uff08${backend.url}\uff09` : '';
+      return `${title}${url} - ${state}`;
+    }).join('\n');
+  }, []);
+  const runSmartLabeling = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async () => {
+    if (!dmRef || !(project !== null && project !== void 0 && project.id) || smartLabeling) return;
+    setSmartLabeling(true);
+    showSmartLabelingProgress();
+
+    try {
+      var _dmRef$apiCall4, _result$response3;
+
+      const result = await ((_dmRef$apiCall4 = dmRef.apiCall) === null || _dmRef$apiCall4 === void 0 ? void 0 : _dmRef$apiCall4.call(dmRef, 'invokeAction', {
+        project: project.id,
+        id: 'retrieve_tasks_predictions'
+      }, {
+        body: buildSmartLabelingRequest()
+      }));
+
+      if (result !== null && result !== void 0 && result.error || result !== null && result !== void 0 && (_result$response3 = result.response) !== null && _result$response3 !== void 0 && _result$response3.detail) {
+        var _result$response4;
+
+        const detail = (result === null || result === void 0 ? void 0 : (_result$response4 = result.response) === null || _result$response4 === void 0 ? void 0 : _result$response4.detail) || (result === null || result === void 0 ? void 0 : result.detail) || (result === null || result === void 0 ? void 0 : result.error);
+        throw new Error(detail || '\u0041\u0049 \u521d\u7a3f\u751f\u6210\u5931\u8d25\uff0c\u8bf7\u68c0\u67e5\u667a\u80fd\u6807\u6ce8\u6a21\u578b\u662f\u5426\u5df2\u8fde\u63a5\u3002');
+      }
+
+      await refreshCurrentView();
+      showSmartLabelingResult('\u0041\u0049 \u521d\u7a3f\u751f\u6210\u5b8c\u6210', (result === null || result === void 0 ? void 0 : result.detail) || '\u0041\u0049 \u521d\u7a3f\u5df2\u751f\u6210\uff0c\u8bf7\u8fdb\u5165\u6807\u6ce8\u9875\u786e\u8ba4\u6216\u4fee\u6539\u3002');
+    } catch (error) {
+      console.error('[smart-labeling] Failed to generate AI drafts', error);
+      showSmartLabelingResult('\u667a\u80fd\u9884\u6807\u6ce8\u5931\u8d25', (error === null || error === void 0 ? void 0 : error.message) || '\u8bf7\u68c0\u67e5\u667a\u80fd\u6807\u6ce8\u6a21\u578b\u662f\u5426\u5df2\u8fde\u63a5\uff0c\u6216\u7a0d\u540e\u91cd\u8bd5\u3002');
+    } finally {
+      closeSmartLabelingProgress();
+      setSmartLabeling(false);
+    }
+  }, [buildSmartLabelingRequest, closeSmartLabelingProgress, dmRef, project === null || project === void 0 ? void 0 : project.id, refreshCurrentView, showSmartLabelingProgress, showSmartLabelingResult, smartLabeling]);
+  const confirmSmartLabeling = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async () => {
+    if (!hasSmartLabelingSelection()) {
+      showSmartLabelingResult('\u8bf7\u5148\u9009\u62e9\u6570\u636e', '\u8bf7\u5148\u5728\u6570\u636e\u5217\u8868\u4e2d\u52fe\u9009\u9700\u8981\u667a\u80fd\u9884\u6807\u6ce8\u7684\u4efb\u52a1\uff0c\u7136\u540e\u518d\u70b9\u51fb\u201c\u667a\u80fd\u9884\u6807\u6ce8\u201d\u3002');
+      return;
+    }
+
+    const backends = await loadSmartLabelingBackends();
+    const connectedBackends = backends.filter(backend => backend.state === 'CO');
+
+    if (!connectedBackends.length) {
+      showSmartLabelingResult('\u667a\u80fd\u6807\u6ce8\u6a21\u578b\u672a\u8fde\u63a5', '\u5f53\u524d\u6ca1\u6709\u53ef\u7528\u7684\u667a\u80fd\u6807\u6ce8\u6a21\u578b\uff0c\u8bf7\u5148\u5230\u201c\u9879\u76ee\u8bbe\u7f6e > \u667a\u80fd\u6807\u6ce8\u201d\u8fde\u63a5\u53ef\u7528\u7684\u6a21\u578b\u670d\u52a1\u3002');
+      return;
+    }
+
+    let modalInstance;
+    modalInstance = (0,_components_Modal_Modal__WEBPACK_IMPORTED_MODULE_2__.modal)({
+      title: '\u751f\u6210 AI \u521d\u7a3f',
+      body: () => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsxs)("div", {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)("p", {
+          children: '\u5c06\u4e3a\u5f53\u524d\u9009\u4e2d\u7684\u4efb\u52a1\u751f\u6210 AI \u521d\u7a3f\u3002\u751f\u6210\u540e\u9700\u8981\u4eba\u5de5\u786e\u8ba4\u6216\u4fee\u6539\uff0c\u624d\u4f1a\u6210\u4e3a\u6b63\u5f0f\u6807\u6ce8\u3002'
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)("p", {
+          style: {
+            marginTop: 12,
+            fontWeight: 600
+          },
+          children: '\u672c\u6b21\u5c06\u8c03\u7528\u7684\u673a\u5668\u5b66\u4e60\u540e\u7aef\uff1a'
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)("pre", {
+          style: {
+            whiteSpace: 'pre-wrap',
+            margin: 0
+          },
+          children: formatBackendList(connectedBackends)
+        })]
+      }),
+      footer: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsxs)(_components_Space_Space__WEBPACK_IMPORTED_MODULE_3__.Space, {
+        align: "end",
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_components_Button_Button__WEBPACK_IMPORTED_MODULE_1__.Button, {
+          size: "compact",
+          onClick: () => {
+            var _modalInstance4;
+
+            return (_modalInstance4 = modalInstance) === null || _modalInstance4 === void 0 ? void 0 : _modalInstance4.close();
+          },
+          children: '\u53d6\u6d88'
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_components_Button_Button__WEBPACK_IMPORTED_MODULE_1__.Button, {
+          size: "compact",
+          look: "primary",
+          onClick: () => {
+            var _modalInstance5;
+
+            (_modalInstance5 = modalInstance) === null || _modalInstance5 === void 0 ? void 0 : _modalInstance5.close();
+            runSmartLabeling();
+          },
+          children: '\u5f00\u59cb\u751f\u6210'
+        })]
+      })
+    });
+  }, [formatBackendList, hasSmartLabelingSelection, loadSmartLabelingBackends, runSmartLabeling, showSmartLabelingResult]);
   const reviewStatusTranslations = createReviewStatusTranslations();
   const statusText = (0,_reviewStatus__WEBPACK_IMPORTED_MODULE_15__.localizeReviewStatus)({
     translations: reviewStatusTranslations,
@@ -21557,7 +21770,13 @@ DataManagerPage.context = ({
   const showReviewControls = mode !== 'explorer';
   return project && project.id ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsxs)(_components_Space_Space__WEBPACK_IMPORTED_MODULE_3__.Space, {
     size: "small",
-    children: [showReviewControls && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsxs)(_components_Space_Space__WEBPACK_IMPORTED_MODULE_3__.Space, {
+    children: [mode === 'explorer' && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_components_Button_Button__WEBPACK_IMPORTED_MODULE_1__.Button, {
+      size: "compact",
+      look: "primary",
+      waiting: smartLabeling,
+      onClick: confirmSmartLabeling,
+      children: '\u667a\u80fd\u9884\u6807\u6ce8'
+    }), showReviewControls && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsxs)(_components_Space_Space__WEBPACK_IMPORTED_MODULE_3__.Space, {
       size: "small",
       children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsxs)("span", {
         children: ["\u5BA1\u6838\u72B6\u6001\uFF1A", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)("span", {
@@ -21755,6 +21974,9 @@ const APIConfig = {
 
     /** List of available actions */
     actions: "/actions",
+
+    /** ML backends connected to the current project */
+    mlBackends: "/../ml",
 
     /** Subtract item from the current selection */
     deleteSelectedItem: "DELETE:/views/:tabID/selected-items",
@@ -23545,9 +23767,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "MachineLearningList": () => (/* binding */ MachineLearningList)
 /* harmony export */ });
-/* harmony import */ var date_fns__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! date-fns */ "./node_modules/date-fns/esm/format/index.js");
+/* harmony import */ var date_fns__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! date-fns */ "./node_modules/date-fns/esm/format/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react_icons_fa__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! react-icons/fa */ "./node_modules/react-icons/fa/index.esm.js");
+/* harmony import */ var react_icons_fa__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! react-icons/fa */ "./node_modules/react-icons/fa/index.esm.js");
 /* harmony import */ var truncate_middle__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! truncate-middle */ "./node_modules/truncate-middle/index.js");
 /* harmony import */ var truncate_middle__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(truncate_middle__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _components__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../components */ "./src/components/index.js");
@@ -23556,9 +23778,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_Oneof_Oneof__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../components/Oneof/Oneof */ "./src/components/Oneof/Oneof.js");
 /* harmony import */ var _providers_ApiProvider__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../providers/ApiProvider */ "./src/providers/ApiProvider.js");
 /* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../utils/bem */ "./src/utils/bem.tsx");
-/* harmony import */ var _i18n__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../i18n */ "./src/i18n/index.js");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
-
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 
 
 
@@ -23594,9 +23814,9 @@ const MachineLearningList = ({
     });
     await fetchBackends();
   }, [fetchBackends, api]);
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("div", {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("div", {
     className: rootClass,
-    children: backends.map(backend => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(BackendCard, {
+    children: backends.map(backend => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(BackendCard, {
       backend: backend,
       onStartTrain: onStartTraining,
       onDelete: onDeleteModel,
@@ -23613,9 +23833,9 @@ const BackendCard = ({
 }) => {
   const confirmDelete = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(backend => {
     (0,_components_Modal_Modal__WEBPACK_IMPORTED_MODULE_4__.confirm)({
-      title: (0,_i18n__WEBPACK_IMPORTED_MODULE_8__.t)('projectSettings.machineLearning.list.confirm.title'),
-      body: (0,_i18n__WEBPACK_IMPORTED_MODULE_8__.t)('projectSettings.machineLearning.list.confirm.body'),
-      buttonLook: "destructive",
+      title: '删除智能标注模型',
+      body: '此操作无法撤销，确定继续吗？',
+      buttonLook: 'destructive',
 
       onOk() {
         onDelete === null || onDelete === void 0 ? void 0 : onDelete(backend);
@@ -23623,52 +23843,52 @@ const BackendCard = ({
 
     });
   }, [backend, onDelete]);
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)(_components__WEBPACK_IMPORTED_MODULE_2__.Card, {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)(_components__WEBPACK_IMPORTED_MODULE_2__.Card, {
     style: {
       marginTop: 0
     },
     header: backend.title,
-    extra: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)("div", {
+    extra: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)("div", {
       className: (0,_utils_bem__WEBPACK_IMPORTED_MODULE_7__.cn)('ml').elem('info'),
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(BackendState, {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(BackendState, {
         backend: backend
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_components__WEBPACK_IMPORTED_MODULE_2__.Dropdown.Trigger, {
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_components__WEBPACK_IMPORTED_MODULE_2__.Dropdown.Trigger, {
         align: "right",
-        content: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)(_components__WEBPACK_IMPORTED_MODULE_2__.Menu, {
+        content: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)(_components__WEBPACK_IMPORTED_MODULE_2__.Menu, {
           size: "small",
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_components__WEBPACK_IMPORTED_MODULE_2__.Menu.Item, {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_components__WEBPACK_IMPORTED_MODULE_2__.Menu.Item, {
             onClick: () => onEdit(backend),
-            children: (0,_i18n__WEBPACK_IMPORTED_MODULE_8__.t)('projectSettings.machineLearning.list.actions.edit')
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_components__WEBPACK_IMPORTED_MODULE_2__.Menu.Item, {
+            children: "\u7F16\u8F91"
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_components__WEBPACK_IMPORTED_MODULE_2__.Menu.Item, {
             onClick: () => confirmDelete(backend),
-            children: (0,_i18n__WEBPACK_IMPORTED_MODULE_8__.t)('projectSettings.machineLearning.list.actions.delete')
+            children: "\u5220\u9664"
           })]
         }),
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
           type: "link",
-          icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(react_icons_fa__WEBPACK_IMPORTED_MODULE_10__.FaEllipsisV, {})
+          icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(react_icons_fa__WEBPACK_IMPORTED_MODULE_9__.FaEllipsisV, {})
         })
       })]
     }),
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)(_components_DescriptionList_DescriptionList__WEBPACK_IMPORTED_MODULE_3__.DescriptionList, {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)(_components_DescriptionList_DescriptionList__WEBPACK_IMPORTED_MODULE_3__.DescriptionList, {
       className: (0,_utils_bem__WEBPACK_IMPORTED_MODULE_7__.cn)('ml').elem('summary'),
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_components_DescriptionList_DescriptionList__WEBPACK_IMPORTED_MODULE_3__.DescriptionList.Item, {
-        term: (0,_i18n__WEBPACK_IMPORTED_MODULE_8__.t)('projectSettings.machineLearning.list.fields.url'),
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_components_DescriptionList_DescriptionList__WEBPACK_IMPORTED_MODULE_3__.DescriptionList.Item, {
+        term: "\u670D\u52A1\u5730\u5740",
         termStyle: {
           whiteSpace: 'nowrap'
         },
         children: truncate_middle__WEBPACK_IMPORTED_MODULE_1___default()(backend.url, 20, 10, '...')
-      }), backend.description && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_components_DescriptionList_DescriptionList__WEBPACK_IMPORTED_MODULE_3__.DescriptionList.Item, {
-        term: (0,_i18n__WEBPACK_IMPORTED_MODULE_8__.t)('projectSettings.machineLearning.list.fields.description'),
+      }), backend.description && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_components_DescriptionList_DescriptionList__WEBPACK_IMPORTED_MODULE_3__.DescriptionList.Item, {
+        term: "\u8BF4\u660E",
         children: backend.description
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_components_DescriptionList_DescriptionList__WEBPACK_IMPORTED_MODULE_3__.DescriptionList.Item, {
-        term: (0,_i18n__WEBPACK_IMPORTED_MODULE_8__.t)('projectSettings.machineLearning.list.fields.version'),
-        children: backend.version ? (0,date_fns__WEBPACK_IMPORTED_MODULE_11__.default)(new Date(backend.version), 'yyyy年MM月dd日 HH:mm:ss') : (0,_i18n__WEBPACK_IMPORTED_MODULE_8__.t)('projectSettings.machineLearning.list.fields.unknown')
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_components_DescriptionList_DescriptionList__WEBPACK_IMPORTED_MODULE_3__.DescriptionList.Item, {
+        term: "\u6A21\u578B\u7248\u672C",
+        children: backend.version ? (0,date_fns__WEBPACK_IMPORTED_MODULE_10__.default)(new Date(backend.version), 'yyyy-MM-dd HH:mm:ss') : '未知'
       })]
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
-      disabled: backend.state !== "CO",
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
+      disabled: backend.state !== 'CO',
       onClick: () => onStartTrain(backend),
-      children: (0,_i18n__WEBPACK_IMPORTED_MODULE_8__.t)('projectSettings.machineLearning.list.actions.startTraining')
+      children: "\u5F00\u59CB\u8BAD\u7EC3"
     })]
   });
 };
@@ -23679,30 +23899,30 @@ const BackendState = ({
   const {
     state
   } = backend;
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)("div", {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)("div", {
     className: (0,_utils_bem__WEBPACK_IMPORTED_MODULE_7__.cn)('ml').elem('status'),
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("span", {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("span", {
       className: (0,_utils_bem__WEBPACK_IMPORTED_MODULE_7__.cn)('ml').elem('indicator').mod({
         state
       })
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)(_components_Oneof_Oneof__WEBPACK_IMPORTED_MODULE_5__.Oneof, {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)(_components_Oneof_Oneof__WEBPACK_IMPORTED_MODULE_5__.Oneof, {
       value: state,
       className: (0,_utils_bem__WEBPACK_IMPORTED_MODULE_7__.cn)('ml').elem('status-label'),
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("span", {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("span", {
         case: "DI",
-        children: (0,_i18n__WEBPACK_IMPORTED_MODULE_8__.t)('projectSettings.machineLearning.list.status.disconnected')
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("span", {
+        children: "\u672A\u8FDE\u63A5"
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("span", {
         case: "CO",
-        children: (0,_i18n__WEBPACK_IMPORTED_MODULE_8__.t)('projectSettings.machineLearning.list.status.connected')
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("span", {
+        children: "\u5DF2\u8FDE\u63A5"
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("span", {
         case: "ER",
-        children: (0,_i18n__WEBPACK_IMPORTED_MODULE_8__.t)('projectSettings.machineLearning.list.status.error')
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("span", {
+        children: "\u8FDE\u63A5\u5F02\u5E38"
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("span", {
         case: "TR",
-        children: (0,_i18n__WEBPACK_IMPORTED_MODULE_8__.t)('projectSettings.machineLearning.list.status.training')
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("span", {
+        children: "\u8BAD\u7EC3\u4E2D"
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("span", {
         case: "PR",
-        children: (0,_i18n__WEBPACK_IMPORTED_MODULE_8__.t)('projectSettings.machineLearning.list.status.predicting')
+        children: "\u751F\u6210\u4E2D"
       })]
     })]
   });
@@ -23732,9 +23952,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _providers_ApiProvider__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../providers/ApiProvider */ "./src/providers/ApiProvider.js");
 /* harmony import */ var _providers_ProjectProvider__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../providers/ProjectProvider */ "./src/providers/ProjectProvider.tsx");
 /* harmony import */ var _MachineLearningList__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./MachineLearningList */ "./src/pages/Settings/MachineLearningSettings/MachineLearningList.js");
-/* harmony import */ var _i18n__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../../i18n */ "./src/i18n/index.js");
-/* harmony import */ var _MachineLearningSettings_styl__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./MachineLearningSettings.styl */ "./src/pages/Settings/MachineLearningSettings/MachineLearningSettings.styl");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var _MachineLearningSettings_styl__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./MachineLearningSettings.styl */ "./src/pages/Settings/MachineLearningSettings/MachineLearningSettings.styl");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 
 
 
@@ -23750,6 +23969,86 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+const text = {
+  title: '\u667a\u80fd\u6807\u6ce8',
+  description: '\u8fde\u63a5\u4e00\u4e2a\u667a\u80fd\u6807\u6ce8\u6a21\u578b\uff0c\u4e3a\u9879\u76ee\u6570\u636e\u751f\u6210 AI \u521d\u7a3f\u3002\u751f\u6210\u7ed3\u679c\u9700\u8981\u4eba\u5de5\u786e\u8ba4\u6216\u4fee\u6539\u540e\uff0c\u624d\u4f1a\u6210\u4e3a\u6b63\u5f0f\u6807\u6ce8\u3002',
+  connectDefault: '\u8fde\u63a5\u9ed8\u8ba4\u667a\u80fd\u6807\u6ce8\u6a21\u578b',
+  connectCustom: '\u8fde\u63a5\u81ea\u5b9a\u4e49\u6a21\u578b\u670d\u52a1',
+  editTitle: '\u7f16\u8f91\u667a\u80fd\u6807\u6ce8\u6a21\u578b',
+  addTitle: '\u8fde\u63a5\u667a\u80fd\u6807\u6ce8\u6a21\u578b',
+  name: '\u6a21\u578b\u540d\u79f0',
+  namePlaceholder: '\u4f8b\u5982\uff1a\u672c\u673a\u667a\u80fd\u6807\u6ce8\u670d\u52a1',
+  url: '\u6a21\u578b\u670d\u52a1\u5730\u5740',
+  descriptionField: '\u8bf4\u660e',
+  submit: '\u6d4b\u8bd5\u8fde\u63a5\u5e76\u4fdd\u5b58',
+  saveError: '\u667a\u80fd\u6807\u6ce8\u6a21\u578b\u4fdd\u5b58\u5931\u8d25\u3002',
+  addError: '\u667a\u80fd\u6807\u6ce8\u6a21\u578b\u8fde\u63a5\u5931\u8d25\u3002',
+  settings: '\u667a\u80fd\u6807\u6ce8\u4f7f\u7528\u8bbe\u7f6e',
+  autoDraft: '\u6253\u5f00\u4efb\u52a1\u65f6\u81ea\u52a8\u751f\u6210 AI \u521d\u7a3f',
+  showDrafts: '\u6807\u6ce8\u65f6\u663e\u793a AI \u521d\u7a3f',
+  modelVersion: '\u6a21\u578b\u7248\u672c',
+  modelVersionDescription: '\u9009\u62e9\u5411\u6807\u6ce8\u5458\u5c55\u793a\u54ea\u4e00\u4e2a\u6a21\u578b\u7248\u672c\u751f\u6210\u7684 AI \u521d\u7a3f\u3002',
+  modelVersionPlaceholder: '\u672a\u9009\u62e9\u6a21\u578b\u7248\u672c',
+  reset: '\u91cd\u7f6e',
+  connecting: '\u6b63\u5728\u5c1d\u8bd5\u8fde\u63a5\u9ed8\u8ba4\u667a\u80fd\u6807\u6ce8\u6a21\u578b...',
+  defaultConnected: '\u9ed8\u8ba4\u667a\u80fd\u6807\u6ce8\u6a21\u578b\u5df2\u8fde\u63a5',
+  defaultFailed: '\u672a\u80fd\u81ea\u52a8\u8fde\u63a5\u9ed8\u8ba4\u667a\u80fd\u6807\u6ce8\u6a21\u578b',
+  ok: '\u77e5\u9053\u4e86'
+};
+const DEFAULT_BACKEND_TITLE = 'Default Smart Labeling Backend';
+const DEFAULT_BACKEND_DESCRIPTION = 'Faster R-CNN default ML backend for smart pre-annotation.';
+
+const uniq = items => [...new Set(items.filter(Boolean))];
+
+const getDefaultBackendCandidates = () => {
+  const location = window.location;
+  const protocol = (location === null || location === void 0 ? void 0 : location.protocol) || 'http:';
+  const hostname = (location === null || location === void 0 ? void 0 : location.hostname) || 'localhost';
+  const hostLike = ['localhost', '127.0.0.1', '0.0.0.0'].includes(hostname);
+
+  if (hostLike) {
+    // Local dev on host machine: prefer host mapped port first.
+    return uniq([`${protocol}//127.0.0.1:9090`, `${protocol}//localhost:9090`, `${protocol}//${hostname}:9090`, `${protocol}//127.0.0.1:9091`]);
+  } // Non-localhost hostnames are usually containerized or remote setups.
+
+
+  return uniq(['http://ml-backend:9091', `${protocol}//${hostname}:9091`, 'http://host.docker.internal:9090', 'http://host.docker.internal:9091']);
+};
+
+const checkBackendHealth = async url => {
+  const normalized = url.endsWith('/') ? url.slice(0, -1) : url;
+
+  try {
+    const response = await fetch(`${normalized}/health`, {
+      method: 'GET'
+    });
+    return response.ok;
+  } catch (error) {
+    return false;
+  }
+};
+
+const showInfoModal = (title, body) => {
+  let modalRef;
+  modalRef = (0,_components_Modal_Modal__WEBPACK_IMPORTED_MODULE_7__.modal)({
+    title,
+    body: () => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)("div", {
+      style: {
+        whiteSpace: 'pre-wrap'
+      },
+      children: body
+    }),
+    footer: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
+      look: "primary",
+      onClick: () => {
+        var _modalRef;
+
+        return (_modalRef = modalRef) === null || _modalRef === void 0 ? void 0 : _modalRef.close();
+      },
+      children: text.ok
+    })
+  });
+};
 
 const MachineLearningSettings = () => {
   const api = (0,_providers_ApiProvider__WEBPACK_IMPORTED_MODULE_8__.useAPI)();
@@ -23761,13 +24060,15 @@ const MachineLearningSettings = () => {
   const [mlError, setMLError] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)();
   const [backends, setBackends] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
   const [versions, setVersions] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
+  const [connectingDefault, setConnectingDefault] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
+  const defaultCandidates = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(getDefaultBackendCandidates, []);
   const resetMLVersion = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async e => {
     e.preventDefault();
     e.stopPropagation();
     await updateProject({
       model_version: null
     });
-  }, [api, project]);
+  }, [project, updateProject]);
   const fetchBackends = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async () => {
     const models = await api.callApi('mlBackends', {
       params: {
@@ -23777,22 +24078,82 @@ const MachineLearningSettings = () => {
     if (models) setBackends(models);
   }, [api, project, setBackends]);
   const fetchMLVersions = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async () => {
-    const versions = await api.callApi("modelVersions", {
+    const versions = await api.callApi('modelVersions', {
       params: {
         pk: project.id
       }
     });
     setVersions(versions);
   }, [api, project.id]);
+  const connectDefaultBackend = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async () => {
+    if (!(project !== null && project !== void 0 && project.id) || connectingDefault) return;
+    setConnectingDefault(true);
+    const failures = [];
+
+    try {
+      var _response$response;
+
+      let reachableUrl = null;
+
+      for (const url of defaultCandidates) {
+        // Do a silent health check first to avoid noisy global request errors.
+        // Only the first healthy candidate will be used for backend creation.
+        // eslint-disable-next-line no-await-in-loop
+        const healthy = await checkBackendHealth(url);
+
+        if (healthy) {
+          reachableUrl = url;
+          break;
+        }
+
+        failures.push(`${url}: health check failed`);
+      }
+
+      if (!reachableUrl) {
+        showInfoModal(text.defaultFailed, `${text.defaultFailed}\n\n${failures.join('\n')}\n\nYou can still use "${text.connectCustom}" and enter the backend URL manually.`);
+        return;
+      }
+
+      const existing = backends.find(backend => backend.url === reachableUrl);
+
+      if (existing) {
+        showInfoModal(text.defaultConnected, `${existing.title || DEFAULT_BACKEND_TITLE}\n${reachableUrl}`);
+        return;
+      }
+
+      const response = await api.callApi('addMLBackend', {
+        params: {},
+        body: {
+          project: project.id,
+          title: DEFAULT_BACKEND_TITLE,
+          url: reachableUrl,
+          description: DEFAULT_BACKEND_DESCRIPTION
+        },
+        errorFilter: () => true
+      });
+
+      if (response && !response.error && !response.error_message) {
+        await fetchBackends();
+        await fetchMLVersions();
+        showInfoModal(text.defaultConnected, `${DEFAULT_BACKEND_TITLE}\n${reachableUrl}`);
+        return;
+      }
+
+      failures.push(`${reachableUrl}: ${(response === null || response === void 0 ? void 0 : (_response$response = response.response) === null || _response$response === void 0 ? void 0 : _response$response.detail) || (response === null || response === void 0 ? void 0 : response.error) || (response === null || response === void 0 ? void 0 : response.error_message) || 'failed'}`);
+      showInfoModal(text.defaultFailed, `${text.defaultFailed}\n\n${failures.join('\n')}\n\nYou can still use "${text.connectCustom}" and enter the backend URL manually.`);
+    } finally {
+      setConnectingDefault(false);
+    }
+  }, [api, backends, connectingDefault, defaultCandidates, fetchBackends, fetchMLVersions, project === null || project === void 0 ? void 0 : project.id]);
   const showMLFormModal = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(backend => {
-    const action = backend ? "updateMLBackend" : "addMLBackend";
+    const action = backend ? 'updateMLBackend' : 'addMLBackend';
     const modalProps = {
-      title: backend ? (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.form.editTitle') : (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.form.addTitle'),
+      title: backend ? text.editTitle : text.addTitle,
       style: {
         width: 760
       },
       closeOnClickOutside: false,
-      body: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Form, {
+      body: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Form, {
         action: action,
         formData: { ...(backend !== null && backend !== void 0 ? backend : {})
         },
@@ -23805,49 +24166,49 @@ const MachineLearningSettings = () => {
             modalRef.close();
           }
         },
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Input, {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Input, {
           type: "hidden",
           name: "project",
           value: project.id
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Form.Row, {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Form.Row, {
           columnCount: 2,
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Input, {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Input, {
             name: "title",
-            label: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.form.name'),
-            placeholder: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.form.namePlaceholder')
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Input, {
+            label: text.name,
+            placeholder: text.namePlaceholder
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Input, {
             name: "url",
-            label: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.form.url'),
+            label: text.url,
             required: true
           })]
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Form.Row, {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Form.Row, {
           columnCount: 1,
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.TextArea, {
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.TextArea, {
             name: "description",
-            label: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.form.description'),
+            label: text.descriptionField,
             style: {
               minHeight: 120
             }
           })
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Form.Actions, {
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Form.Actions, {
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
             type: "submit",
             look: "primary",
             onClick: () => setMLError(null),
-            children: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.form.submit')
+            children: text.submit
           })
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Form.ResponseParser, {
-          children: response => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.Fragment, {
-            children: response.error_message && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Error_Error__WEBPACK_IMPORTED_MODULE_4__.ErrorWrapper, {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Form.ResponseParser, {
+          children: response => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.Fragment, {
+            children: response.error_message && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Error_Error__WEBPACK_IMPORTED_MODULE_4__.ErrorWrapper, {
               error: {
                 response: {
-                  detail: backend ? (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.form.saveError') : (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.form.addError'),
+                  detail: backend ? text.saveError : text.addError,
                   exc_info: response.error_message
                 }
               }
             })
           })
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Error_InlineError__WEBPACK_IMPORTED_MODULE_5__.InlineError, {})]
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Error_InlineError__WEBPACK_IMPORTED_MODULE_5__.InlineError, {})]
       })
     };
     const modalRef = (0,_components_Modal_Modal__WEBPACK_IMPORTED_MODULE_7__.modal)(modalProps);
@@ -23858,19 +24219,31 @@ const MachineLearningSettings = () => {
       fetchMLVersions();
     }
   }, [project]);
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.Fragment, {
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(_components_Description_Description__WEBPACK_IMPORTED_MODULE_2__.Description, {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.Fragment, {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Description_Description__WEBPACK_IMPORTED_MODULE_2__.Description, {
       style: {
         marginTop: 0,
-        maxWidth: 680
+        maxWidth: 760
       },
-      children: [(0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.description.intro'), (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.description.hint'), (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.description.link'), (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.description.suffix')]
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
-      onClick: () => showMLFormModal(),
-      children: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.actions.addModel')
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Divider_Divider__WEBPACK_IMPORTED_MODULE_3__.Divider, {
+      children: text.description
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)("div", {
+      style: {
+        display: 'flex',
+        gap: 12,
+        flexWrap: 'wrap'
+      },
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
+        look: "primary",
+        waiting: connectingDefault,
+        onClick: connectDefaultBackend,
+        children: connectingDefault ? text.connecting : text.connectDefault
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
+        onClick: () => showMLFormModal(),
+        children: text.connectCustom
+      })]
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Divider_Divider__WEBPACK_IMPORTED_MODULE_3__.Divider, {
       height: 32
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Form, {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Form, {
       action: "updateProject",
       formData: { ...project
       },
@@ -23879,78 +24252,70 @@ const MachineLearningSettings = () => {
       },
       onSubmit: () => fetchProject(),
       autosubmit: true,
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Form.Row, {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Form.Row, {
         columnCount: 1,
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Label, {
-          text: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.section.assistedLabeling'),
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Label, {
+          text: text.settings,
           large: true
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)("div", {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)("div", {
           style: {
             paddingLeft: 16
           },
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Toggle, {
-            label: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.section.startTraining'),
-            name: "start_training_on_annotation_update"
-          })
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)("div", {
-          style: {
-            paddingLeft: 16
-          },
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Toggle, {
-            label: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.section.retrievePredictions'),
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Toggle, {
+            label: text.autoDraft,
             name: "evaluate_predictions_automatically"
           })
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)("div", {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)("div", {
           style: {
             paddingLeft: 16
           },
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Toggle, {
-            label: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.section.showPredictions'),
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Toggle, {
+            label: text.showDrafts,
             name: "show_collab_predictions"
           })
         })]
-      }), versions.length > 1 && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Form.Row, {
+      }), versions.length > 1 && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Form.Row, {
         columnCount: 1,
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Label, {
-          text: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.section.modelVersion'),
-          description: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.section.modelVersionDescription'),
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Label, {
+          text: text.modelVersion,
+          description: text.modelVersionDescription,
           style: {
             marginTop: 16
           },
           large: true
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)("div", {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)("div", {
           style: {
             display: 'flex',
             alignItems: 'center',
             width: 400,
             paddingLeft: 16
           },
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)("div", {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)("div", {
             style: {
               flex: 1,
               paddingRight: 16
             },
-            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Select, {
+            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_6__.Select, {
               name: "model_version",
               defaultValue: null,
               options: [...versions],
-              placeholder: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.section.modelVersionPlaceholder')
+              placeholder: text.modelVersionPlaceholder
             })
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
             onClick: resetMLVersion,
-            children: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.machineLearning.actions.reset')
+            children: text.reset
           })]
         })]
       })]
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_MachineLearningList__WEBPACK_IMPORTED_MODULE_10__.MachineLearningList, {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_MachineLearningList__WEBPACK_IMPORTED_MODULE_10__.MachineLearningList, {
       onEdit: backend => showMLFormModal(backend),
       fetchBackends: fetchBackends,
       backends: backends
     })]
   });
 };
-MachineLearningSettings.title = (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('projectSettings.menu.machineLearning');
-MachineLearningSettings.path = "/ml";
+MachineLearningSettings.title = text.title;
+MachineLearningSettings.path = '/ml';
 
 /***/ }),
 

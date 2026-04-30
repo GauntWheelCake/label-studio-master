@@ -570,7 +570,9 @@ DataManagerPage.context = ({dmRef}) => {
   const [currentTaskId, setCurrentTaskId] = useState(null);
   const [currentReviewStatus, setCurrentReviewStatus] = useState('pending');
   const [pendingDecision, setPendingDecision] = useState(null);
+  const [smartLabeling, setSmartLabeling] = useState(false);
   const isSwitchingTaskRef = useRef(false);
+  const smartLabelingModalRef = useRef(null);
 
   const showReviewError = useCallback((message) => {
     let modalInstance;
@@ -965,6 +967,209 @@ DataManagerPage.context = ({dmRef}) => {
     await sendReviewDecision('rejected', { comment });
   }, [requestRejectComment, sendReviewDecision]);
 
+  const refreshCurrentView = useCallback(async () => {
+    const view = dmRef?.store?.currentView ?? dmRef?.store?.viewsStore?.selected;
+
+    if (typeof view?.reload === 'function') {
+      await view.reload();
+      return;
+    }
+
+    if (typeof view?.fetchTasks === 'function') {
+      await view.fetchTasks();
+      return;
+    }
+
+    if (typeof dmRef?.store?.taskStore?.reload === 'function') {
+      await dmRef.store.taskStore.reload();
+    }
+  }, [dmRef]);
+
+  const showSmartLabelingResult = useCallback((title, message) => {
+    let modalInstance;
+
+    modalInstance = modal({
+      title,
+      body: () => <div>{message}</div>,
+      footer: (
+        <Space align="end">
+          <Button
+            size="compact"
+            look="primary"
+            onClick={() => modalInstance?.close()}
+          >
+            {'\u77e5\u9053\u4e86'}
+          </Button>
+        </Space>
+      ),
+    });
+  }, []);
+
+  const showSmartLabelingProgress = useCallback(() => {
+    smartLabelingModalRef.current?.close?.();
+    smartLabelingModalRef.current = modal({
+      title: '\u6b63\u5728\u8fdb\u884c\u667a\u80fd\u6807\u6ce8',
+      allowClose: false,
+      closeOnClickOutside: false,
+      body: () => (
+        <div>
+          {'\u6b63\u5728\u751f\u6210 AI \u521d\u7a3f\uff0c\u8bf7\u52ff\u8df3\u8f6c\u5230\u5176\u4ed6\u9875\u9762\u6216\u5237\u65b0\u6d4f\u89c8\u5668\uff0c\u4ee5\u514d\u4e2d\u65ad\u672c\u6b21\u667a\u80fd\u6807\u6ce8\u3002'}
+        </div>
+      ),
+    });
+  }, []);
+
+  const closeSmartLabelingProgress = useCallback(() => {
+    smartLabelingModalRef.current?.close?.();
+    smartLabelingModalRef.current = null;
+  }, []);
+
+  const getSmartLabelingSelection = useCallback(() => {
+    const view = dmRef?.store?.currentView ?? dmRef?.store?.viewsStore?.selected;
+    const hasSelectedItems = view?.selected?.hasSelected;
+    const selectedItems = hasSelectedItems && view?.selected?.snapshot
+      ? view.selected.snapshot
+      : null;
+
+    return {
+      view,
+      hasSelectedItems: Boolean(hasSelectedItems),
+      selectedItems,
+    };
+  }, [dmRef]);
+
+  const hasSmartLabelingSelection = useCallback(() => {
+    const { hasSelectedItems, selectedItems } = getSmartLabelingSelection();
+    const included = selectedItems?.included ?? [];
+    const excluded = selectedItems?.excluded ?? [];
+
+    return hasSelectedItems && (
+      selectedItems?.all === true ||
+      included.length > 0 ||
+      excluded.length > 0
+    );
+  }, [getSmartLabelingSelection]);
+
+  const buildSmartLabelingRequest = useCallback(() => {
+    const { view, selectedItems } = getSmartLabelingSelection();
+
+    return {
+      ...(view?.ordering ? { ordering: view.ordering } : {}),
+      selectedItems: selectedItems ?? { all: false, included: [] },
+      filters: {
+        conjunction: view?.conjunction ?? 'and',
+        items: view?.serializedFilters ?? [],
+      },
+    };
+  }, [getSmartLabelingSelection]);
+
+  const loadSmartLabelingBackends = useCallback(async () => {
+    if (!dmRef || !project?.id) return [];
+
+    const result = await dmRef.apiCall?.('mlBackends', {
+      project: project.id,
+    });
+
+    return Array.isArray(result) ? result : [];
+  }, [dmRef, project?.id]);
+
+  const formatBackendList = useCallback((backends = []) => {
+    if (!backends.length) return '\u672a\u8fde\u63a5\u667a\u80fd\u6807\u6ce8\u6a21\u578b';
+
+    return backends.map((backend) => {
+      const title = backend.title || `\u6a21\u578b ${backend.id}`;
+      const state = backend.state === 'CO'
+        ? '\u5df2\u8fde\u63a5'
+        : backend.state === 'ER'
+          ? '\u8fde\u63a5\u5f02\u5e38'
+          : '\u672a\u8fde\u63a5';
+      const url = backend.url ? `\uff08${backend.url}\uff09` : '';
+
+      return `${title}${url} - ${state}`;
+    }).join('\n');
+  }, []);
+
+  const runSmartLabeling = useCallback(async () => {
+    if (!dmRef || !project?.id || smartLabeling) return;
+
+    setSmartLabeling(true);
+    showSmartLabelingProgress();
+
+    try {
+      const result = await dmRef.apiCall?.('invokeAction', {
+        project: project.id,
+        id: 'retrieve_tasks_predictions',
+      }, {
+        body: buildSmartLabelingRequest(),
+      });
+
+      if (result?.error || result?.response?.detail) {
+        const detail = result?.response?.detail || result?.detail || result?.error;
+        throw new Error(detail || '\u0041\u0049 \u521d\u7a3f\u751f\u6210\u5931\u8d25\uff0c\u8bf7\u68c0\u67e5\u667a\u80fd\u6807\u6ce8\u6a21\u578b\u662f\u5426\u5df2\u8fde\u63a5\u3002');
+      }
+
+      await refreshCurrentView();
+      showSmartLabelingResult('\u0041\u0049 \u521d\u7a3f\u751f\u6210\u5b8c\u6210', result?.detail || '\u0041\u0049 \u521d\u7a3f\u5df2\u751f\u6210\uff0c\u8bf7\u8fdb\u5165\u6807\u6ce8\u9875\u786e\u8ba4\u6216\u4fee\u6539\u3002');
+    } catch (error) {
+      console.error('[smart-labeling] Failed to generate AI drafts', error);
+      showSmartLabelingResult('\u667a\u80fd\u9884\u6807\u6ce8\u5931\u8d25', error?.message || '\u8bf7\u68c0\u67e5\u667a\u80fd\u6807\u6ce8\u6a21\u578b\u662f\u5426\u5df2\u8fde\u63a5\uff0c\u6216\u7a0d\u540e\u91cd\u8bd5\u3002');
+    } finally {
+      closeSmartLabelingProgress();
+      setSmartLabeling(false);
+    }
+  }, [buildSmartLabelingRequest, closeSmartLabelingProgress, dmRef, project?.id, refreshCurrentView, showSmartLabelingProgress, showSmartLabelingResult, smartLabeling]);
+
+  const confirmSmartLabeling = useCallback(async () => {
+    if (!hasSmartLabelingSelection()) {
+      showSmartLabelingResult(
+        '\u8bf7\u5148\u9009\u62e9\u6570\u636e',
+        '\u8bf7\u5148\u5728\u6570\u636e\u5217\u8868\u4e2d\u52fe\u9009\u9700\u8981\u667a\u80fd\u9884\u6807\u6ce8\u7684\u4efb\u52a1\uff0c\u7136\u540e\u518d\u70b9\u51fb\u201c\u667a\u80fd\u9884\u6807\u6ce8\u201d\u3002'
+      );
+      return;
+    }
+
+    const backends = await loadSmartLabelingBackends();
+    const connectedBackends = backends.filter((backend) => backend.state === 'CO');
+
+    if (!connectedBackends.length) {
+      showSmartLabelingResult(
+        '\u667a\u80fd\u6807\u6ce8\u6a21\u578b\u672a\u8fde\u63a5',
+        '\u5f53\u524d\u6ca1\u6709\u53ef\u7528\u7684\u667a\u80fd\u6807\u6ce8\u6a21\u578b\uff0c\u8bf7\u5148\u5230\u201c\u9879\u76ee\u8bbe\u7f6e > \u667a\u80fd\u6807\u6ce8\u201d\u8fde\u63a5\u53ef\u7528\u7684\u6a21\u578b\u670d\u52a1\u3002'
+      );
+      return;
+    }
+
+    let modalInstance;
+
+    modalInstance = modal({
+      title: '\u751f\u6210 AI \u521d\u7a3f',
+      body: () => (
+        <div>
+          <p>{'\u5c06\u4e3a\u5f53\u524d\u9009\u4e2d\u7684\u4efb\u52a1\u751f\u6210 AI \u521d\u7a3f\u3002\u751f\u6210\u540e\u9700\u8981\u4eba\u5de5\u786e\u8ba4\u6216\u4fee\u6539\uff0c\u624d\u4f1a\u6210\u4e3a\u6b63\u5f0f\u6807\u6ce8\u3002'}</p>
+          <p style={{ marginTop: 12, fontWeight: 600 }}>{'\u672c\u6b21\u5c06\u8c03\u7528\u7684\u673a\u5668\u5b66\u4e60\u540e\u7aef\uff1a'}</p>
+          <pre style={{ whiteSpace: 'pre-wrap', margin: 0 }}>{formatBackendList(connectedBackends)}</pre>
+        </div>
+      ),
+      footer: (
+        <Space align="end">
+          <Button size="compact" onClick={() => modalInstance?.close()}>
+            {'\u53d6\u6d88'}
+          </Button>
+          <Button
+            size="compact"
+            look="primary"
+            onClick={() => {
+              modalInstance?.close();
+              runSmartLabeling();
+            }}
+          >
+            {'\u5f00\u59cb\u751f\u6210'}
+          </Button>
+        </Space>
+      ),
+    });
+  }, [formatBackendList, hasSmartLabelingSelection, loadSmartLabelingBackends, runSmartLabeling, showSmartLabelingResult]);
+
   const reviewStatusTranslations = createReviewStatusTranslations();
   const statusText = localizeReviewStatus({
     translations: reviewStatusTranslations,
@@ -985,6 +1190,17 @@ DataManagerPage.context = ({dmRef}) => {
 
   return project && project.id ? (
     <Space size="small">
+      {mode === 'explorer' && (
+        <Button
+          size="compact"
+          look="primary"
+          waiting={smartLabeling}
+          onClick={confirmSmartLabeling}
+        >
+          {'\u667a\u80fd\u9884\u6807\u6ce8'}
+        </Button>
+      )}
+
       {showReviewControls && (
         <Space size="small">
           <span>

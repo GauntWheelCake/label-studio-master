@@ -231,7 +231,7 @@ def get_prepared_queryset(request, project):
     return queryset
 
 
-def evaluate_predictions(tasks):
+def evaluate_predictions(tasks, ml_backends=None):
     """ Call ML backend for prediction evaluation of the task queryset
     """
     if not tasks:
@@ -239,6 +239,6 @@ def evaluate_predictions(tasks):
 
     project = tasks[0].project
 
-    for ml_backend in project.ml_backends.all():
+    for ml_backend in ml_backends or project.ml_backends.all():
         # tasks = tasks.filter(~Q(predictions__model_version=ml_backend.model_version))
         ml_backend.predict_many_tasks(tasks)
