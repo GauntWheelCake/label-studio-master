@@ -34,12 +34,15 @@ const text = {
   connecting: '\u6b63\u5728\u5c1d\u8bd5\u8fde\u63a5\u9ed8\u8ba4\u667a\u80fd\u6807\u6ce8\u6a21\u578b...',
   defaultConnected: '\u9ed8\u8ba4\u667a\u80fd\u6807\u6ce8\u6a21\u578b\u5df2\u8fde\u63a5',
   defaultFailed: '\u672a\u80fd\u81ea\u52a8\u8fde\u63a5\u9ed8\u8ba4\u667a\u80fd\u6807\u6ce8\u6a21\u578b',
+  defaultConnectingTitle: '\u6b63\u5728\u8fde\u63a5\u9ed8\u8ba4\u667a\u80fd\u6807\u6ce8\u6a21\u578b',
+  defaultConnectingBody: '\u6b63\u5728\u6d4b\u8bd5\u5e76\u4fdd\u5b58\u9ed8\u8ba4\u667a\u80fd\u6807\u6ce8\u6a21\u578b\uff0c\u8bf7\u52ff\u8df3\u8f6c\u5230\u5176\u4ed6\u9875\u9762\u6216\u5237\u65b0\u6d4f\u89c8\u5668\u3002',
   backendConsoleHint: '\u8bf7\u540c\u65f6\u786e\u8ba4 ML \u540e\u7aef\u63a7\u5236\u53f0\u5df2\u8fde\u63a5\u6167\u6807\u7cfb\u7edf\uff0c\u5426\u5219\u53ef\u80fd\u53ea\u80fd\u4fdd\u5b58\u8fde\u63a5\uff0c\u65e0\u6cd5\u6b63\u5e38\u63a8\u7406\u3002',
   ok: '\u77e5\u9053\u4e86',
 };
 
 const DEFAULT_BACKEND_TITLE = 'Default Smart Labeling Backend';
 const DEFAULT_BACKEND_DESCRIPTION = 'Faster R-CNN default ML backend for smart pre-annotation.';
+const PRODUCTION_ML_BACKEND_URL = 'http://68.68.18.26:9000';
 
 const uniq = (items) => [...new Set(items.filter(Boolean))];
 
@@ -50,23 +53,17 @@ const getDefaultBackendCandidates = () => {
   const hostLike = ['localhost', '127.0.0.1', '0.0.0.0'].includes(hostname);
 
   if (hostLike) {
-    // Local dev on host machine: prefer host mapped port first.
+    // Local development: direct host process first, then host access from Docker.
     return uniq([
       `${protocol}//127.0.0.1:9091`,
-      `${protocol}//localhost:9091`,
-      `${protocol}//${hostname}:9091`,
-      `${protocol}//127.0.0.1:9090`,
-      `${protocol}//localhost:9090`,
-      `${protocol}//${hostname}:9090`,
+      'http://host.docker.internal:9091',
     ]);
   }
 
-  // Non-localhost hostnames are usually containerized or remote setups.
+  // Server deployment: use the fixed ML backend first, then the current server host.
   return uniq([
-    `${protocol}//${hostname}:9091`,
-    'http://host.docker.internal:9091',
-    'http://ml-backend:9091',
-    'http://host.docker.internal:9090',
+    PRODUCTION_ML_BACKEND_URL,
+    `${protocol}//${hostname}:9000`,
   ]);
 };
 
@@ -83,6 +80,14 @@ const showInfoModal = (title, body) => {
     ),
   });
 };
+
+const showBlockingModal = (title, body) => modal({
+  title,
+  allowClose: false,
+  closeOnClickOutside: false,
+  body: () => <div style={{ whiteSpace: 'pre-wrap' }}>{body}</div>,
+  footer: null,
+});
 
 export const MachineLearningSettings = () => {
   const api = useAPI();
@@ -127,6 +132,7 @@ export const MachineLearningSettings = () => {
 
     setConnectingDefault(true);
     const failures = [];
+    const progressModal = showBlockingModal(text.defaultConnectingTitle, text.defaultConnectingBody);
 
     try {
       let connectedUrl = null;
@@ -172,6 +178,7 @@ export const MachineLearningSettings = () => {
         `${text.defaultFailed}\n\n${failures.join('\n')}\n\n${text.backendConsoleHint}\n\nYou can still use "${text.connectCustom}" and enter the backend URL manually.`
       );
     } finally {
+      progressModal?.close?.();
       setConnectingDefault(false);
     }
   }, [api, backends, connectingDefault, defaultCandidates, fetchBackends, fetchMLVersions, project?.id]);
