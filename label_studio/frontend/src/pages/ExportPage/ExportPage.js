@@ -113,13 +113,12 @@ export const ExportPage = () => {
 
     if (response) {
       if (response.ok) {
-        const notice = response.headers.get('x-review-export-notice');
         const blob = await response.blob();
         downloadFile(blob, response.headers.get('filename'));
 
         Modal.info({
           title: t('exportPage.modal.readyTitle'),
-          body: notice ?? t('exportPage.notice.approvedOnly'),
+          body: t('exportPage.notice.approvedOnly'),
           simple: true,
         });
       } else if (response.status === 400) {

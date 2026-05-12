@@ -119,7 +119,6 @@ class ExportAPI(generics.RetrieveAPIView):
         response = HttpResponse(File(export_stream), content_type=content_type)
         response['Content-Disposition'] = 'attachment; filename="%s"' % filename
         response['filename'] = filename
-        response['X-Review-Export-Notice'] = APPROVED_EXPORT_NOTICE
         return response
 
 

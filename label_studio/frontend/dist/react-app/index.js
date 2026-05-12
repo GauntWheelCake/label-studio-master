@@ -22204,12 +22204,11 @@ const ExportPage = () => {
 
     if (response) {
       if (response.ok) {
-        const notice = response.headers.get('x-review-export-notice');
         const blob = await response.blob();
         downloadFile(blob, response.headers.get('filename'));
         _components_Modal_Modal__WEBPACK_IMPORTED_MODULE_3__.Modal.info({
           title: (0,_i18n__WEBPACK_IMPORTED_MODULE_10__.t)('exportPage.modal.readyTitle'),
-          body: notice !== null && notice !== void 0 ? notice : (0,_i18n__WEBPACK_IMPORTED_MODULE_10__.t)('exportPage.notice.approvedOnly'),
+          body: (0,_i18n__WEBPACK_IMPORTED_MODULE_10__.t)('exportPage.notice.approvedOnly'),
           simple: true
         });
       } else if (response.status === 400) {
