@@ -51,6 +51,11 @@ RUN python3 -m pip install --no-cache-dir "djangorestframework==3.13.1"
 # （保留）构建阶段的预初始化（不编前端）
 RUN bash -xe /label-studio/deploy/prebuild_wo_frontend.sh
 
+# 保留不可变资源副本，容器启动时用它刷新共享给 Nginx 的资源卷。
+RUN mkdir -p /label-studio-assets/core-static-build /label-studio-assets/frontend-dist \
+    && cp -a /label-studio/label_studio/core/static_build/. /label-studio-assets/core-static-build/ \
+    && cp -a /label-studio/label_studio/frontend/dist/. /label-studio-assets/frontend-dist/
+
 ENTRYPOINT ["/label-studio/deploy/docker-entrypoint.sh"]
 # 用 JSON 写法更稳
 CMD ["bash", "/label-studio/deploy/start_label_studio.sh"]

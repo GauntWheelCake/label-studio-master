@@ -9,6 +9,14 @@ set -e
 : "${POSTGRE_NAME:=postgres}"
 : "${DJANGO_DB:=default}"
 
+# 刷新共享给 Nginx 的资源卷，避免重新构建镜像后继续使用旧资源。
+echo "=> Refreshing static assets..."
+mkdir -p /label-studio/label_studio/core/static_build /label-studio/label_studio/frontend/dist
+find /label-studio/label_studio/core/static_build -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +
+find /label-studio/label_studio/frontend/dist -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +
+cp -a /label-studio-assets/core-static-build/. /label-studio/label_studio/core/static_build/
+cp -a /label-studio-assets/frontend-dist/. /label-studio/label_studio/frontend/dist/
+
 # 启动容器内 PostgreSQL（如果不指定外部主机）
 if [[ "${POSTGRE_HOST}" == "localhost" || "${POSTGRE_HOST}" == "127.0.0.1" || -z "${POSTGRE_HOST}" ]]; then
     echo "=> Starting internal PostgreSQL server..."

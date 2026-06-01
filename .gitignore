@@ -49,4 +49,5 @@ label_studio.sqlite3
 *.egg-info
 tmp
 .DS_Store
+postgres-data/
 *.sqlite3
