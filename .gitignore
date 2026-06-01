@@ -52,4 +52,5 @@ tmp
 postgres-data/
 *.sqlite3
 师兄项目开发与部署说明.md
+慧标系统项目开发与部署说明.md
 .env
