@@ -51,3 +51,5 @@ tmp
 .DS_Store
 postgres-data/
 *.sqlite3
+师兄项目开发与部署说明.md
+.env
