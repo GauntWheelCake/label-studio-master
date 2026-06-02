@@ -711,3 +711,6 @@ hotkey i {
 .button.light-blue:hover {
     background: rgb(50, 149, 230) !important;
 }
+
+/* Hide the entire '数据' column group (title + children) from DataManager dropdown */
+.dm-menu-group { display: none; }

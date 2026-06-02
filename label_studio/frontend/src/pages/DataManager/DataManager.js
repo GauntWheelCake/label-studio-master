@@ -540,7 +540,10 @@ export const DataManagerPage = ({...props}) => {
   }, []);
 
   useEffect(() => {
-    init();
+    init().catch((err) => {
+      console.error('[DataManager] init failed', err);
+      setCrashed(true);
+    });
 
     return () => destroyDM();
   }, [root, init]);

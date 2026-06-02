@@ -122,7 +122,14 @@ export const Menubar = ({
       setProjects(data ?? []);
     };
     fetchProjects();
-  }, [api]);
+
+    const handleProjectsUpdate = () => fetchProjects();
+    window.addEventListener('projectsUpdated', handleProjectsUpdate);
+
+    return () => {
+      window.removeEventListener('projectsUpdated', handleProjectsUpdate);
+    };
+  }, [api, location.pathname]);
 
   return (
     <div className={contentClass}>

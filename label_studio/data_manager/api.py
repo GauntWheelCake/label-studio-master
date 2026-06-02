@@ -232,7 +232,9 @@ class ProjectColumnsAPI(APIView):
 
         Retrieve the data manager columns available for the tasks in a specific project.
         """
-        pk = int_from_request(request.GET, "project", 1)
+        pk = int_from_request(request.GET, "project", None)
+        if pk is None:
+            return Response({'detail': 'project parameter is required'}, status=status.HTTP_400_BAD_REQUEST)
         project = get_object_with_check_and_log(request, Project, pk=pk)
         self.check_object_permissions(request, project)
         data = get_all_columns(project)
@@ -250,7 +252,9 @@ class ProjectStateAPI(APIView):
 
         Retrieve the project state for data manager.
         """
-        pk = int_from_request(request.GET, "project", 1)  # replace 1 to None, it's for debug only
+        pk = int_from_request(request.GET, "project", None)
+        if pk is None:
+            return Response({'detail': 'project parameter is required'}, status=status.HTTP_400_BAD_REQUEST)
         project = get_object_with_check_and_log(request, Project.objects.with_counts(), pk=pk)
         self.check_object_permissions(request, project)
         data = ProjectSerializer(project).data
@@ -283,7 +287,9 @@ class ProjectActionsAPI(APIView):
 
         Retrieve all the registered actions with descriptions that data manager can use.
         """
-        pk = int_from_request(request.GET, "project", 1)  # replace 1 to None, it's for debug only
+        pk = int_from_request(request.GET, "project", None)
+        if pk is None:
+            return Response({'detail': 'project parameter is required'}, status=status.HTTP_400_BAD_REQUEST)
         project = get_object_with_check_and_log(request, Project, pk=pk)
         self.check_object_permissions(request, project)
 

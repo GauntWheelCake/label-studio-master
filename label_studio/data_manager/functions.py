@@ -48,6 +48,7 @@ def get_all_columns(project):
             'type': data_type if data_type in ['Image', 'Audio', 'AudioPlus', 'Unknown'] else 'String',
             'target': 'tasks',
             'parent': 'data',
+            'align': 'left',
             'visibility_defaults': {
                 'explore': True,
                 'labeling': key in project.data_types or key == settings.DATA_UNDEFINED_NAME

@@ -4649,7 +4649,12 @@ const Menubar = ({
       setProjects(data !== null && data !== void 0 ? data : []);
     };
     fetchProjects();
-  }, [api]);
+    const handleProjectsUpdate = () => fetchProjects();
+    window.addEventListener('projectsUpdated', handleProjectsUpdate);
+    return () => {
+      window.removeEventListener('projectsUpdated', handleProjectsUpdate);
+    };
+  }, [api, location.pathname]);
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsxs)("div", {
     className: contentClass,
     children: [enabled && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_18__.jsxs)("div", {
@@ -8881,7 +8886,10 @@ const DataManagerPage = ({
     };
   }, []);
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
-    init();
+    init().catch(err => {
+      console.error('[DataManager] init failed', err);
+      setCrashed(true);
+    });
     return () => destroyDM();
   }, [root, init]);
   return crashed ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsxs)(_utils_bem__WEBPACK_IMPORTED_MODULE_10__.Block, {
@@ -10673,6 +10681,7 @@ const ProjectsPage = () => {
   };
   const handleProjectDelete = () => {
     fetchProjects();
+    window.dispatchEvent(new Event('projectsUpdated'));
   };
   react__WEBPACK_IMPORTED_MODULE_0__.useEffect(() => {
     fetchProjects();

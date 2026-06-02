@@ -34,6 +34,7 @@ export const ProjectsPage = () => {
 
   const handleProjectDelete = () => {
     fetchProjects();
+    window.dispatchEvent(new Event('projectsUpdated'));
   };
 
   React.useEffect(() => {
