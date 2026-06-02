@@ -32,6 +32,10 @@ export const ProjectsPage = () => {
     setNetworkState('loaded');
   };
 
+  const handleProjectDelete = () => {
+    fetchProjects();
+  };
+
   React.useEffect(() => {
     fetchProjects();
   }, []);
@@ -47,7 +51,7 @@ export const ProjectsPage = () => {
           <Spinner size={64} />
         </Elem>
         <Elem name="content" case="loaded">
-          <ProjectsList projects={projectsList} openModal={openModal} />
+          <ProjectsList projects={projectsList} openModal={openModal} onProjectDelete={handleProjectDelete} />
           {modal && <CreateProject onClose={closeModal} />}
         </Elem>
       </Oneof>

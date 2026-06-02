@@ -4,15 +4,17 @@ import React, { useMemo } from 'react';
 import { NavLink } from 'react-router-dom';
 import { LsBulb, LsCheck, LsEllipsis, LsMinus } from '../../assets/icons';
 import { Button, Dropdown, Menu, Userpic } from '../../components';
+import { modal } from '../../components/Modal/Modal';
+import { useAPI } from '../../providers/ApiProvider';
 import { Block, Elem } from '../../utils/bem';
 import { absoluteURL } from '../../utils/helpers';
 import { t } from '../../i18n';
 
-export const ProjectsList = ({ projects, openModal }) => {
+export const ProjectsList = ({ projects, openModal, onProjectDelete }) => {
   return (
     <Elem name="list">
       {projects.map(project => (
-        <ProjectCard key={project.id} project={project} />
+        <ProjectCard key={project.id} project={project} onDelete={onProjectDelete} />
       ))}
       <CreateProjectCard onClick={openModal} />
     </Elem>
@@ -55,7 +57,8 @@ const CreateProjectCard = ({ onClick }) => {
   );
 };
 
-const ProjectCard = ({ project }) => {
+const ProjectCard = ({ project, onDelete }) => {
+  const api = useAPI();
   const color = useMemo(() => {
     return project.color === '#FFFFFF' ? null : project.color;
   }, [project]);
@@ -66,6 +69,37 @@ const ProjectCard = ({ project }) => {
       '--background-color': chr(color).alpha(0.2).css(),
     } : {};
   }, [color]);
+
+  const handleDelete = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+
+    const title = project.title ?? t('projectsPage.card.untitled');
+    let modalRef;
+
+    modalRef = modal({
+      title: '删除项目',
+      body: () => (
+        <div style={{ whiteSpace: 'pre-wrap' }}>
+          确定要删除项目 "{title}" 吗？此操作不可撤销，项目中的所有标注数据也将被删除。
+        </div>
+      ),
+      footer: (
+        <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+          <Button onClick={() => modalRef?.close()}>
+            取消
+          </Button>
+          <Button look="destructive" onClick={async () => {
+            modalRef?.close();
+            await api.callApi('deleteProject', { params: { pk: project.id } });
+            onDelete?.();
+          }}>
+            删除
+          </Button>
+        </div>
+      ),
+    });
+  };
 
   return (
     <Elem tag={NavLink} name="link" to={`/projects/${project.id}/data`} data-external>
@@ -84,6 +118,7 @@ const ProjectCard = ({ project }) => {
                 <Menu>
                   <Menu.Item href={`/projects/${project.id}/settings`}>{t('projectsPage.card.menu.settings')}</Menu.Item>
                   <Menu.Item href={`/projects/${project.id}/data?labeling=1`}>{t('projectsPage.card.menu.label')}</Menu.Item>
+                  <Menu.Item onClick={handleDelete}>删除项目</Menu.Item>
                 </Menu>
               )}>
                 <Button size="small" type="text" icon={<LsEllipsis />} />

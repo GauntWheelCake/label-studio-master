@@ -103,14 +103,14 @@ def parse_input_args():
 
     parser_user = subparsers.add_parser('user', help='Print user info', parents=[root_parser])
 
-    parser_init = subparsers.add_parser('init', help='Initialize Label Studio', parents=[root_parser])
+    parser_init = subparsers.add_parser('init', help='初始化标注平台', parents=[root_parser])
     parser_init.add_argument(
         'project_name', help='Path to directory where project state will be initialized', type=project_name
     )
 
     # start sub-command parser
 
-    parser_start = subparsers.add_parser('start', help='Start Label Studio server', parents=[root_parser])
+    parser_start = subparsers.add_parser('start', help='启动标注平台服务', parents=[root_parser])
     parser_start.add_argument(
         'project_name', help='Project name', type=project_name, default='', nargs='?'
     )

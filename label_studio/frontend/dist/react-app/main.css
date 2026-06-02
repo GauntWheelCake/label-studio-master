@@ -1024,8 +1024,8 @@
   cursor: pointer;
   align-items: center;
   justify-content: space-between;
-  min-width: 240px;
-  max-width: 240px;
+  min-width: 340px;
+  max-width: 340px;
   box-sizing: border-box;
   box-shadow: 1px 0 0 0 rgba(0,0,0,0.1);
 }
@@ -1953,20 +1953,13 @@ input.ls-input[type=radio] {
 .cm-fat-cursor div.CodeMirror-cursors {
   z-index: 1;
 }
-.cm-fat-cursor-mark {
-  background-color: rgba(20, 255, 20, 0.5);
-  -webkit-animation: blink 1.06s steps(1) infinite;
-  -moz-animation: blink 1.06s steps(1) infinite;
-  animation: blink 1.06s steps(1) infinite;
-}
-.cm-animate-fat-cursor {
-  width: auto;
-  border: 0;
-  -webkit-animation: blink 1.06s steps(1) infinite;
-  -moz-animation: blink 1.06s steps(1) infinite;
-  animation: blink 1.06s steps(1) infinite;
-  background-color: #7e7;
-}
+.cm-fat-cursor .CodeMirror-line::selection,
+.cm-fat-cursor .CodeMirror-line > span::selection, 
+.cm-fat-cursor .CodeMirror-line > span > span::selection { background: transparent; }
+.cm-fat-cursor .CodeMirror-line::-moz-selection,
+.cm-fat-cursor .CodeMirror-line > span::-moz-selection,
+.cm-fat-cursor .CodeMirror-line > span > span::-moz-selection { background: transparent; }
+.cm-fat-cursor { caret-color: transparent; }
 @-moz-keyframes blink {
   0% {}
   50% { background-color: transparent; }
@@ -2064,6 +2057,7 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #a22;}
   height: 100%;
   outline: none; /* Prevent dragging from highlighting the element */
   position: relative;
+  z-index: 0;
 }
 .CodeMirror-sizer {
   position: relative;
@@ -3639,6 +3633,12 @@ body {
 .tag[data-status="pending"]  { background: var(--tag-pending);  }
 .tag[data-status="approved"] { background: var(--tag-approved); }
 .tag[data-status="rejected"] { background: var(--tag-rejected); }
+
+/* Hide DM left-side tabs and add button, keep right-side annotation stats */
+.dm-tabs__list,
+.dm-tabs__add {
+  display: none !important;
+}
 
 
 /*# sourceMappingURL=main.css.map*/

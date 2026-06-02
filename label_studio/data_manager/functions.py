@@ -63,7 +63,7 @@ def get_all_columns(project):
         'title': "数据",
         'type': "List",
         'target': 'tasks',
-        'children': task_data_children
+        'children': task_data_children,
     }
 
     result['columns'] += [

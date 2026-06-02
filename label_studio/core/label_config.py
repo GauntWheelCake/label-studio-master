@@ -216,17 +216,20 @@ def get_task_from_labeling_config(config):
     end = config[start:].find('-->') if start >= 0 else -1
     if 3 < start < start + end:
         try:
+            json_str = config[start:start + end].strip()
+            if not json_str or json_str[0] not in ('{', '['):
+                return task_data, annotations, predictions
             logger.debug('Parse ' + config[start:start + end])
-            body = json.loads(config[start:start + end])
+            body = json.loads(json_str)
         except Exception as exc:
-            logger.error(exc, exc_info=True)
-            pass
-        else:
-            logger.debug(json.dumps(body, indent=2))
-            dont_use_root = 'predictions' in body or 'annotations' in body
-            task_data = body['data'] if 'data' in body else (None if dont_use_root else body)
-            predictions = body['predictions'] if 'predictions' in body else None
-            annotations = body['annotations'] if 'annotations' in body else None
+            logger.warning('Failed to parse labeling config comment as JSON: %s', exc)
+            return task_data, annotations, predictions
+
+        logger.debug(json.dumps(body, indent=2))
+        dont_use_root = 'predictions' in body or 'annotations' in body
+        task_data = body['data'] if 'data' in body else (None if dont_use_root else body)
+        predictions = body['predictions'] if 'predictions' in body else None
+        annotations = body['annotations'] if 'annotations' in body else None
     return task_data, annotations, predictions
 
 

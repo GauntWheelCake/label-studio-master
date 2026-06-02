@@ -1,6 +1,5 @@
 import React from 'react';
 import { SidebarMenu } from '../../components/SidebarMenu/SidebarMenu';
-import { DangerZone } from './DangerZone';
 import { GeneralSettings } from './GeneralSettings';
 import { InstructionsSettings } from './InstructionsSettings';
 import { LabelingSettings } from './LabelingSettings';
@@ -14,7 +13,6 @@ export const MenuLayout = ({children, ...routeProps}) => {
         LabelingSettings,
         InstructionsSettings,
         MachineLearningSettings,
-        DangerZone,
       ]}
       path={routeProps.match.url}
       children={children}
@@ -32,6 +30,5 @@ export const SettingsPage = {
     InstructionsSettings,
     LabelingSettings,
     MachineLearningSettings,
-    DangerZone,
   },
 };

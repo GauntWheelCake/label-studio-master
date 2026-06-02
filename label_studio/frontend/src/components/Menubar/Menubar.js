@@ -1,6 +1,7 @@
 import { createContext, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { StaticContent } from '../../app/StaticContent/StaticContent';
-import { IconFolder, IconPersonInCircle, IconPin, LsDoor, LsSettings } from '../../assets/icons';
+import { IconPersonInCircle, IconPin, LsDoor, LsSettings } from '../../assets/icons';
+import { useAPI } from '../../providers/ApiProvider';
 import { useConfig } from '../../providers/ConfigProvider';
 import { useContextComponent, useFixedLocation } from '../../providers/RoutesProvider';
 import { cn } from '../../utils/bem';
@@ -53,8 +54,10 @@ export const Menubar = ({
   const location = useFixedLocation();
 
   const config = useConfig();
+  const api = useAPI();
   const [sidebarOpened, setSidebarOpened] = useState(defaultOpened ?? false);
   const [sidebarPinned, setSidebarPinned] = useState(defaultPinned ?? false);
+  const [projects, setProjects] = useState([]);
   const [PageContext, setPageContext] = useState({
     Component: null,
     props: {},
@@ -113,6 +116,14 @@ export const Menubar = ({
     useMenuRef?.current?.close();
   }, [location]);
 
+  useEffect(() => {
+    const fetchProjects = async () => {
+      const data = await api.callApi('projects');
+      setProjects(data ?? []);
+    };
+    fetchProjects();
+  }, [api]);
+
   return (
     <div className={contentClass}>
       {enabled && (
@@ -122,7 +133,7 @@ export const Menubar = ({
             closeOnClickOutside={!sidebarPinned}
           >
             <div className={`${menubarClass.elem('trigger')} main-menu-trigger`}>
-              <img src={absoluteURL("/static/icons/logo-black.svg")} alt={t('menubar.logoAlt')} height="22" />
+              <img src={absoluteURL("/static/icons/logo.png")} alt={t('menubar.logoAlt')} height="28" /><span style={{fontWeight: 500, marginLeft: 8, fontSize: 16}}>智能训练服务-标注平台</span>
               <Hamburger opened={sidebarOpened} />
             </div>
           </Dropdown.Trigger>
@@ -171,15 +182,9 @@ export const Menubar = ({
               onVisibilityChanged={() => window.dispatchEvent(new Event('resize'))}
               visible={sidebarOpened}
               className={[sidebarClass, sidebarClass.mod({ floating: !sidebarPinned })].join(" ")}
-              style={{ width: 240 }}
+              style={{ width: 340 }}
             >
               <Menu>
-                <Menu.Item
-                  label={t('menubar.menu.projects')}
-                  to="/projects"
-                  icon={<IconFolder />}
-                  exact
-                />
                 {!config.sharedAdminMode && (
                   <Menu.Item
                     label={t('menubar.menu.organization')}
@@ -187,6 +192,16 @@ export const Menubar = ({
                     icon={<IconPersonInCircle />}
                     exact
                   />
+                )}
+
+                {projects.length > 0 && (
+                  projects.map(p => (
+                    <Menu.Item
+                      key={p.id}
+                      label={p.title || '未命名项目'}
+                      to={`/projects/${p.id}/data`}
+                    />
+                  ))
                 )}
 
                 <Menu.Spacer />

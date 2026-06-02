@@ -97,7 +97,7 @@ const setElementRoleState = (element, allowed, message) => {
 };
 
 const initializeDataManager = async (root, props, params) => {
-  if (!window.LabelStudio) throw Error("慧标系统前端未在页面中加载");
+  if (!window.LabelStudio) throw Error("标注平台前端未在页面中加载");
   if (!root && root.dataset.dmInitialized) return;
 
   root.dataset.dmInitialized = true;
@@ -435,7 +435,7 @@ export const DataManagerPage = ({...props}) => {
     setContextProps({dmRef: dataManager});
 
     applyRoleRestrictions(roleRef.current ?? DEFAULT_ROLE);
-  }, [LabelStudio, DataManager, applyRoleRestrictions]);
+  }, [LabelStudio, DataManager, applyRoleRestrictions, params.id]);
 
   const destroyDM = useCallback(() => {
     if (dataManagerRef.current) {

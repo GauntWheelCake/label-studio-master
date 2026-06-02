@@ -10,3 +10,9 @@
 .tag[data-status="pending"]  { background: var(--tag-pending);  }
 .tag[data-status="approved"] { background: var(--tag-approved); }
 .tag[data-status="rejected"] { background: var(--tag-rejected); }
+
+/* Hide DM left-side tabs and add button, keep right-side annotation stats */
+.dm-tabs__list,
+.dm-tabs__add {
+  display: none !important;
+}

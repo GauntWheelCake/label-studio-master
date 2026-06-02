@@ -153,7 +153,7 @@ def _create_user(input_args, config):
     user = User.objects.get(email=username)
     org = Organization.objects.first()
     if not org:
-        Organization.create_organization(created_by=user, title='Label Studio')
+        Organization.create_organization(created_by=user, title='标注平台')
     else:
         org.add_user(user)
 
@@ -284,7 +284,7 @@ def main():
     # print version
     if input_args.command == 'version':
         from label_studio import __version__
-        print('\nLabel Studio version:', __version__, '\n')
+        print('\n标注平台版本:', __version__, '\n')
         print(json.dumps(versions, indent=4))
 
     # init
@@ -297,7 +297,7 @@ def main():
         _init(input_args, config)
 
         print('')
-        print('Label Studio has been successfully initialized.')
+        print('智能训练服务-标注平台已成功初始化。')
         if input_args.command != 'start':
             print('Start the server: label-studio start ' + input_args.project_name)
             return
