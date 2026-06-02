@@ -34,7 +34,7 @@ def playground_replacements(request, task_data):
     if request.GET.get('playground', '0') == '1':
         for key in task_data:
             if "/samples/time-series.csv" in task_data[key]:
-                task_data[key] = "https://app.heartex.ai" + task_data[key]
+                task_data[key] = request.build_absolute_uri("/")[:-1] + task_data[key]
     return task_data
 
 

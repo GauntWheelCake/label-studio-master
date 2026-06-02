@@ -353,7 +353,7 @@ DATA_UNDEFINED_NAME = '$undefined$'
 LICENSE = {}
 VERSIONS = {}
 VERSION_EDITION = '社区版'
-LATEST_VERSION_CHECK = True
+LATEST_VERSION_CHECK = False
 VERSIONS_CHECK_TIME = 0
 
 CREATE_ORGANIZATION = 'organizations.functions.create_organization'

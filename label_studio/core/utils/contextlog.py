@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 class ContextLog(object):
 
     def __init__(self):
-        self.collect_analytics = get_bool_env('collect_analytics', True)
+        self.collect_analytics = get_bool_env('collect_analytics', False)
         self.version = get_app_version()
         self.server_id = self._get_server_id()
 

@@ -13,11 +13,14 @@ def init_sentry(release_name, release_version):
         else:
             advanced = []
 
-        sentry_sdk.init(
-            dsn=settings.SENTRY_DSN,
-            integrations=[DjangoIntegration()] + advanced,
-            traces_sample_rate=settings.SENTRY_RATE,
-            send_default_pii=True,
-            environment=settings.SENTRY_ENVIRONMENT,
-            release=release_name + '@' + str(release_version)
-        )
+        try:
+            sentry_sdk.init(
+                dsn=settings.SENTRY_DSN,
+                integrations=[DjangoIntegration()] + advanced,
+                traces_sample_rate=settings.SENTRY_RATE,
+                send_default_pii=True,
+                environment=settings.SENTRY_ENVIRONMENT,
+                release=release_name + '@' + str(release_version)
+            )
+        except Exception:
+            pass

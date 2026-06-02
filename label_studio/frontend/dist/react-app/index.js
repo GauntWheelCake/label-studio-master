@@ -17587,7 +17587,7 @@ const VersionNotifier = ({
 }) => {
   var _useContext;
 
-  const url = "https://pypi.org/project/label-studio/#history";
+  const url = "#";
   const {
     newVersion,
     updateTime,
@@ -17772,19 +17772,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const initSentry = history => {
-  setTags();
-  _sentry_browser__WEBPACK_IMPORTED_MODULE_1__.init({
-    dsn: "https://5f51920ff82a4675a495870244869c6b@o227124.ingest.sentry.io/5838868",
-    integrations: [new _sentry_tracing__WEBPACK_IMPORTED_MODULE_0__.Integrations.BrowserTracing({
-      routingInstrumentation: _sentry_react__WEBPACK_IMPORTED_MODULE_2__.reactRouterV5Instrumentation(history)
-    })],
-    environment: "development",
-    // Set tracesSampleRate to 1.0 to capture 100%
-    // of transactions for performance monitoring.
-    // We recommend adjusting this value in production
-    tracesSampleRate: 0.25,
-    release: "label-studio@1.1.0-frontend"
-  });
+  // Sentry disabled for intranet deployment
+  return;
 };
 
 const setTags = () => {

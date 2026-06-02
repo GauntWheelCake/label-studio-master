@@ -54287,7 +54287,7 @@
                                 "You have to use <b>timeFormat</b> parameter if your values are datetimes.",
                               ),
                           n.push(
-                            '<br/><a href="https://labelstud.io/tags/timeseries.html#Parameters" target="_blank">Read Documentation</a> for details.',
+                            '<br/><a href="#" target="_blank">Read Documentation</a> for details.',
                           ),
                           new Error(n.join("<br/>"))
                         );
@@ -54298,7 +54298,7 @@
                         `Looks like your <b>timeColumn</b> (${e.timecolumn}) contains non-numbers.`,
                         "You have to use <b>timeFormat</b> parameter if your values are datetimes.",
                         `First wrong values: ${t[e.keyColumn].slice(0, 3).join(", ")}`,
-                        '<a href="https://labelstud.io/tags/timeseries.html#Parameters" target="_blank">Read Documentation</a> for details.',
+                        '<a href="#" target="_blank">Read Documentation</a> for details.',
                       ];
                       throw new Error(n.join("<br/>"));
                     }
@@ -60823,7 +60823,7 @@
           "undefined" != typeof reactHotLoaderGlobal &&
             reactHotLoaderGlobal.default.signature;
           const a =
-              "https://app.heartex.ai/docs/guide/FAQ.html#Image-audio-resource-loading-error-while-labeling",
+              "#",
             
             //   i = {
             //   DONE: "Done!",

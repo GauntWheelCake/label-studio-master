@@ -44,7 +44,7 @@ config: '
 
 
 <!-- {"data": {
-"image": "https://htx-pub.s3.amazonaws.com/samples/clevr.jpg",
+"image": "<HOSTNAME>/static/samples/clevr.jpg",
 "q1": "Are there an equal number of large things and metal spheres?",
 "q2": "What size is the cylinder that is to the left of the brown metal thing that
 and is to the left of the big sphere?",

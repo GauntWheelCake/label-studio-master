@@ -44,7 +44,8 @@ export const VersionProvider = ({children}) => {
 };
 
 export const VersionNotifier = ({showNewVersion, showCurrentVersion}) => {
-  const url = "https://pypi.org/project/label-studio/#history";
+  // PyPI link removed for intranet deployment
+  const url = "#";
   const {newVersion, updateTime, latestVersion, version } = useContext(VersionContext) ?? {};
 
   return (newVersion && showNewVersion) ? (
