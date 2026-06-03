@@ -5,7 +5,6 @@ import { Spinner } from '../../../components';
 import { useAPI } from '../../../providers/ApiProvider';
 import { cn } from '../../../utils/bem';
 import './Config.styl';
-import { IconInfo } from '../../../assets/icons';
 import { t } from '../../../i18n';
 
 
@@ -38,7 +37,7 @@ const TemplatesInGroup = ({ templates, group, onSelectRecipe }) => {
   );
 };
 
-export const TemplatesList = ({ selectedGroup, selectedRecipe, onCustomTemplate, onSelectGroup, onSelectRecipe }) => {
+export const TemplatesList = ({ selectedGroup, selectedRecipe, onSelectGroup, onSelectRecipe }) => {
   const [groups, setGroups] = React.useState([]);
   const [templates, setTemplates] = React.useState();
   const api = useAPI();
@@ -71,20 +70,11 @@ export const TemplatesList = ({ selectedGroup, selectedRecipe, onCustomTemplate,
             </li>
           ))}
         </ul>
-        <button type="button" onClick={onCustomTemplate} className={listClass.elem("custom-template")}>
-          {t('createProject.templates.customTemplate')}
-        </button>
       </aside>
       <main>
         {!templates && <Spinner style={{ width: "100%", height: 200 }} />}
         <TemplatesInGroup templates={templates || []} group={selected} onSelectRecipe={onSelectRecipe} />
       </main>
-      <footer>
-        <IconInfo className={listClass.elem("info-icon")} width="20" height="20" />
-        {t('createProject.templates.footer.docsPrefix')}{' '}
-        {t('createProject.templates.footer.linkText')}
-        {t('createProject.templates.footer.suffix')}
-      </footer>
     </div>
   );
 };

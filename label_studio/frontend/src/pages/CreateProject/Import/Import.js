@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
-import { Modal } from '../../../components/Modal/Modal';
 import { cn } from '../../../utils/bem';
 import { unique } from '../../../utils/helpers';
 import "./Import.styl";
-import { IconUpload, IconInfo, IconError } from '../../../assets/icons';
+import { IconUpload, IconError } from '../../../assets/icons';
 import { useAPI } from '../../../providers/ApiProvider';
 import { t } from '../../../i18n';
 
@@ -51,18 +50,6 @@ function getFiles(files) {
       .then(resolve);
   });
 }
-
-const Footer = () => {
-  return (
-    <Modal.Footer>
-      <IconInfo className={importClass.elem("info-icon")} width="20" height="20" />
-      
-      {t('importPage.footer.connector')}{' '}
-      {t('importPage.footer.syncLink')}
-      {t('importPage.footer.suffix')}
-    </Modal.Footer>
-  );
-};
 
 const Upload = ({ children, sendFiles }) => {
   const [hovered, setHovered] = useState(false);
@@ -344,7 +331,6 @@ export const ImportPage = ({
         </Upload>
       </main>
 
-      <Footer />
     </div>
   );
 };

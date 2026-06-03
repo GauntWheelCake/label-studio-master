@@ -10,7 +10,7 @@ import { Palette } from '../../../utils/colors';
 import { colorNames } from './colors';
 import './Config.styl';
 import { Preview } from './Preview';
-import { DEFAULT_COLUMN, EMPTY_CONFIG, isEmptyConfig, Template } from './Template';
+import { DEFAULT_COLUMN, isEmptyConfig, Template } from './Template';
 import { TemplatesList } from './TemplatesList';
 import { useAPI } from '../../../providers/ApiProvider';
 import { t } from '../../../i18n';
@@ -429,11 +429,6 @@ export const ConfigPage = ({ config: initialConfig = "", columns: externalColumn
     setMode("view");
   });
 
-  const onCustomTemplate = React.useCallback(() => {
-    setTemplate(EMPTY_CONFIG);
-    setMode("view");
-  });
-
   React.useEffect(() => {
     if (initialConfig) {
       setTemplate(initialConfig);
@@ -452,7 +447,6 @@ export const ConfigPage = ({ config: initialConfig = "", columns: externalColumn
           selectedRecipe={selectedRecipe}
           onSelectGroup={setSelectedGroup}
           onSelectRecipe={onSelectRecipe}
-          onCustomTemplate={onCustomTemplate}
         />
         <Configurator
           case="view"

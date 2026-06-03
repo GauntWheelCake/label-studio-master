@@ -1,6 +1,6 @@
 import React from 'react';
 import { useHistory } from 'react-router';
-import { Button, ToggleItems } from '../../components';
+import { Button } from '../../components';
 import { Modal } from '../../components/Modal/Modal';
 import { Space } from '../../components/Space/Space';
 import { useAPI } from '../../providers/ApiProvider';
@@ -11,10 +11,32 @@ import { ImportPage } from './Import/Import';
 import { useImportPage } from './Import/useImportPage';
 import { useDraftProject } from './utils/useDraftProject';
 import { t } from '../../i18n';
+import { LsCheck, LsChevronRight } from '../../assets/icons';
+
+const StepIconProject = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+  </svg>
+);
+
+const StepIconUpload = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+    <polyline points="17 8 12 3 7 8" />
+    <line x1="12" y1="3" x2="12" y2="15" />
+  </svg>
+);
+
+const StepIconConfig = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="3" />
+    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+  </svg>
+);
 
 
-  const ProjectName = ({ name, setName, onSaveName, onSubmit, error, description, setDescription, show = true }) => !show ? null :(
-    <form className={cn("project-name")} onSubmit={e => { e.preventDefault(); onSubmit(); }}>
+  const ProjectName = ({ name, setName, onSaveName, error, description, setDescription, show = true }) => !show ? null :(
+    <form className={cn("project-name")} onSubmit={e => { e.preventDefault(); }}>
       <div className="field field--wide">
         <label htmlFor="project_name">{t('createProject.projectName.label')}</label>
         <input name="name" id="project_name" value={name} onChange={e => setName(e.target.value)} onBlur={onSaveName} />
@@ -34,9 +56,51 @@ import { t } from '../../i18n';
   </form>
 );
 
+const WizardSteps = ({ current, onSelect }) => {
+  const steps = [
+    { key: 'name', label: '项目信息', icon: <StepIconProject /> },
+    { key: 'import', label: '数据导入', icon: <StepIconUpload /> },
+    { key: 'config', label: '标注配置', icon: <StepIconConfig /> },
+  ];
+
+  const currentIndex = steps.findIndex(s => s.key === current);
+  const stepsClass = cn('wizard-steps');
+  const stepClass = cn('wizard-step');
+
+  return (
+    <div className={stepsClass.toString()}>
+      {steps.map((step, index) => {
+        const isCompleted = index < currentIndex;
+        const isCurrent = index === currentIndex;
+        const canClick = isCompleted;
+
+        return (
+          <React.Fragment key={step.key}>
+            <button
+              type="button"
+              className={stepClass.mod({ completed: isCompleted, current: isCurrent, pending: !isCompleted && !isCurrent }).toString()}
+              onClick={() => canClick && onSelect?.(step.key)}
+              disabled={!canClick}
+            >
+              {isCompleted ? <LsCheck width="14" height="14" /> : step.icon}
+              <span>{step.label}</span>
+            </button>
+            {index < steps.length - 1 && (
+              <span className={stepClass.elem('arrow').toString()}>
+                <LsChevronRight width="14" height="14" />
+              </span>
+            )}
+          </React.Fragment>
+        );
+      })}
+    </div>
+  );
+};
+
 export const CreateProject = ({ onClose }) => {
-  const [step, setStep] = React.useState("name"); // name | import | config
+  const [step, setStep] = React.useState("name");
   const [waiting, setWaitingStatus] = React.useState(false);
+  const [configValid, setConfigValid] = React.useState(false);
 
   const project = useDraftProject();
   const history = useHistory();
@@ -52,15 +116,9 @@ export const CreateProject = ({ onClose }) => {
   const { columns, uploading, uploadDisabled, finishUpload, pageProps } = useImportPage(project);
 
   const rootClass = cn("create-project");
-  const tabClass = rootClass.elem("tab");
-  const steps = {
-    name: <span className={tabClass.mod({ disabled: !!error })}>{t('createProject.steps.name')}</span>,
-    import: <span className={tabClass.mod({ disabled: uploadDisabled })}>{t('createProject.steps.import')}</span>,
-    config: <span className={tabClass}>{t('createProject.steps.config')}</span>,
-  };
+  const stepOrder = ['name', 'import', 'config'];
+  const currentIndex = stepOrder.indexOf(step);
 
-  // name intentionally skipped from deps:
-  // this should trigger only once when we got project loaded
   React.useEffect(() => project && !name && setName(project.title), [project]);
 
   const projectBody = React.useMemo(() => ({
@@ -88,7 +146,10 @@ export const CreateProject = ({ onClose }) => {
   }, [project, projectBody, finishUpload]);
 
   const onSaveName = async () => {
-    if (error) return;
+    if (!name.trim()) {
+      setError('项目名不能为空');
+      return false;
+    }
     const res = await api.callApi('updateProjectRaw', {
       params: {
         pk: project.id,
@@ -97,12 +158,16 @@ export const CreateProject = ({ onClose }) => {
         title: name,
       },
     });
-    if (res.ok) return;
+    if (res.ok) {
+      setError(null);
+      return true;
+    }
     const err = await res.json();
-    setError(err.validation_errors?.title);
+    setError(err.validation_errors?.title || '保存失败');
+    return false;
   };
 
-  const onDelete = React.useCallback(async () => {
+  const onCancel = React.useCallback(async () => {
     setWaitingStatus(true);
     if (project) await api.callApi('deleteProject', {
       params: {
@@ -114,30 +179,93 @@ export const CreateProject = ({ onClose }) => {
     onClose?.();
   }, [project]);
 
+  const goToNextStep = async () => {
+    if (step === 'name') {
+      const ok = await onSaveName();
+      if (ok) setStep('import');
+    } else if (step === 'import') {
+      setStep('config');
+    }
+  };
+
+  const goToPrevStep = () => {
+    if (step === 'import') setStep('name');
+    else if (step === 'config') setStep('import');
+  };
+
+  const canGoNext = React.useMemo(() => {
+    if (step === 'name') return name.trim().length > 0 && !error;
+    if (step === 'import') return !uploadDisabled;
+    return false;
+  }, [step, name, error, uploadDisabled]);
+
+  const canSave = React.useMemo(() => {
+    return configValid && !uploadDisabled && !waiting && !uploading;
+  }, [configValid, uploadDisabled, waiting, uploading]);
+
+  const handleStepSelect = (nextStep) => {
+    const nextIndex = stepOrder.indexOf(nextStep);
+    if (nextIndex < currentIndex) {
+      setStep(nextStep);
+    }
+  };
+
   return (
     <Modal onHide={() => history.push("/projects")} fullscreen visible bare closeOnClickOutside={false}>
       <div className={rootClass}>
         <Modal.Header>
           <h1>{t('createProject.header.title')}</h1>
-          <ToggleItems items={steps} active={step} onSelect={setStep} />
-
-            <Space>
-              <Button look="danger" size="compact" onClick={onDelete} waiting={waiting}>{t('createProject.actions.delete')}</Button>
-              <Button look="primary" size="compact" onClick={onCreate} waiting={waiting || uploading} disabled={!project || uploadDisabled || error}>{t('createProject.actions.save')}</Button>
-            </Space>
+          <WizardSteps current={step} onSelect={handleStepSelect} />
+          <Button look="danger" size="compact" onClick={onCancel} waiting={waiting}>
+            {t('createProject.actions.delete')}
+          </Button>
         </Modal.Header>
-        <ProjectName
-          name={name}
-          setName={setName}
-          error={error}
-          onSaveName={onSaveName}
-          onSubmit={onCreate}
-          description={description}
-          setDescription={setDescription}
-          show={step === "name"}
-        />
-        <ImportPage project={project} show={step === "import"} {...pageProps} />
-        <ConfigPage project={project} onUpdate={setConfig} show={step === "config"} columns={columns} disableSaveButton={true} />
+
+        <div className={rootClass.elem("body")}>
+          <ProjectName
+            name={name}
+            setName={setName}
+            error={error}
+            onSaveName={onSaveName}
+            description={description}
+            setDescription={setDescription}
+            show={step === "name"}
+          />
+          <ImportPage project={project} show={step === "import"} {...pageProps} />
+          <ConfigPage
+            project={project}
+            onUpdate={setConfig}
+            show={step === "config"}
+            columns={columns}
+            disableSaveButton={true}
+            onValidate={(validation) => setConfigValid(!validation?.error)}
+          />
+        </div>
+
+        <div className={rootClass.elem("footer")}>
+          <Space>
+            {step !== 'name' && (
+              <Button size="compact" onClick={goToPrevStep}>
+                上一步
+              </Button>
+            )}
+            {step === 'name' && (
+              <Button look="primary" size="compact" onClick={goToNextStep} disabled={!canGoNext}>
+                下一步
+              </Button>
+            )}
+            {step === 'import' && (
+              <Button look="primary" size="compact" onClick={goToNextStep} disabled={!canGoNext}>
+                下一步
+              </Button>
+            )}
+            {step === 'config' && (
+              <Button look="primary" size="compact" onClick={onCreate} disabled={!canSave} waiting={waiting || uploading}>
+                保存
+              </Button>
+            )}
+          </Space>
+        </div>
       </div>
     </Modal>
   );
