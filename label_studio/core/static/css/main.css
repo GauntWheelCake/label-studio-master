@@ -2659,27 +2659,35 @@ hotkey i {
 }
 
 /* --- CSS Modules hash classes --- */
-[data-theme="dark"] #label-studio [class*="--"]:not([class^="lsf-"]):not([class^="ant-"]) {
+[data-theme="dark"] [class*="--"]:not([class^="lsf-"]):not([class^="ant-"]):not([class^="dm-"]) {
     color: #c9d1d9 !important;
 }
-[data-theme="dark"] #label-studio [class*="menu--"] {
+[data-theme="dark"] [class*="menu--"] {
     background-color: #161b22 !important;
     border-left-color: rgba(255,255,255,0.1) !important;
 }
-[data-theme="dark"] #label-studio [class*="section--"] {
+[data-theme="dark"] [class*="section--"] {
     background: #161b22 !important;
     border-color: rgba(255,255,255,0.2) !important;
 }
-[data-theme="dark"] #label-studio [class*="editorfs--"] {
+[data-theme="dark"] [class*="editorfs--"] {
     background: #0d1117 !important;
 }
-[data-theme="dark"] #label-studio [class*="dialoguename--"],
-[data-theme="dark"] #label-studio [class*="dialoguename--"] span {
+[data-theme="dark"] [class*="editor--"] {
+    --main-bg-color: #0d1117 !important;
+    background-color: #0d1117 !important;
+}
+[data-theme="dark"] [class*="dialoguename--"],
+[data-theme="dark"] [class*="dialoguename--"] span {
     background: #161b22 !important;
 }
-[data-theme="dark"] #label-studio [class*="mark--"] {
+[data-theme="dark"] [class*="mark--"] {
     background-color: #1a2f1a !important;
     border-color: #4a8a4a !important;
+}
+[data-theme="dark"] [class*="block--"] {
+    background-color: #161b22 !important;
+    border-color: rgba(255,255,255,0.1) !important;
 }
 
 
@@ -2772,17 +2780,17 @@ hotkey i {
 }
 
 /* --- CSS Modules hash: selected / tree labels / list items --- */
-[data-theme="dark"] #label-studio [class*="selected--"] {
+[data-theme="dark"] [class*="selected--"] {
     background-color: rgba(31,111,235,0.12);
 }
-[data-theme="dark"] #label-studio [class*="lstitem--"] {
+[data-theme="dark"] [class*="lstitem--"] {
     background: transparent;
     border-bottom-color: #30363d;
     color: #c9d1d9;
 }
-[data-theme="dark"] #label-studio [class*="treelabels--"] {
+[data-theme="dark"] [class*="treelabels--"] {
     background: transparent;
 }
-[data-theme="dark"] #label-studio [class*="node--"] {
+[data-theme="dark"] [class*="node--"] {
     color: #c9d1d9;
 }

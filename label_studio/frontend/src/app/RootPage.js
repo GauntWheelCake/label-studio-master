@@ -4,8 +4,7 @@ import { ProjectRoutes } from '../routes/ProjectRoutes';
 
 const isStorageTrue = (key, defaultValue = true) => {
   const value = localStorage.getItem(key);
-  if (value === null) return defaultValue;
-  return value !== 'false';
+  return value === null ? defaultValue : value !== 'false';
 };
 
 export const RootPage = ({content}) => {

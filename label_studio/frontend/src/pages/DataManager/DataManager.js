@@ -117,6 +117,7 @@ const initializeDataManager = async (root, props, params) => {
       export: false,
       backButton: false,
       labelingHeader: false,
+      labelButton: false,
     },
     ...props,
     ...settings,
@@ -1220,6 +1221,15 @@ DataManagerPage.context = ({dmRef}) => {
 
   return project && project.id ? (
     <Space size="small">
+      {mode !== 'explorer' && (
+        <Button
+          size="compact"
+          onClick={() => dmRef?.store?.closeLabeling?.()}
+        >
+          {'\u8fd4\u56de'}
+        </Button>
+      )}
+
       {(mode === 'explorer' || currentTaskId) && (
         <Button
           size="compact"

@@ -1,4 +1,5 @@
 import { createContext, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
 import { StaticContent } from '../../app/StaticContent/StaticContent';
 import { IconPersonInCircle, IconPin, LsDoor, LsSettings } from '../../assets/icons';
 import { useAPI } from '../../providers/ApiProvider';
@@ -112,6 +113,8 @@ export const Menubar = ({
     Component: null,
     props: {},
   });
+  const pageContextRef = useRef(PageContext);
+  pageContextRef.current = PageContext;
 
   const menubarClass = cn('menu-header');
   const menubarContext = menubarClass.elem('context');
@@ -133,8 +136,6 @@ export const Menubar = ({
   }, [onSidebarToggle]);
 
   const providerValue = useMemo(() => ({
-    PageContext,
-
     setContext(ctx) {
       setPageContext(prev => ({ ...prev, Component: ctx }));
     },
@@ -144,9 +145,9 @@ export const Menubar = ({
     },
 
     contextIsSet(ctx) {
-      return PageContext.Component === ctx;
+      return pageContextRef.current.Component === ctx;
     },
-  }), [PageContext]);
+  }), []);
 
   useEffect(() => {
     if (!sidebarPinned) {

@@ -7,6 +7,7 @@ import ujson as json
 import os
 from datetime import datetime
 from copy import deepcopy
+from urllib.parse import unquote
 
 from django.conf import settings
 from django.db import models
@@ -67,9 +68,23 @@ class DataExport(object):
         return sorted(formats, key=lambda f: f.get('disabled', False))
 
     @staticmethod
+    def _decode_task_urls(tasks):
+        """URL-decode local file paths in task data so external converters can read them from disk."""
+        for task in tasks:
+            task_data = task.get('data')
+            if isinstance(task_data, dict):
+                for key, value in task_data.items():
+                    if isinstance(value, str) and value.startswith('/data/'):
+                        task_data[key] = unquote(value)
+            elif isinstance(task_data, str) and task_data.startswith('/data/'):
+                task['data'] = unquote(task_data)
+        return tasks
+
+    @staticmethod
     def generate_export_file(project, tasks, output_format, get_args):
         # prepare for saving
         now = datetime.now()
+        tasks = DataExport._decode_task_urls(tasks)
         data = json.dumps(tasks, ensure_ascii=False)
         md5 = hashlib.md5(json.dumps(data).encode('utf-8')).hexdigest()
         name = 'project-' + str(project.id) + '-at-' + now.strftime('%Y-%m-%d-%H-%M') + f'-{md5[0:8]}'

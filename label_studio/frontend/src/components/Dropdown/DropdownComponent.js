@@ -149,7 +149,7 @@ export const Dropdown = forwardRef(
       }
     }, [visibility, visible]);
 
-    const hasPosition = offset?.left !== undefined;
+    const hasPosition = offset.left !== undefined;
 
     const compositeStyles = {
       ...(props.style ?? {}),
