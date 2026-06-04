@@ -1,0 +1,301 @@
+
+/* Auto-generated dark overrides for remaining ls- and dm- rules */
+[data-theme="dark"] .ls-button_waiting, .ls-button:disabled {
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .ls-button__extra {
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .ls-button_waiting {
+    background: #21262d;
+}
+
+[data-theme="dark"] .ls-modal {
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .ls-modal__header_divided {
+    border-color: #30363d;
+}
+
+[data-theme="dark"] .ls-main-menu__item:not(.ls-main-menu__item_look_danger):hover {
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .ls-menu-group__title {
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .ls-breadcrumbs__item > span, .ls-breadcrumbs__item > a {
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .ls-checkbox {
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .ls-checkbox__check {
+    background: #161b22;
+}
+
+[data-theme="dark"] .ls-checkbox__check::after {
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .ls-tooltip {
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .ls-tooltip::before {
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .ls-userpic {
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .ls-menu-header__role-switcher {
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .ls-menu-header__role-select {
+    background: #0d1117;
+    border-color: #30363d;
+}
+
+[data-theme="dark"] .ls-menu-header__role-select:focus {
+    color: #c9d1d9;
+    border-color: #30363d;
+}
+
+[data-theme="dark"] .ls-toggle-items__item {
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .ls-toggle-items__item_active {
+    background: #161b22;
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .ls-description {
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .ls-form-validation__message {
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .ls-label__description {
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .ls-label[data-required] .ls-label__text::after {
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .ls-counter {
+    background: #161b22;
+}
+
+[data-theme="dark"] .ls-counter__btn {
+    background: #161b22;
+}
+
+[data-theme="dark"] .ls-counter__btn_disabled {
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .ls-input, .ls-select, .ls-textarea {
+    background: #0d1117;
+    border-color: #30363d;
+}
+
+[data-theme="dark"] .ls-select_ghost:hover {
+    border-color: #30363d;
+}
+
+[data-theme="dark"] .ls-form__info_valid {
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .ls-people-list__column, .ls-people-list__field {
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .ls-people-list__column.ls-last-activity, .ls-people-list__field.ls-last-activity {
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .ls-people-list__user:nth-child(odd):not(.ls-people-list__user_active) {
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .ls-people-list__user_active {
+    background: #161b22;
+}
+
+[data-theme="dark"] .ls-people-list__user_active::after {
+    background: #161b22;
+}
+
+[data-theme="dark"] .ls-user-info {
+    border-color: #30363d;
+}
+
+[data-theme="dark"] .ls-user-info__header {
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .ls-user-info__full-name {
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .ls-user-info__actions-hint {
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .ls-wizard .ls-configure__container {
+    background: #161b22;
+}
+
+[data-theme="dark"] .ls-wizard ul.ls-configure__settings input[type=text], .ls-wizard ul.ls-configure__settings select {
+    border-color: #30363d;
+}
+
+[data-theme="dark"] .ls-wizard .ls-configure__preview {
+    background: #161b22;
+    border-color: #30363d;
+}
+
+[data-theme="dark"] .ls-create-project > .ls-modal__header {
+    border-color: #30363d;
+}
+
+[data-theme="dark"] .ls-create-project__footer {
+    border-color: #30363d;
+}
+
+[data-theme="dark"] .ls-wizard-step_pending {
+    background: #161b22;
+    border-color: #30363d;
+}
+
+[data-theme="dark"] .ls-upload_page__csv-handling_highlighted {
+    background: #161b22;
+}
+
+[data-theme="dark"] .ls-export-page__footer {
+    background: #161b22;
+}
+
+[data-theme="dark"] .ls-export-page__notice {
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .ls-formats {
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .ls-radio-group__button_checked {
+    background: #21262d;
+}
+
+[data-theme="dark"] .ls-dl {
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .ls-ml__status {
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .dm-button {
+    background: #21262d;
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .dm-button:disabled,.dm-button[disabled],.dm-button_disabled,.dm-button_waiting {
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .dm-button__extra {
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .dm-button_waiting {
+    background: #21262d;
+}
+
+[data-theme="dark"] .dm-dropdown {
+    background: #161b22;
+}
+
+[data-theme="dark"] .dm-menu__item {
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .dm-menu__item:not(.dm-menu__item_look_danger):hover {
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .dm-menu__item:not(.dm-menu__item_active):hover {
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .dm-menu__item_active {
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .dm-menu__divider {
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .dm-menu-group__title {
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .dm-checkbox__check {
+    background: #161b22;
+}
+
+[data-theme="dark"] .dm-tooltip,.dm-tooltip:before {
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .dm-select {
+    background: #0d1117;
+    border-color: #30363d;
+}
+
+[data-theme="dark"] .dm-select__optgroup-label {
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .dm-input,.dm-textarea {
+    background: #0d1117;
+    border-color: #30363d;
+}
+
+[data-theme="dark"] .dm-filters {
+    background: #161b22;
+}
+
+[data-theme="dark"] .dm-modal {
+    color: #c9d1d9;
+}
+
+[data-theme="dark"] .dm-modal__content {
+    background: #161b22;
+}
+
+[data-theme="dark"] .dm-modal__header_divided {
+    border-color: #30363d;
+}
+
+[data-theme="dark"] .dm-radio-group__button_checked {
+    background: #21262d;
+}
+
+[data-theme="dark"] .dm-tabs__item_active {
+Total generated rules: 359

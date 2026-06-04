@@ -1,7 +1,7 @@
 .sidebar
   left: 0
   overflow auto
-  position fixed
+  position fixed !important
   z-index 100 !important
   top var(--header-height)
   height calc(100vh - var(--header-height))
@@ -41,7 +41,7 @@
 
     &.appear ~ .content-wrapper__content,
     &.visible ~ .content-wrapper__content
-      margin-left 240px
+      margin-left var(--menu-sidebar-width)
 
     &.disappear ~ .content-wrapper__content
       margin-left 0

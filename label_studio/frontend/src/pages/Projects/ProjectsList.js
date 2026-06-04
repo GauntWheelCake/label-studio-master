@@ -59,6 +59,7 @@ const CreateProjectCard = ({ onClick }) => {
 
 const ProjectCard = ({ project, onDelete }) => {
   const api = useAPI();
+  const dropdownRef = React.useRef(null);
   const color = useMemo(() => {
     return project.color === '#FFFFFF' ? null : project.color;
   }, [project]);
@@ -73,6 +74,8 @@ const ProjectCard = ({ project, onDelete }) => {
   const handleDelete = (e) => {
     e.stopPropagation();
     e.preventDefault();
+
+    dropdownRef.current?.close();
 
     const title = project.title ?? t('projectsPage.card.untitled');
     let modalRef;
@@ -114,7 +117,7 @@ const ProjectCard = ({ project, onDelete }) => {
               e.stopPropagation();
               e.preventDefault();
             }}>
-              <Dropdown.Trigger content={(
+              <Dropdown.Trigger ref={dropdownRef} content={(
                 <Menu>
                   <Menu.Item href={`/projects/${project.id}/settings`}>{t('projectsPage.card.menu.settings')}</Menu.Item>
                   <Menu.Item href={`/projects/${project.id}/data?labeling=1`}>{t('projectsPage.card.menu.label')}</Menu.Item>

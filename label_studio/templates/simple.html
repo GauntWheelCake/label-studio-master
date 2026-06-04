@@ -14,8 +14,8 @@
   <meta name="msapplication-navbutton-color" content="#272727">  <!-- Windows Phone -->
   <meta name="apple-mobile-web-app-status-bar-style" content="#272727">  <!-- iOS Safari -->
 
-  <link href="{{settings.HOSTNAME}}{% static 'images/logo.png' %}" rel="shortcut icon" type="image/png"/>
-  <link href="{{settings.HOSTNAME}}{% static 'css/main.css' %}" rel="stylesheet"/>
+  <link href="{{settings.HOSTNAME}}{% static 'images/logo.png' %}?v=2" rel="shortcut icon" type="image/png"/>
+  <link href="{{settings.HOSTNAME}}{% static 'css/main.css' %}?v=9" rel="stylesheet"/>
   <link href="{{settings.HOSTNAME}}/react-app/main.css?v={{ versions.backend.commit }}" rel="stylesheet">
 
   {% block head %}

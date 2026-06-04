@@ -41,6 +41,56 @@ const RightContextMenu = ({ className, ...props }) => {
   );
 };
 
+export const ThemeToggle = () => {
+  const [theme, setTheme] = useState(() => {
+    return document.documentElement.getAttribute('data-theme') || 'light';
+  });
+
+  const toggleTheme = () => {
+    const next = theme === 'light' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('ls-theme', next);
+    setTheme(next);
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={toggleTheme}
+      title={theme === 'light' ? '切换暗色模式' : '切换亮色模式'}
+      style={{
+        background: 'transparent',
+        border: 'none',
+        cursor: 'pointer',
+        padding: '4px 8px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: 'inherit',
+        outline: 'none',
+      }}
+    >
+      {theme === 'light' ? (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="5" />
+          <line x1="12" y1="1" x2="12" y2="3" />
+          <line x1="12" y1="21" x2="12" y2="23" />
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+          <line x1="1" y1="12" x2="3" y2="12" />
+          <line x1="21" y1="12" x2="23" y2="12" />
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+        </svg>
+      ) : (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+        </svg>
+      )}
+    </button>
+  );
+};
+
 export const Menubar = ({
   enabled,
   defaultOpened,
@@ -140,7 +190,7 @@ export const Menubar = ({
             closeOnClickOutside={!sidebarPinned}
           >
             <div className={`${menubarClass.elem('trigger')} main-menu-trigger`}>
-              <img src={absoluteURL("/static/icons/logo.png")} alt={t('menubar.logoAlt')} height="28" /><span style={{fontWeight: 500, marginLeft: 8, fontSize: 16}}>智能训练服务-标注平台</span>
+              <img src={absoluteURL("/static/icons/logo.png?v=2")} alt={t('menubar.logoAlt')} height="28" /><span style={{fontWeight: 500, marginLeft: 8, fontSize: 16}}>智能训练服务-标注平台</span>
               <Hamburger opened={sidebarOpened} />
             </div>
           </Dropdown.Trigger>
@@ -150,6 +200,8 @@ export const Menubar = ({
 
             <RightContextMenu className={contextItem.mod({ right: true })} />
           </div>
+
+          <ThemeToggle />
 
           {config.sharedAdminMode ? (
             <div className={menubarClass.elem('user')}>
@@ -163,7 +215,6 @@ export const Menubar = ({
                   label={t('menubar.menu.accountAndSettings')}
                   href="/user/account"
                 />
-                {/* <Menu.Item label="Dark Mode"/> */}
                 <Menu.Item
                   icon={<LsDoor />}
                   label={t('menubar.menu.logout')}
@@ -189,7 +240,7 @@ export const Menubar = ({
               onVisibilityChanged={() => window.dispatchEvent(new Event('resize'))}
               visible={sidebarOpened}
               className={[sidebarClass, sidebarClass.mod({ floating: !sidebarPinned })].join(" ")}
-              style={{ width: 340 }}
+              style={{ width: 'var(--menu-sidebar-width)' }}
             >
               <Menu>
                 {!config.sharedAdminMode && (

@@ -33,6 +33,11 @@ initSentry(browserHistory);
 
 initializeI18n();
 
+const savedTheme = localStorage.getItem('ls-theme');
+if (savedTheme) {
+  document.documentElement.setAttribute('data-theme', savedTheme);
+}
+
 const App = ({content}) => {
   const libraries = {
     lsf: {
