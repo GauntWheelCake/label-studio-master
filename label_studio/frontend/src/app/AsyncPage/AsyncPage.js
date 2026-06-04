@@ -7,6 +7,7 @@ import { absoluteURL, removePrefix } from '../../utils/helpers';
 import { clearScriptsCache, isScriptValid, reInsertScripts, replaceScript } from '../../utils/scripts';
 
 const pageCache = new Map();
+let connectionErrorModal = null;
 
 const pageFromHTML = (html) => {
   const parser = new DOMParser();
@@ -46,7 +47,9 @@ const loadAsyncPage = async (url) => {
       return html;
     }
   } catch (err) {
-    modal({
+    if (connectionErrorModal) return null;
+
+    connectionErrorModal = modal({
       body: () => (
         <ErrorWrapper
           possum={false}
@@ -54,8 +57,11 @@ const loadAsyncPage = async (url) => {
           message={"服务器未响应，请确认服务仍在运行。"}
         />
       ),
-      allowClose: false,
+      allowClose: true,
       style: { width: 680 },
+      onHidden: () => {
+        connectionErrorModal = null;
+      },
     });
     return null;
   }

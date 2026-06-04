@@ -6,6 +6,7 @@ import { APIProxy } from '../utils/api-proxy';
 import { absoluteURL } from '../utils/helpers';
 
 const API = new APIProxy(API_CONFIG);
+let apiConnectionErrorModal = null;
 
 export const ApiContext = createContext();
 ApiContext.displayName = 'ApiContext';
@@ -39,8 +40,10 @@ const handleError = async (response, showModal = true) => {
   if (showModal) {
     const {isShutdown, ...formattedError} = errorFormatter(result);
 
-    modal({
-      allowClose: !isShutdown,
+    if (isShutdown && apiConnectionErrorModal) return;
+
+    const m = modal({
+      allowClose: true,
       simple: true,
       body: isShutdown ? (
         <ErrorWrapper
@@ -51,9 +54,13 @@ const handleError = async (response, showModal = true) => {
       ) : (
         <ErrorWrapper {...formattedError}/>
       ),
-      simple: true,
       style: { width: 680 },
+      onHidden: () => {
+        if (apiConnectionErrorModal === m) apiConnectionErrorModal = null;
+      },
     });
+
+    if (isShutdown) apiConnectionErrorModal = m;
   }
 };
 
