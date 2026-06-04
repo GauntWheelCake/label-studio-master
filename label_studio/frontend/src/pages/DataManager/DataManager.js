@@ -462,13 +462,21 @@ export const DataManagerPage = ({...props}) => {
     if (typeof MutationObserver === 'undefined') return;
     if (typeof document === 'undefined' || !document.body) return;
 
+    let rafId;
     const observer = new MutationObserver(() => {
-      applyRoleRestrictions(roleRef.current ?? DEFAULT_ROLE);
+      if (rafId) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        applyRoleRestrictions(roleRef.current ?? DEFAULT_ROLE);
+      });
     });
 
     observer.observe(document.body, { childList: true, subtree: true });
 
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      if (rafId) cancelAnimationFrame(rafId);
+    };
   }, [applyRoleRestrictions]);
 
   useEffect(() => {
