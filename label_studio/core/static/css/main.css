@@ -212,15 +212,6 @@ main.main {
     background-color: #1a1a1a;
     color: #e0e0e0;
 }
-[data-theme="dark"] table th {
-    background-color: #252525;
-    color: #e0e0e0;
-}
-[data-theme="dark"] table td {
-    color: #d0d0d0;
-    border-bottom-color: rgba(255,255,255,0.08);
-}
-
 /* 项目卡片 */
 [data-theme="dark"] .projects-page .project-card {
     background-color: #1e1e1e;
@@ -1017,10 +1008,6 @@ hotkey i {
     color: #c9d1d9;
 }
 
-[data-theme="dark"] .ls-menu-header__context {
-    color: #c9d1d9;
-}
-
 [data-theme="dark"] .ls-sidebar {
     background: #161b22;
     border-right: 1px solid #30363d;
@@ -1567,15 +1554,6 @@ hotkey i {
 }
 
 /* Templates list (Config -> Browse templates) */
-[data-theme="dark"] .ls-templates-list__sidebar {
-    background: #0d1117;
-    border-right: 1px solid #30363d;
-}
-
-[data-theme="dark"] .ls-templates-list__group {
-    color: #c9d1d9;
-}
-
 [data-theme="dark"] .ls-templates-list__group:hover {
     background: #21262d;
 }

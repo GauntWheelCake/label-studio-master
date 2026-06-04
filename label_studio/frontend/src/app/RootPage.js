@@ -2,9 +2,15 @@ import React from 'react';
 import { Menubar } from '../components/Menubar/Menubar';
 import { ProjectRoutes } from '../routes/ProjectRoutes';
 
+const isStorageTrue = (key, defaultValue = true) => {
+  const value = localStorage.getItem(key);
+  if (value === null) return defaultValue;
+  return value !== 'false';
+};
+
 export const RootPage = ({content}) => {
-  const pinned = localStorage.getItem('sidebar-pinned') !== 'false';
-  const opened = pinned && localStorage.getItem('sidebar-opened') !== 'false';
+  const pinned = isStorageTrue('sidebar-pinned');
+  const opened = pinned && isStorageTrue('sidebar-opened');
 
   return (
     <Menubar

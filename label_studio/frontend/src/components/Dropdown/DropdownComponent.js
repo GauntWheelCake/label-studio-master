@@ -149,9 +149,12 @@ export const Dropdown = forwardRef(
       }
     }, [visibility, visible]);
 
+    const hasPosition = offset?.left !== undefined;
+
     const compositeStyles = {
       ...(props.style ?? {}),
       ...(offset ?? {}),
+      ...(!isInline && !hasPosition ? { left: -9999, top: -9999 } : {}),
       zIndex: 1000 + dropdownIndex,
     };
 

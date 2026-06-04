@@ -12,7 +12,7 @@ import { Dropdown } from "../Dropdown/Dropdown";
 import { Hamburger } from "../Hamburger/Hamburger";
 import { Menu } from '../Menu/Menu';
 import { Userpic } from '../Userpic/Userpic';
-import { VersionNotifier, VersionProvider } from '../VersionNotifier/VersionNotifier';
+import { VersionProvider } from '../VersionNotifier/VersionNotifier';
 import './Menubar.styl';
 import './MenuContent.styl';
 import './MenuSidebar.styl';
@@ -128,30 +128,19 @@ export const Menubar = ({
   }, [sidebarPinned]);
 
   const sidebarToggle = useCallback((visible) => {
-    const newState = visible;
-    setSidebarOpened(newState);
-    onSidebarToggle?.(newState);
-  }, [sidebarOpened]);
+    setSidebarOpened(visible);
+    onSidebarToggle?.(visible);
+  }, [onSidebarToggle]);
 
   const providerValue = useMemo(() => ({
     PageContext,
 
     setContext(ctx) {
-      setTimeout(() => {
-        setPageContext({
-          ...PageContext,
-          Component: ctx,
-        });
-      });
+      setPageContext(prev => ({ ...prev, Component: ctx }));
     },
 
     setProps(props) {
-      setTimeout(() => {
-        setPageContext({
-          ...PageContext,
-          props,
-        });
-      });
+      setPageContext(prev => ({ ...prev, props }));
     },
 
     contextIsSet(ctx) {
@@ -190,7 +179,8 @@ export const Menubar = ({
             closeOnClickOutside={!sidebarPinned}
           >
             <div className={`${menubarClass.elem('trigger')} main-menu-trigger`}>
-              <img src={absoluteURL("/static/icons/logo.png?v=2")} alt={t('menubar.logoAlt')} height="28" /><span style={{fontWeight: 500, marginLeft: 8, fontSize: 16}}>智能训练服务-标注平台</span>
+              <img src={absoluteURL("/static/icons/logo.png?v=2")} alt={t('menubar.logoAlt')} height="28" />
+              <span className={menubarClass.elem('brand')}>智能训练服务-标注平台</span>
               <Hamburger opened={sidebarOpened} />
             </div>
           </Dropdown.Trigger>
@@ -263,10 +253,6 @@ export const Menubar = ({
                 )}
 
                 <Menu.Spacer />
-
-                {/* <VersionNotifier showNewVersion/>
-
-                <VersionNotifier showCurrentVersion/> */}
 
                 <Menu.Divider />
 
