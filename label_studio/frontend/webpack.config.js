@@ -30,11 +30,9 @@ const optimizer = {};
 if (process.env.NODE_ENV === 'production') {
   optimizer.minimize = true;
   optimizer.minimizer = [new TerserPlugin(), new CssMinimizerPlugin()];
-  optimizer.runtimeChunk = false,
+  optimizer.runtimeChunk = false;
   optimizer.splitChunks = {
-    cacheGroups: {
-      default: false,
-    },
+    chunks: 'async',
   };
 }
 

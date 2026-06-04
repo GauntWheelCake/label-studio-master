@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { SentryRoute as Route } from '../config/Sentry';
 import { RouteWithStaticFallback } from "../routes/RouteWithStaticFallback";
+import { Spinner } from '../components/Spinner/Spinner';
 
 export const RouteContext = React.createContext();
+
+const fallback = <Spinner size={32} />;
 
 const resolveWithConfig = (routes, config) => {
   return routes instanceof Function ? routes(config) : routes;
@@ -95,7 +98,11 @@ export const resolveRoutes = (routes, props) => {
 
         children.push(...resolvedNestedRoutes);
 
-        return Layout ? <Layout {...routeProps}>{children}</Layout> : children;
+        return Layout ? (
+          <Suspense fallback={fallback}>
+            <Layout {...routeProps}>{children}</Layout>
+          </Suspense>
+        ) : children;
       };
 
       return (
@@ -104,7 +111,9 @@ export const resolveRoutes = (routes, props) => {
     } else {
       const routeProps = { key: fullPath, path: fullPath, modal: !!Component.modal };
       return <Route {...routeProps} exact render={() => (
-        <Component {...(props ?? {})}/>
+        <Suspense fallback={fallback}>
+          <Component {...(props ?? {})}/>
+        </Suspense>
       )} {...rest}/>;
     }
   };

@@ -8,7 +8,7 @@ import { t } from '../../i18n';
 import { ApiContext } from '../../providers/ApiProvider';
 import { useContextProps } from '../../providers/RoutesProvider';
 import { Block, Elem } from '../../utils/bem';
-import { CreateProject } from '../CreateProject/CreateProject';
+const CreateProject = React.lazy(() => import('../CreateProject/CreateProject').then(m => ({ default: m.CreateProject })));
 import { DataManagerPage } from '../DataManager/DataManager';
 import { SettingsPage } from '../Settings';
 import './Projects.styl';
@@ -53,7 +53,11 @@ export const ProjectsPage = () => {
         </Elem>
         <Elem name="content" case="loaded">
           <ProjectsList projects={projectsList} openModal={openModal} onProjectDelete={handleProjectDelete} />
-          {modal && <CreateProject onClose={closeModal} />}
+          {modal && (
+            <React.Suspense fallback={<Spinner size={32} />}>
+              <CreateProject onClose={closeModal} />
+            </React.Suspense>
+          )}
         </Elem>
       </Oneof>
     </Block>

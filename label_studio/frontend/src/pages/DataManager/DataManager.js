@@ -546,7 +546,14 @@ export const DataManagerPage = ({...props}) => {
       setCrashed(true);
     });
 
-    return () => destroyDM();
+    return () => {
+      // 异步销毁重型第三方库，释放主线程给浏览器先完成新页面绘制
+      if (typeof requestAnimationFrame !== 'undefined') {
+        requestAnimationFrame(() => destroyDM());
+      } else {
+        destroyDM();
+      }
+    };
   }, [root, init]);
 
   return crashed ? (

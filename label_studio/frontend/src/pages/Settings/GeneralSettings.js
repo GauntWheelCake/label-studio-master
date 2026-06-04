@@ -1,9 +1,7 @@
 import React, { useCallback, useContext } from 'react';
 import { Button } from '../../components';
 import { Form, Input, TextArea } from '../../components/Form';
-import { RadioGroup } from '../../components/Form/Elements/RadioGroup/RadioGroup';
 import { ProjectContext } from '../../providers/ProjectProvider';
-import { Block } from '../../utils/bem';
 import { t } from '../../i18n';
 
 export const GeneralSettings = () => {
@@ -12,30 +10,6 @@ export const GeneralSettings = () => {
   const updateProject = useCallback(() => {
     if (project.id) fetchProject(project.id, true);
   }, [project]);
-
-  const colors = [
-    '#FFFFFF',
-    '#F52B4F',
-    '#FA8C16',
-    '#F6C549',
-    '#9ACA4F',
-    '#51AAFD',
-    '#7F64FF',
-    '#D55C9D',
-  ];
-
-  const samplings = [
-    {
-      value: "Sequential",
-      label: t('projectSettings.general.sampling.sequential.label'),
-      description: t('projectSettings.general.sampling.sequential.description'),
-    },
-    {
-      value: "Uniform",
-      label: t('projectSettings.general.sampling.uniform.label'),
-      description: t('projectSettings.general.sampling.uniform.description'),
-    },
-  ];
 
   return (
     <div style={{width: 480}}>
@@ -58,25 +32,6 @@ export const GeneralSettings = () => {
             labelProps={{large: true}}
             style={{minHeight: 128}}
           />
-
-          <RadioGroup name="color" label={t('projectSettings.general.color.label')} size="large" labelProps={{size: "large"}}>
-            {colors.map(color => (
-              <RadioGroup.Button key={color} value={color}>
-                <Block name="color" style={{'--background': color}}/>
-              </RadioGroup.Button>
-            ))}
-          </RadioGroup>
-
-          <RadioGroup label={t('projectSettings.general.sampling.label')} labelProps={{size: "large"}} name="sampling" simple>
-            {samplings.map(({value, label, description}) => (
-              <RadioGroup.Button
-                key={value}
-                value={`${value} sampling`}
-                label={label}
-                description={description}
-              />
-            ))}
-          </RadioGroup>
         </Form.Row>
 
         <Form.Actions>
