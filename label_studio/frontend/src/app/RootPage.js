@@ -3,8 +3,12 @@ import { Menubar } from '../components/Menubar/Menubar';
 import { ProjectRoutes } from '../routes/ProjectRoutes';
 
 const isStorageTrue = (key, defaultValue = true) => {
-  const value = localStorage.getItem(key);
-  return value === null ? defaultValue : value !== 'false';
+  try {
+    const value = localStorage.getItem(key);
+    return value === null ? defaultValue : value !== 'false';
+  } catch {
+    return defaultValue;
+  }
 };
 
 export const RootPage = ({content}) => {

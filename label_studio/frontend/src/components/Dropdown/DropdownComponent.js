@@ -26,20 +26,22 @@ export const Dropdown = forwardRef(
       visible ? "visible" : null,
     );
 
+    const { align, enabled, onToggle, onVisibilityChanged } = props;
+
     const calculatePosition = useCallback(() => {
       const dropdownEl = dropdown.current;
       const parent = triggerRef?.current ?? dropdownEl.parentNode;
-      const { left, top } = alignElements(parent, dropdownEl, `bottom-${props.align ?? 'left'}`);
+      const { left, top } = alignElements(parent, dropdownEl, `bottom-${align ?? 'left'}`);
 
       setOffset({ left, top });
-    }, [triggerRef]);
+    }, [triggerRef, align]);
 
     const dropdownIndex = useMemo(() => {
       return lastIndex++;
     }, []);
 
-    const performAnimation = useCallback(async (visible = false) => {
-      if (props.enabled === false && visible === true) return;
+    const performAnimation = useCallback((visible = false) => {
+      if (enabled === false && visible === true) return Promise.resolve();
 
       return new Promise((resolve) => {
         const menu = dropdown.current;
@@ -65,24 +67,24 @@ export const Dropdown = forwardRef(
     }, [animated]);
 
     const changeVisibility = useCallback(async (visibility) => {
-      props.onToggle?.(visibility);
+      onToggle?.(visibility);
       await performAnimation(visibility);
       setVisible(visibility);
-      props.onVisibilityChanged?.(visibility);
-    }, [props, performAnimation]);
+      onVisibilityChanged?.(visibility);
+    }, [onToggle, onVisibilityChanged, performAnimation]);
 
     const close = useCallback(async () => {
       if (currentVisible === false || renderable === false) return;
 
       await changeVisibility(false);
       setRenderable(false);
-    }, [currentVisible, performAnimation, props, renderable]);
+    }, [currentVisible, changeVisibility, renderable]);
 
     const open = useCallback(async () => {
       if (currentVisible === true || renderable === true) return;
 
       setRenderable(true);
-    }, [currentVisible, performAnimation, props, renderable]);
+    }, [currentVisible, renderable]);
 
     const toggle = useCallback(async () => {
       const newState = !currentVisible;
@@ -104,7 +106,8 @@ export const Dropdown = forwardRef(
         open,
         close,
       };
-    }, [close, open, ref, toggle, dropdown, visibility]);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [close, open, ref, toggle, visibility]);
 
     useEffect(() => {
       setVisible(visible);
@@ -132,22 +135,14 @@ export const Dropdown = forwardRef(
         })
         : children;
 
-    const visibilityClasses = useMemo(() => {
-      switch (visibility) {
-        case "before-appear":
-          return "before-appear";
-        case "appear":
-          return "appear before-appear";
-        case "before-disappear":
-          return "before-disappear";
-        case "disappear":
-          return "disappear before-disappear";
-        case "visible":
-          return "visible";
-        default:
-          return visible ? "visible" : null;
-      }
-    }, [visibility, visible]);
+    const VISIBILITY_MAP = {
+      "before-appear": "before-appear",
+      "appear": "appear before-appear",
+      "before-disappear": "before-disappear",
+      "disappear": "disappear before-disappear",
+      "visible": "visible",
+    };
+    const visibilityClasses = VISIBILITY_MAP[visibility] ?? (visible ? "visible" : null);
 
     const hasPosition = offset.left !== undefined;
 

@@ -775,11 +775,6 @@ DataManagerPage.context = ({dmRef}) => {
           return;
         }
 
-        if (apiResult?.status === 404 || apiResult?.$meta?.status === 404) {
-          dmRef.store?.SDK?.invoke?.('labelStreamFinished');
-          return;
-        }
-
         if (typeof taskStore.applyTaskSnapshot === 'function') {
           nextTaskResult = taskStore.applyTaskSnapshot(apiResult);
         }

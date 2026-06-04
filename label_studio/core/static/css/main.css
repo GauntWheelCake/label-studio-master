@@ -19,10 +19,13 @@ a {
 
 table th {
     background-color: #fcfcfc;
+    font-weight: normal;
+    font-size: 1em;
 }
 
 table td {
     font-size: 13px;
+    font-weight: lighter;
 }
 table tr.positive {
     color: #222222 !important;
@@ -31,14 +34,6 @@ table tr.positive {
 
 table tr:nth-child(2n).positive {
     background-color: #f5fff7;
-}
-
-table th {
-    font-weight: normal;
-    font-size: 1em;
-}
-table td {
-    font-weight: lighter;
 }
 
 .label, .value {
@@ -1060,6 +1055,7 @@ hotkey i {
     background: #161b22;
     border: 1px solid #30363d;
     color: #c9d1d9;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
 }
 
 [data-theme="dark"] .ls-modal__header {
@@ -1343,12 +1339,12 @@ hotkey i {
 }
 
 [data-theme="dark"] .ls-templates-list__group:hover {
-    background: rgba(88,166,255,0.1);
+    background: #21262d;
     color: #58a6ff;
 }
 
 [data-theme="dark"] .ls-templates-list__template {
-    background: #161b22;
+    background: #21262d;
     border: 1px solid #30363d;
     color: #c9d1d9;
 }
@@ -1356,6 +1352,8 @@ hotkey i {
 [data-theme="dark"] .ls-templates-list__template:hover {
     background: #21262d;
     border-color: #58a6ff;
+    box-shadow: 0px 0px 0 2px #58a6ff;
+    opacity: 1;
 }
 
 [data-theme="dark"] .ls-configure {
@@ -1554,10 +1552,6 @@ hotkey i {
 }
 
 /* Templates list (Config -> Browse templates) */
-[data-theme="dark"] .ls-templates-list__group:hover {
-    background: #21262d;
-}
-
 [data-theme="dark"] .ls-templates-list__group_active {
     background: #161b22;
     color: #e6edf3;
@@ -1565,16 +1559,6 @@ hotkey i {
 
 [data-theme="dark"] .ls-templates-list main {
     background: #0d1117;
-}
-
-[data-theme="dark"] .ls-templates-list__template {
-    background: #21262d;
-    border: 1px solid #30363d;
-}
-
-[data-theme="dark"] .ls-templates-list__template:hover {
-    box-shadow: 0px 0px 0 2px #58a6ff;
-    opacity: 1;
 }
 
 [data-theme="dark"] .ls-templates-list__template h3 {
@@ -1639,10 +1623,6 @@ hotkey i {
 
 [data-theme="dark"] .ls-button_waiting {
     background: #21262d;
-}
-
-[data-theme="dark"] .ls-modal {
-    color: #c9d1d9;
 }
 
 [data-theme="dark"] .ls-modal__header_divided {
@@ -1881,6 +1861,10 @@ hotkey i {
 
 [data-theme="dark"] .dm-checkbox__check {
     background: #161b22;
+    box-shadow: inset 0 -1px 0 rgba(255,255,255,0.15), inset 0 0 0 1px rgba(255,255,255,0.25);
+}
+[data-theme="dark"] .dm-checkbox__input:checked + .dm-checkbox__check:before {
+    filter: invert(1);
 }
 
 [data-theme="dark"] .dm-tooltip, [data-theme="dark"] .dm-tooltip:before {
@@ -1936,6 +1920,12 @@ hotkey i {
 [data-theme="dark"] .dm-table__row-wrapper_even:not(.dm-table__row-wrapper_selected) {
     background: #0d1117;
 }
+[data-theme="dark"] .dm-table__row-wrapper:not(.dm-table__row-wrapper_selected):hover {
+    background-color: #21262d;
+}
+[data-theme="dark"] .dm-table__row-wrapper_selected {
+    background-color: rgba(31,111,235,0.15);
+}
 
 [data-theme="dark"] .dm-agreement__score_zero {
     color: #c9d1d9;
@@ -1979,16 +1969,13 @@ hotkey i {
 
 /* Modal backdrop fix for dark mode */
 [data-theme="dark"] .ls-modal {
+    color: #c9d1d9;
     background-color: rgba(0,0,0,0.6);
     z-index: 2000;
 }
 
 .ls-modal {
     z-index: 2000 !important;
-}
-
-[data-theme="dark"] .ls-modal__content {
-    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
 }
 
 [data-theme="dark"] .dm-modal {
@@ -2066,8 +2053,7 @@ hotkey i {
     color: #c9d1d9;
 }
 
-[data-theme="dark"] #label-studio,
-[data-theme="dark"] #label-studio * {
+[data-theme="dark"] #label-studio {
     --main-bg-color: #0d1117 !important;
 }
 

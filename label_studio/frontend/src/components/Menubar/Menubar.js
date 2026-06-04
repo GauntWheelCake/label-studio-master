@@ -135,7 +135,7 @@ export const Menubar = ({
     onSidebarToggle?.(visible);
   }, [onSidebarToggle]);
 
-  const providerValue = useMemo(() => ({
+  const providerValue = {
     setContext(ctx) {
       setPageContext(prev => ({ ...prev, Component: ctx }));
     },
@@ -147,7 +147,7 @@ export const Menubar = ({
     contextIsSet(ctx) {
       return pageContextRef.current.Component === ctx;
     },
-  }), []);
+  };
 
   useEffect(() => {
     if (!sidebarPinned) {
