@@ -24,7 +24,7 @@ export const ProjectsList = ({ projects, openModal, onProjectDelete }) => {
 export const EmptyProjectsList = ({ openModal }) => {
   return (
     <Block name="empty-projects-page">
-      <Elem name="heidi" tag="img" src={absoluteURL("/static/images/opossum_looking.png")} />
+      <Elem name="heidi" tag="img" src={absoluteURL("/static/images/empty-state.svg")} />
       <Elem name="header" tag="h1">{t('projectsPage.empty.title')}</Elem>
       <p>{t('projectsPage.empty.description')}</p>
       <Elem name="action" tag={Button} onClick={openModal} look="primary">{t('projectsPage.empty.action')}</Elem>

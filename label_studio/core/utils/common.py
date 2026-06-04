@@ -325,7 +325,11 @@ def retry_database_locked():
 
 
 def get_app_version():
-    return pkg_resources.get_distribution('label-studio').version
+    try:
+        return pkg_resources.get_distribution('label-studio').version
+    except pkg_resources.DistributionNotFound:
+        import label_studio
+        return label_studio.__version__
 
 
 def get_latest_version():
