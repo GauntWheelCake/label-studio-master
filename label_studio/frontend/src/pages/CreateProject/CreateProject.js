@@ -3,6 +3,7 @@ import { useHistory } from 'react-router';
 import { Button } from '../../components';
 import { Modal } from '../../components/Modal/Modal';
 import { Space } from '../../components/Space/Space';
+import { Select } from '../../components/Form/Elements';
 import { useAPI } from '../../providers/ApiProvider';
 import { cn } from '../../utils/bem';
 import { ConfigPage } from './Config/Config';
@@ -30,12 +31,12 @@ const StepIconUpload = () => (
 const StepIconConfig = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <circle cx="12" cy="12" r="3" />
-    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
   </svg>
 );
 
 
-  const ProjectName = ({ name, setName, onSaveName, error, description, setDescription, show = true }) => !show ? null :(
+  const ProjectName = ({ name, setName, onSaveName, error, description, setDescription, modelClass, setModelClass, modelClassOptions, modelClassLoading, show = true }) => !show ? null :(
     <form className={cn("project-name")} onSubmit={e => { e.preventDefault(); }}>
       <div className="field field--wide">
         <label htmlFor="project_name">{t('createProject.projectName.label')}</label>
@@ -51,6 +52,18 @@ const StepIconConfig = () => (
           rows="4"
           value={description}
           onChange={e => setDescription(e.target.value)}
+        />
+      </div>
+      <div className="field field--wide">
+        <Select
+          name="model_class"
+          label={t('createProject.projectModelClass.label')}
+          placeholder={t('createProject.projectModelClass.placeholder')}
+          value={modelClass}
+          options={modelClassOptions}
+          onChange={e => setModelClass(e.target.value)}
+          required
+          disabled={modelClassLoading}
         />
       </div>
   </form>
@@ -110,8 +123,11 @@ export const CreateProject = ({ onClose }) => {
   const [error, setError] = React.useState();
   const [description, setDescription] = React.useState("");
   const [config, setConfig] = React.useState("<View></View>");
+  const [modelClass, setModelClass] = React.useState("");
+  const [modelClassOptions, setModelClassOptions] = React.useState([]);
+  const [modelClassLoading, setModelClassLoading] = React.useState(false);
 
-  React.useEffect(() => { setError(null); }, [name]);
+  React.useEffect(() => { setError(null); }, [name, modelClass]);
 
   const { columns, uploading, uploadDisabled, finishUpload, pageProps } = useImportPage(project);
 
@@ -121,11 +137,31 @@ export const CreateProject = ({ onClose }) => {
 
   React.useEffect(() => project && !name && setName(project.title), [project]);
 
+  React.useEffect(() => {
+    let cancelled = false;
+
+    const fetchModelClasses = async () => {
+      setModelClassLoading(true);
+      const result = await api.callApi('modelClassDict');
+
+      if (!cancelled) {
+        setModelClassLoading(false);
+        if (result?.items) {
+          setModelClassOptions(result.items);
+        }
+      }
+    };
+
+    fetchModelClasses();
+    return () => { cancelled = true; };
+  }, [api]);
+
   const projectBody = React.useMemo(() => ({
     title: name,
     description,
     label_config: config,
-  }), [name, description, config]);
+    model_class: modelClass,
+  }), [name, description, config, modelClass]);
 
   const onCreate = React.useCallback(async () => {
     const imported = await finishUpload();
@@ -138,16 +174,28 @@ export const CreateProject = ({ onClose }) => {
       },
       body: projectBody,
     });
-    setWaitingStatus(false);
 
     if (response !== null) {
+      await api.callApi('createFeDataset', {
+        body: {
+          datatype: modelClass,
+          name,
+          remark: description,
+          type: 0,
+        },
+      });
       history.push(`/projects/${response.id}/data`);
     }
-  }, [project, projectBody, finishUpload]);
+    setWaitingStatus(false);
+  }, [project, projectBody, finishUpload, api, modelClass, name, description, history]);
 
   const onSaveName = async () => {
     if (!name.trim()) {
       setError('项目名不能为空');
+      return false;
+    }
+    if (!modelClass) {
+      setError('请选择模型分类');
       return false;
     }
     const res = await api.callApi('updateProjectRaw', {
@@ -156,6 +204,8 @@ export const CreateProject = ({ onClose }) => {
       },
       body: {
         title: name,
+        description,
+        model_class: modelClass,
       },
     });
     if (res.ok) {
@@ -163,7 +213,7 @@ export const CreateProject = ({ onClose }) => {
       return true;
     }
     const err = await res.json();
-    setError(err.validation_errors?.title || '保存失败');
+    setError(err.validation_errors?.title || err.detail || '保存失败');
     return false;
   };
 
@@ -194,10 +244,10 @@ export const CreateProject = ({ onClose }) => {
   };
 
   const canGoNext = React.useMemo(() => {
-    if (step === 'name') return name.trim().length > 0 && !error;
+    if (step === 'name') return name.trim().length > 0 && !error && !!modelClass;
     if (step === 'import') return !uploadDisabled;
     return false;
-  }, [step, name, error, uploadDisabled]);
+  }, [step, name, error, modelClass, uploadDisabled]);
 
   const canSave = React.useMemo(() => {
     return configValid && !uploadDisabled && !waiting && !uploading;
@@ -229,6 +279,10 @@ export const CreateProject = ({ onClose }) => {
             onSaveName={onSaveName}
             description={description}
             setDescription={setDescription}
+            modelClass={modelClass}
+            setModelClass={setModelClass}
+            modelClassOptions={modelClassOptions}
+            modelClassLoading={modelClassLoading}
             show={step === "name"}
           />
           <ImportPage project={project} show={step === "import"} {...pageProps} />
@@ -270,3 +324,8 @@ export const CreateProject = ({ onClose }) => {
     </Modal>
   );
 };
+
+CreateProject.title = 'Create Project';
+CreateProject.path = '/create-project';
+CreateProject.exact = true;
+CreateProject.context = () => null;

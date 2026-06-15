@@ -37,6 +37,20 @@ if HOSTNAME:
 
 INTERNAL_PORT = '8080'
 
+# SSO platform integration: host for /api/v1/admin/auth/userinfo
+# Override with the SSO_USERINFO_HOST environment variable.
+# Accept either "host:port" or a full "http(s)://host:port" URL prefix.
+_SSO_USERINFO_HOST = get_env('SSO_USERINFO_HOST', '68.68.18.26:31798')
+if _SSO_USERINFO_HOST.startswith(('http://', 'https://')):
+    SSO_USERINFO_URL = f'{_SSO_USERINFO_HOST}/api/v1/admin/auth/userinfo'
+else:
+    SSO_USERINFO_URL = f'http://{_SSO_USERINFO_HOST}/api/v1/admin/auth/userinfo'
+SSO_USERINFO_TIMEOUT = int(get_env('SSO_USERINFO_TIMEOUT', '5'))
+
+# Local development helper: when True, bypass the external SSO userinfo call
+# and return a mock user for any non-empty token. Never enable in production.
+SSO_DEBUG_MOCK = get_bool_env('SSO_DEBUG_MOCK', default=False)
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '$(fefwefwef13;LFK{P!)@#*!)kdsjfWF2l+i5e3t(8a1n'
 
@@ -156,7 +170,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'core.middleware.DisableCSRF',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'core.middleware.SharedAdminAutoLoginMiddleware',
+    'core.middleware.SSOAuthMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'core.middleware.CommonMiddlewareAppendSlashWithoutRedirect',  # instead of 'CommonMiddleware'
@@ -343,7 +357,7 @@ PROJECT_TITLE_MIN_LEN = 3
 PROJECT_TITLE_MAX_LEN = 50
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/'
-ENABLE_SHARED_ADMIN_MODE = get_bool_env('ENABLE_SHARED_ADMIN_MODE', default=True) # if True, all users will be automatically logged in as a shared admin user with email SHARED_ADMIN_EMAIL and username SHARED_ADMIN_USERNAME, and will have access to the shared organization with title SHARED_ORGANIZATION_TITLE. This mode is useful for quick evaluation of Label Studio without the need to create an account, but it is not recommended for production use due to security concerns.
+ENABLE_SHARED_ADMIN_MODE = get_bool_env('ENABLE_SHARED_ADMIN_MODE', default=False) # if True, all users will be automatically logged in as a shared admin user with email SHARED_ADMIN_EMAIL and username SHARED_ADMIN_USERNAME, and will have access to the shared organization with title SHARED_ORGANIZATION_TITLE. This mode is useful for quick evaluation of Label Studio without the need to create an account, but it is not recommended for production use due to security concerns.
 SHARED_ADMIN_EMAIL = get_env('SHARED_ADMIN_EMAIL', 'shared-admin@huibiaosystem.local')
 SHARED_ADMIN_USERNAME = get_env('SHARED_ADMIN_USERNAME', 'shared-admin')
 SHARED_ORGANIZATION_TITLE = get_env('SHARED_ORGANIZATION_TITLE', 'Hui Biao Shared')

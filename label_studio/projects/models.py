@@ -137,6 +137,10 @@ class Project(ProjectMixin, models.Model):
     task_data_password = models.CharField(
         _('task_data_password'), max_length=256, blank=True, null=True, help_text='Task data credentials: password')
 
+    model_class = models.CharField(
+        _('model class'), max_length=32, blank=True, null=True, default='',
+        help_text='External model classification value (e.g. 101, 102) from the SSO platform dictionary')
+
     def __init__(self, *args, **kwargs):
         super(Project, self).__init__(*args, **kwargs)
         self.__original_label_config = self.label_config

@@ -5,9 +5,8 @@ import { isDefined } from "../utils/helpers";
 const initialBreadcrumbs = [];
 
 const noop = () => {
-  if (process.env.NODE_ENV === 'development') {
-    console.warn("Breadcrumbs must be initialized first");
-  }
+  // Breadcrumbs helpers are replaced once the singleton hook mounts.
+  // Before that, callers like DataManager may invoke them harmlessly.
 };
 
 export let setBreadcrumbs = noop;

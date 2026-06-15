@@ -1,7 +1,7 @@
 import { createContext, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { StaticContent } from '../../app/StaticContent/StaticContent';
-import { IconPersonInCircle, IconPin, LsDoor, LsSettings } from '../../assets/icons';
+import { IconPin } from '../../assets/icons';
 import { useAPI } from '../../providers/ApiProvider';
 import { useConfig } from '../../providers/ConfigProvider';
 import { useContextComponent, useFixedLocation } from '../../providers/RoutesProvider';
@@ -101,7 +101,6 @@ export const Menubar = ({
   onSidebarPin,
 }) => {
   const menuDropdownRef = useRef();
-  const useMenuRef = useRef();
   const location = useFixedLocation();
 
   const config = useConfig();
@@ -153,7 +152,6 @@ export const Menubar = ({
     if (!sidebarPinned) {
       menuDropdownRef?.current?.close();
     }
-    useMenuRef?.current?.close();
   }, [location]);
 
   useEffect(() => {
@@ -194,31 +192,9 @@ export const Menubar = ({
 
           <ThemeToggle />
 
-          {config.sharedAdminMode ? (
-            <div className={menubarClass.elem('user')}>
-              <Userpic user={config.user} />
-            </div>
-          ) : (
-            <Dropdown.Trigger ref={useMenuRef} align="right" content={(
-              <Menu>
-                <Menu.Item
-                  icon={<LsSettings />}
-                  label={t('menubar.menu.accountAndSettings')}
-                  href="/user/account"
-                />
-                <Menu.Item
-                  icon={<LsDoor />}
-                  label={t('menubar.menu.logout')}
-                  href={absoluteURL("/logout")}
-                  forceReload
-                />
-              </Menu>
-            )}>
-              <div className={menubarClass.elem('user')}>
-                <Userpic user={config.user} />
-              </div>
-            </Dropdown.Trigger>
-          )}
+          <div className={menubarClass.elem('user')}>
+            <Userpic user={config.user} />
+          </div>
         </div>
       )}
 
@@ -234,15 +210,6 @@ export const Menubar = ({
               style={{ width: 'var(--menu-sidebar-width)' }}
             >
               <Menu>
-                {!config.sharedAdminMode && (
-                  <Menu.Item
-                    label={t('menubar.menu.organization')}
-                    to="/people"
-                    icon={<IconPersonInCircle />}
-                    exact
-                  />
-                )}
-
                 {projects.length > 0 && (
                   projects.map(p => (
                     <Menu.Item

@@ -76,6 +76,8 @@ export const zhCN = {
   'createProject.projectName.label': '项目名称',
   'createProject.projectDescription.label': '项目描述',
   'createProject.projectDescription.placeholder': '可选：填写项目描述',
+  'createProject.projectModelClass.label': '模型分类',
+  'createProject.projectModelClass.placeholder': '请选择模型分类',
   'createProject.steps.name': '项目信息',
   'createProject.steps.import': '数据导入',
   'createProject.steps.config': '标注配置',

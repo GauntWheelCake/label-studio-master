@@ -1,7 +1,51 @@
 """This file and its contents are licensed under the Apache License 2.0. Please see the included NOTICE for copyright information and LICENSE for a copy of the license.
 """
 from django.conf import settings as django_settings
+
 from core.utils.common import collect_versions
+
+
+def _sso_user_settings(sso_user):
+    """Map external SSO user payload to frontend user settings."""
+    nick_name = sso_user.get('nickName', '') or sso_user.get('username', '')
+    username = sso_user.get('username', '')
+    email = sso_user.get('email', '')
+
+    if nick_name:
+        initials = nick_name[0]
+    elif username:
+        initials = username[0]
+    elif email:
+        initials = email[0]
+    else:
+        initials = ''
+
+    return {
+        'id': str(sso_user.get('id', '')) if sso_user.get('id') is not None else '',
+        'username': username,
+        'firstName': nick_name,
+        'lastName': '',
+        'initials': initials,
+        'email': email,
+        'avatar': sso_user.get('userAvatarPath', '') or '',
+    }
+
+
+def _django_user_settings(user):
+    """Build user settings from Django request.user."""
+    settings = {
+        'id': str(user.id) if getattr(user, 'id', None) is not None else '',
+        'username': getattr(user, 'username', ''),
+        'firstName': getattr(user, 'first_name', ''),
+        'lastName': getattr(user, 'last_name', ''),
+        'initials': user.get_initials() if hasattr(user, 'get_initials') else '',
+        'email': getattr(user, 'email', ''),
+    }
+
+    if getattr(user, 'avatar', None) and hasattr(user, 'avatar_url'):
+        settings['avatar'] = user.avatar_url
+
+    return settings
 
 
 def sentry_fe(request):
@@ -29,18 +73,13 @@ def settings(request):
     if 'dm2' in versions:
         versions['dm2']['commit'] = versions['dm2'].get('commit', 'none')[0:6]
 
-    user = request.user
-    user_settings = {
-        'id': str(user.id) if getattr(user, 'id', None) is not None else '',
-        'username': getattr(user, 'username', ''),
-        'firstName': getattr(user, 'first_name', ''),
-        'lastName': getattr(user, 'last_name', ''),
-        'initials': user.get_initials() if hasattr(user, 'get_initials') else '',
-        'email': getattr(user, 'email', ''),
-    }
-
-    if getattr(user, 'avatar', None) and hasattr(user, 'avatar_url'):
-        user_settings['avatar'] = user.avatar_url
+    # SSO middleware validates the URL token and stores the user in session.
+    # Context processor only reads the cached user for rendering.
+    sso_user = request.session.get('sso_user')
+    if sso_user:
+        user_settings = _sso_user_settings(sso_user)
+    else:
+        user_settings = _django_user_settings(request.user)
 
     app_settings = {
         'user': user_settings,

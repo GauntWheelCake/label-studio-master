@@ -8,7 +8,7 @@ import { t } from '../../i18n';
 import { ApiContext } from '../../providers/ApiProvider';
 import { useContextProps } from '../../providers/RoutesProvider';
 import { Block, Elem } from '../../utils/bem';
-const CreateProject = React.lazy(() => import('../CreateProject/CreateProject').then(m => ({ default: m.CreateProject })));
+import { CreateProject } from '../CreateProject/CreateProject';
 import { DataManagerPage } from '../DataManager/DataManager';
 import { SettingsPage } from '../Settings';
 import './Projects.styl';
@@ -42,6 +42,17 @@ export const ProjectsPage = () => {
   }, []);
 
   React.useEffect(() => {
+    // Clean the SSO token from the URL after the page has loaded so users don't
+    // see or share it accidentally. This only touches the query string and does
+    // not trigger a navigation/reload.
+    const url = new URL(window.location.href);
+    if (url.searchParams.has('token')) {
+      url.searchParams.delete('token');
+      window.history.replaceState({}, '', url.toString());
+    }
+  }, []);
+
+  React.useEffect(() => {
     setContextProps({ openModal, showButton: true });
   }, [projectsList.length]);
 
@@ -54,9 +65,7 @@ export const ProjectsPage = () => {
         <Elem name="content" case="loaded">
           <ProjectsList projects={projectsList} openModal={openModal} onProjectDelete={handleProjectDelete} />
           {modal && (
-            <React.Suspense fallback={<Spinner size={32} />}>
-              <CreateProject onClose={closeModal} />
-            </React.Suspense>
+            <CreateProject onClose={closeModal} />
           )}
         </Elem>
       </Oneof>

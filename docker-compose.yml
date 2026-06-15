@@ -30,11 +30,9 @@ services:
       - POSTGRE_PORT=5432
       - POSTGRE_HOST=db
       - LABEL_STUDIO_HOST=${LABEL_STUDIO_HOST:-}
-      - ENABLE_SHARED_ADMIN_MODE=${ENABLE_SHARED_ADMIN_MODE:-true}
-      - SHARED_ADMIN_EMAIL=${SHARED_ADMIN_EMAIL:-shared-admin@huibiaosystem.local}
-      - SHARED_ADMIN_USERNAME=${SHARED_ADMIN_USERNAME:-shared-admin}
-      - SHARED_ORGANIZATION_TITLE=${SHARED_ORGANIZATION_TITLE:-Hui Biao Shared}
-      - SHARED_ADMIN_FIXED_TOKEN=${SHARED_ADMIN_FIXED_TOKEN:-shared-admin-fixed-token}
+      - ENABLE_SHARED_ADMIN_MODE=${ENABLE_SHARED_ADMIN_MODE:-false}
+      - SSO_USERINFO_HOST=${SSO_USERINFO_HOST:-68.68.18.26:31798}
+      - SSO_DEBUG_MOCK=${SSO_DEBUG_MOCK:-false}
     volumes:
       - ./mydata:/label-studio/data:rw
       - static-build:/label-studio/label_studio/core/static_build:rw

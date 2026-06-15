@@ -1,6 +1,6 @@
 import { createContext, forwardRef, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { ErrorWrapper } from '../components/Error/Error';
-import { modal } from '../components/Modal/Modal';
+import { info, modal } from '../components/Modal/Modal';
 import { API_CONFIG } from '../config/ApiConfig';
 import { APIProxy } from '../utils/api-proxy';
 import { absoluteURL } from '../utils/helpers';
@@ -33,7 +33,14 @@ const handleError = async (response, showModal = true) => {
   }
 
   if (response.status === 401) {
-    location.href = absoluteURL("/");
+    info({
+      title: '登录已过期',
+      body: 'token已过期，请重新登录。',
+      okText: '去登录',
+      onOkPress: () => {
+        location.href = absoluteURL('/');
+      },
+    });
     return;
   }
 

@@ -33,8 +33,15 @@ export const EmptyProjectsList = ({ openModal }) => {
 };
 
 const CreateProjectCard = ({ onClick }) => {
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onClick?.();
+    }
+  };
+
   return (
-    <Elem name="link" tag="button" type="button" mod={{ create: true }} onClick={onClick}>
+    <Elem name="link" tag="div" role="button" tabIndex={0} mod={{ create: true }} onClick={onClick} onKeyDown={handleKeyDown}>
       <Block name="project-card" mod={{ create: true }}>
         <Elem name="header">
           <Elem name="title">

@@ -4,7 +4,7 @@ export enum UserRole {
   Admin = 'admin',
 }
 
-export const DEFAULT_ROLE = UserRole.Annotator;
+export const DEFAULT_ROLE = UserRole.Admin;
 
 export const ROLE_STORAGE_KEY = 'ls:user-role';
 export const ROLE_CHANGE_EVENT = 'ls:user-role-change';

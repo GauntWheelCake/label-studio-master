@@ -22,7 +22,7 @@ const Select = ({label, className, options, validate, required, skip, labelProps
         <div className={classList}>
           <select {...props} ref={ref} className={rootClass.elem('list')}>
             {props.placeholder && (
-              <option value="" disabled hidden selected>{props.placeholder}</option>
+              <option value="" disabled hidden>{props.placeholder}</option>
             )}
 
             {(options ?? []).map(option => {

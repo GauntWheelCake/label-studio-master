@@ -5,8 +5,8 @@ import time
 
 from uuid import uuid4
 from django.contrib import auth
-from django.contrib.auth import get_user_model
-from django.http import HttpResponsePermanentRedirect
+from django.contrib.auth import get_user_model, login
+from django.http import HttpResponsePermanentRedirect, HttpResponseRedirect
 from rest_framework.authtoken.models import Token
 from django.utils.deprecation import MiddlewareMixin
 from django.core.handlers.base import BaseHandler
@@ -18,6 +18,11 @@ from django.utils.http import escape_leading_slashes
 from rest_framework.permissions import SAFE_METHODS
 from rest_framework.response import Response
 from core.utils.contextlog import ContextLog
+from core.utils.sso import get_sso_user_info
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class DisableCSRF(MiddlewareMixin):
@@ -98,6 +103,155 @@ class SharedAdminAutoLoginMiddleware(MiddlewareMixin):
                 created_by=user,
                 title=settings.SHARED_ORGANIZATION_TITLE,
             )
+
+        if not organization.has_user(user):
+            organization.add_user(user)
+
+        if user.active_organization_id != organization.id:
+            user.active_organization = organization
+            user.save(update_fields=['active_organization'])
+
+        request.session['organization_pk'] = organization.id
+
+
+class SSOAuthMiddleware(MiddlewareMixin):
+    """Authenticate users via external SSO token and create isolated accounts.
+
+    - URL contains ?token=xxx: validate token, create/get Label Studio user,
+      create/get user's private organization, and log the user in.
+    - No token but session has cached sso_user: log the cached user back in.
+    - No token and no session: redirect to the SSO platform for login.
+    - Invalid/expired token: clear session and redirect to SSO platform.
+    """
+
+    # Paths that should never be redirected to the SSO login page.
+    EXEMPT_PATH_PREFIXES = (
+        '/static/', '/media/', '/data/', '/api/', '/admin/',
+        '/django-rq/', '/swagger/', '/redoc/', '/health',
+    )
+
+    def process_request(self, request):
+        token = request.GET.get('token')
+        has_session_user = bool(request.session.get('sso_user'))
+
+        logger.warning(
+            '[SSOAuthMiddleware] path=%s token=%s session_user=%s mock=%s',
+            request.path_info,
+            'present' if token else 'absent',
+            'present' if has_session_user else 'absent',
+            getattr(settings, 'SSO_DEBUG_MOCK', False),
+        )
+
+        if token:
+            sso_user = get_sso_user_info(token)
+            if sso_user:
+                logger.warning('[SSOAuthMiddleware] token valid, user=%s', sso_user.get('username'))
+                user = self._get_or_create_sso_user(sso_user)
+                self._ensure_sso_organization(user, request)
+                request.session['sso_token'] = token
+                request.session['sso_user'] = sso_user
+                self._login_user(request, user)
+                return
+
+            logger.warning('[SSOAuthMiddleware] token invalid/expired, redirecting to SSO')
+            self._clear_sso_session(request)
+            return HttpResponseRedirect(self._sso_host())
+
+        # No token in URL, but we have a cached SSO user in session.
+        sso_user = request.session.get('sso_user')
+        if sso_user:
+            logger.warning('[SSOAuthMiddleware] restoring user from session=%s', sso_user.get('username'))
+            user = self._get_or_create_sso_user(sso_user)
+            self._ensure_sso_organization(user, request)
+            self._login_user(request, user)
+            return
+
+        # No token and no session: redirect page requests to SSO login.
+        if self._should_redirect(request):
+            logger.warning('[SSOAuthMiddleware] no token/session, redirecting to SSO')
+            return HttpResponseRedirect(self._sso_host())
+
+        logger.warning('[SSOAuthMiddleware] exempt path, allowing anonymous')
+    def _sso_host(self):
+        host = getattr(settings, 'SSO_USERINFO_HOST', '68.68.18.26:31798')
+        if not host.startswith(('http://', 'https://')):
+            host = f'http://{host}'
+        return host
+
+    def _should_redirect(self, request):
+        path = request.path_info
+        return not any(path.startswith(prefix) for prefix in self.EXEMPT_PATH_PREFIXES)
+
+    def _clear_sso_session(self, request):
+        request.session.pop('sso_token', None)
+        request.session.pop('sso_user', None)
+        request.session.pop('organization_pk', None)
+
+    def _login_user(self, request, user):
+        if not request.user.is_authenticated or request.user.id != user.id:
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+
+    def _get_or_create_sso_user(self, sso_user):
+        User = get_user_model()
+        sso_id = str(sso_user.get('id', ''))
+        if not sso_id:
+            raise ValueError('SSO user info is missing "id"')
+
+        username = f"sso_{sso_id}"
+        email = sso_user.get('email', '') or f"{username}@localhost"
+        first_name = sso_user.get('nickName', '')
+
+        try:
+            user, created = User.objects.get_or_create(
+                username=username,
+                defaults={
+                    'email': email,
+                    'first_name': first_name,
+                    'is_active': True,
+                    'is_staff': False,
+                    'is_superuser': False,
+                }
+            )
+        except User.MultipleObjectsReturned:
+            # Defensive: if duplicates exist due to a race condition or legacy
+            # data, reuse the earliest created user.
+            user = User.objects.filter(username=username).order_by('date_joined').first()
+            created = False
+
+        # SSO users must not be able to log in via Label Studio's local password form.
+        if created:
+            user.set_unusable_password()
+            user.save(update_fields=['password'])
+
+        # Keep display name up to date on subsequent logins (safe fallback).
+        if not created and first_name and user.first_name != first_name:
+            user.first_name = first_name
+            user.save(update_fields=['first_name'])
+
+        return user
+
+    def _ensure_sso_organization(self, user, request):
+        from django.db import IntegrityError
+        from organizations.models import Organization
+
+        organization = None
+
+        if user.has_organization:
+            try:
+                organization = user.own_organization
+            except Organization.DoesNotExist:
+                organization = None
+
+        if organization is None:
+            org_title = f"{user.first_name or user.username} 的标注团队"
+            try:
+                organization = Organization.create_organization(
+                    created_by=user,
+                    title=org_title,
+                    )
+            except IntegrityError:
+                # Defensive: another request created the organization in parallel.
+                organization = user.own_organization
 
         if not organization.has_user(user):
             organization.add_user(user)
