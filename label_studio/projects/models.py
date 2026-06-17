@@ -146,6 +146,9 @@ class Project(ProjectMixin, models.Model):
     export_split_ratios = models.JSONField(
         _('export split ratios'), default=dict, null=True, blank=True,
         help_text='Ratios for train/val/test export split, e.g. {"train": 80, "val": 10, "test": 10}')
+    fe_dataset_upload_prefix = models.CharField(
+        _('fe dataset upload prefix'), max_length=256, blank=True, null=True, default='',
+        help_text='Upload prefix returned by the external file explorer feDatasets API')
 
     def __init__(self, *args, **kwargs):
         super(Project, self).__init__(*args, **kwargs)

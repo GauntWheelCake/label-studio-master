@@ -13,6 +13,7 @@ _api_urlpatterns = [
     # export api
     path('<int:pk>/export', api.ExportAPI.as_view(), name='project-export'),
     path('<int:pk>/export/formats', api.ExportFormatsListAPI.as_view(), name='project-export-formats'),
+    path('<int:pk>/export-to-dataset', api.ExportToDatasetAPI.as_view(), name='project-export-to-dataset'),
     # Previously exported results
     path('<int:pk>/export/files', api.ProjectExportFiles.as_view(), name='project-export-files'),
 ]

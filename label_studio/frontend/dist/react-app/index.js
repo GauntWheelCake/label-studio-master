@@ -3066,6 +3066,148 @@ const Label = ({
 
 /***/ },
 
+/***/ "./src/components/Form/Elements/RadioGroup/RadioGroup.js"
+/*!***************************************************************!*\
+  !*** ./src/components/Form/Elements/RadioGroup/RadioGroup.js ***!
+  \***************************************************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   RadioGroup: () => (/* binding */ RadioGroup)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var ___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! .. */ "./src/components/Form/Elements/index.js");
+/* harmony import */ var _utils_bem__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../utils/bem */ "./src/utils/bem.tsx");
+/* harmony import */ var _FormField__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../FormField */ "./src/components/Form/FormField.js");
+/* harmony import */ var _RadioGroup_styl__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./RadioGroup.styl */ "./src/components/Form/Elements/RadioGroup/RadioGroup.styl");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
+
+
+
+
+
+const RadioContext = /*#__PURE__*/(0,react__WEBPACK_IMPORTED_MODULE_0__.createContext)();
+const {
+  Block,
+  Elem
+} = (0,_utils_bem__WEBPACK_IMPORTED_MODULE_2__.BemWithSpecifiContext)();
+const RadioGroup = ({
+  label,
+  className,
+  validate,
+  required,
+  skip,
+  simple,
+  labelProps,
+  size,
+  value,
+  onChange,
+  children,
+  ...props
+}) => {
+  const [currentValue, setCurrentValue] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(value);
+  const onRadioChange = value => {
+    setCurrentValue(value);
+    onChange === null || onChange === void 0 ? void 0 : onChange(value);
+  };
+  const field = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_FormField__WEBPACK_IMPORTED_MODULE_3__.FormField, {
+    name: props.name,
+    label: label,
+    validate: validate,
+    required: required,
+    skip: skip,
+    setValue: value => setCurrentValue(value),
+    ...props,
+    children: (ref, dep, form) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(RadioContext.Provider, {
+      value: {
+        value: currentValue,
+        onChange: value => {
+          onRadioChange(value);
+          form.autosubmit();
+        },
+        setValue: setCurrentValue,
+        isSimple: simple === true
+      },
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)(Block, {
+        name: "radio-group",
+        mod: {
+          size,
+          simple
+        },
+        mix: className,
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("input", {
+          ref: ref,
+          name: props.name,
+          type: "hidden",
+          defaultValue: currentValue
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(Elem, {
+          name: "buttons",
+          children: children
+        })]
+      })
+    })
+  });
+  return label ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(___WEBPACK_IMPORTED_MODULE_1__.Label, {
+    ...(labelProps !== null && labelProps !== void 0 ? labelProps : {}),
+    text: label,
+    simple: simple,
+    required: required,
+    children: field
+  }) : field;
+};
+const RadioButton = ({
+  value,
+  disabled,
+  children,
+  label,
+  description,
+  ...props
+}) => {
+  const {
+    onChange,
+    setValue,
+    value: currentValue,
+    isSimple
+  } = (0,react__WEBPACK_IMPORTED_MODULE_0__.useContext)(RadioContext);
+  const checked = value === currentValue;
+  const clickHandler = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(e => {
+    e.preventDefault();
+    e.stopPropagation();
+    onChange(value);
+  }, [value]);
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    if (props.checked) setValue(value);
+  }, [props.checked]);
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(Elem, {
+    name: "button",
+    mod: {
+      checked,
+      disabled
+    },
+    onClickCapture: clickHandler,
+    children: isSimple ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(___WEBPACK_IMPORTED_MODULE_1__.Label, {
+      placement: "right",
+      text: label,
+      description: description,
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("input", {
+        type: "radio",
+        value: value,
+        checked: checked,
+        readOnly: true,
+        style: {
+          pointerEvents: 'none'
+        }
+      })
+    }) : children
+  });
+};
+RadioGroup.Button = RadioButton;
+
+/***/ },
+
 /***/ "./src/components/Form/Elements/Select/Select.js"
 /*!*******************************************************!*\
   !*** ./src/components/Form/Elements/Select/Select.js ***!
@@ -3304,16 +3446,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   Counter: () => (/* reexport safe */ _Counter_Counter__WEBPACK_IMPORTED_MODULE_0__["default"]),
 /* harmony export */   Input: () => (/* reexport safe */ _Input_Input__WEBPACK_IMPORTED_MODULE_1__["default"]),
 /* harmony export */   Label: () => (/* reexport safe */ _Label_Label__WEBPACK_IMPORTED_MODULE_2__["default"]),
-/* harmony export */   Select: () => (/* reexport safe */ _Select_Select__WEBPACK_IMPORTED_MODULE_3__["default"]),
-/* harmony export */   TextArea: () => (/* reexport safe */ _TextArea_TextArea__WEBPACK_IMPORTED_MODULE_4__["default"]),
-/* harmony export */   Toggle: () => (/* reexport safe */ _Toggle_Toggle__WEBPACK_IMPORTED_MODULE_5__["default"])
+/* harmony export */   RadioGroup: () => (/* reexport safe */ _RadioGroup_RadioGroup__WEBPACK_IMPORTED_MODULE_3__.RadioGroup),
+/* harmony export */   Select: () => (/* reexport safe */ _Select_Select__WEBPACK_IMPORTED_MODULE_4__["default"]),
+/* harmony export */   TextArea: () => (/* reexport safe */ _TextArea_TextArea__WEBPACK_IMPORTED_MODULE_5__["default"]),
+/* harmony export */   Toggle: () => (/* reexport safe */ _Toggle_Toggle__WEBPACK_IMPORTED_MODULE_6__["default"])
 /* harmony export */ });
 /* harmony import */ var _Counter_Counter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Counter/Counter */ "./src/components/Form/Elements/Counter/Counter.js");
 /* harmony import */ var _Input_Input__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Input/Input */ "./src/components/Form/Elements/Input/Input.js");
 /* harmony import */ var _Label_Label__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Label/Label */ "./src/components/Form/Elements/Label/Label.js");
-/* harmony import */ var _Select_Select__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Select/Select */ "./src/components/Form/Elements/Select/Select.js");
-/* harmony import */ var _TextArea_TextArea__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./TextArea/TextArea */ "./src/components/Form/Elements/TextArea/TextArea.js");
-/* harmony import */ var _Toggle_Toggle__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Toggle/Toggle */ "./src/components/Form/Elements/Toggle/Toggle.js");
+/* harmony import */ var _RadioGroup_RadioGroup__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./RadioGroup/RadioGroup */ "./src/components/Form/Elements/RadioGroup/RadioGroup.js");
+/* harmony import */ var _Select_Select__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Select/Select */ "./src/components/Form/Elements/Select/Select.js");
+/* harmony import */ var _TextArea_TextArea__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./TextArea/TextArea */ "./src/components/Form/Elements/TextArea/TextArea.js");
+/* harmony import */ var _Toggle_Toggle__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./Toggle/Toggle */ "./src/components/Form/Elements/Toggle/Toggle.js");
+
 
 
 
@@ -4091,6 +4236,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   Form: () => (/* reexport safe */ _Form__WEBPACK_IMPORTED_MODULE_1__["default"]),
 /* harmony export */   Input: () => (/* reexport safe */ _Elements__WEBPACK_IMPORTED_MODULE_0__.Input),
 /* harmony export */   Label: () => (/* reexport safe */ _Elements__WEBPACK_IMPORTED_MODULE_0__.Label),
+/* harmony export */   RadioGroup: () => (/* reexport safe */ _Elements__WEBPACK_IMPORTED_MODULE_0__.RadioGroup),
 /* harmony export */   Select: () => (/* reexport safe */ _Elements__WEBPACK_IMPORTED_MODULE_0__.Select),
 /* harmony export */   TextArea: () => (/* reexport safe */ _Elements__WEBPACK_IMPORTED_MODULE_0__.TextArea),
 /* harmony export */   Toggle: () => (/* reexport safe */ _Elements__WEBPACK_IMPORTED_MODULE_0__.Toggle)
@@ -5785,6 +5931,7 @@ const API_CONFIG = {
     export: "/projects/:pk/export",
     previousExports: "/projects/:pk/export/files",
     exportFormats: "/projects/:pk/export/formats",
+    exportToDataset: 'POST:/projects/:pk/export-to-dataset',
     // Version
     version: '/version',
     // SSO dictionaries
@@ -5962,11 +6109,14 @@ const zhCN = {
   'importPage.dropzone.types.commonFormats': '常见格式',
   'exportPage.title': '导出数据',
   'exportPage.status.preparing': '正在准备文件，这可能需要一些时间。',
+  'exportPage.status.uploading': '正在上传数据集，请勿关闭页面。',
   'exportPage.actions.export': '导出',
   'exportPage.formatInfo.description': '您可以从以下格式中选择一种导出数据集：',
-  'exportPage.notice.approvedOnly': '默认只导出已标注的任务；勾选下方“导出所有任务”可包含未标注任务。',
+  'exportPage.notice.approvedOnly': '导出结果只包含已标注的任务。',
   'exportPage.notice.noApproved': '没有可导出的任务。',
-  'exportPage.options.downloadAllTasks': '导出所有任务（包括未标注）',
+  'exportPage.target.label': '导出目标',
+  'exportPage.target.local': '导出到本地',
+  'exportPage.target.dataset': '导出到数据集管理',
   'exportPage.split.enabled': '按 train/val/test 拆分导出',
   'exportPage.split.train': '训练集 (train)',
   'exportPage.split.val': '验证集 (val)',
@@ -5975,6 +6125,8 @@ const zhCN = {
   'exportPage.split.invalidTotal': '比例总和必须等于 100%',
   'exportPage.modal.readyTitle': '导出就绪',
   'exportPage.modal.emptyTitle': '没有可导出的数据',
+  'exportPage.modal.uploadedTitle': '上传完成',
+  'exportPage.modal.uploadedBody': '数据集已成功上传至数据集管理。',
   'exportPage.formats.JSON.title': '标注平台 JSON',
   'exportPage.formats.JSON.description': '将任务和标注导出为单个 JSON 文件，保留完整的原始数据结构。',
   'exportPage.formats.JSON_MIN.title': '精简 JSON',
@@ -7661,7 +7813,8 @@ const CreateProject = ({
       body: projectBody
     });
     if (response !== null) {
-      await api.callApi('createFeDataset', {
+      var _feDatasetRes$data;
+      const feDatasetRes = await api.callApi('createFeDataset', {
         body: {
           dataType: modelClass,
           name,
@@ -7669,6 +7822,16 @@ const CreateProject = ({
           type: 0
         }
       });
+      if (feDatasetRes !== null && feDatasetRes !== void 0 && (_feDatasetRes$data = feDatasetRes.data) !== null && _feDatasetRes$data !== void 0 && _feDatasetRes$data.uploadPrefix) {
+        await api.callApi('updateProject', {
+          params: {
+            pk: project.id
+          },
+          body: {
+            fe_dataset_upload_prefix: feDatasetRes.data.uploadPrefix
+          }
+        });
+      }
       history.push(`/projects/${response.id}/data`);
     }
     setWaitingStatus(false);
@@ -10023,6 +10186,7 @@ const ExportPage = () => {
   const [downloadingMessage, setDownloadingMessage] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
   const [availableFormats, setAvailableFormats] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
   const [currentFormat, setCurrentFormat] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)('JSON');
+  const [exportTarget, setExportTarget] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)('local');
   const [splitEnabled, setSplitEnabled] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
   const [splitRatios, setSplitRatios] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({
     train: 80,
@@ -10033,17 +10197,13 @@ const ExportPage = () => {
 
   /** @type {import('react').RefObject<Form>} */
   const form = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)();
+  const effectiveSplitEnabled = exportTarget === 'dataset' ? true : splitEnabled;
   const proceedExport = async () => {
     setDownloading(true);
     const message = setTimeout(() => {
       setDownloadingMessage(true);
     }, 1000);
-    const params = form.current.assembleFormData({
-      asJSON: true,
-      full: true,
-      booleansAsNumbers: true
-    });
-    if (splitEnabled) {
+    if (effectiveSplitEnabled) {
       const total = splitRatios.train + splitRatios.val + splitRatios.test;
       if (total !== 100) {
         setSplitRatiosValid(false);
@@ -10054,39 +10214,73 @@ const ExportPage = () => {
       }
     }
     setSplitRatiosValid(true);
-    const response = await api.callApi('exportRaw', {
-      params: {
-        pk: pageParams.id,
-        ...params,
-        split_enabled: splitEnabled ? 1 : 0,
-        split_ratios: JSON.stringify(splitRatios)
-      }
-    });
-    if (response) {
-      if (response.ok) {
-        const blob = await response.blob();
-        downloadFile(blob, response.headers.get('filename'));
-        _components_Modal_Modal__WEBPACK_IMPORTED_MODULE_4__.Modal.info({
-          title: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.modal.readyTitle'),
-          body: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.notice.approvedOnly'),
-          simple: true
-        });
-      } else if (response.status === 400) {
-        let detail = (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.notice.noApproved');
-        try {
-          var _payload$detail;
-          const payload = await response.clone().json();
-          detail = (_payload$detail = payload === null || payload === void 0 ? void 0 : payload.detail) !== null && _payload$detail !== void 0 ? _payload$detail : detail;
-        } catch (e) {
-          /* ignore */
+    if (exportTarget === 'dataset') {
+      const response = await api.callApi('exportToDataset', {
+        params: {
+          pk: pageParams.id
+        },
+        body: {
+          exportType: currentFormat,
+          split_ratios: JSON.stringify(splitRatios)
         }
-        _components_Modal_Modal__WEBPACK_IMPORTED_MODULE_4__.Modal.info({
-          title: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.modal.emptyTitle'),
-          body: detail,
-          simple: true
-        });
-      } else {
-        api.handleError(response);
+      });
+      if (response) {
+        if (response.status === 'ok') {
+          _components_Modal_Modal__WEBPACK_IMPORTED_MODULE_4__.Modal.info({
+            title: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.modal.uploadedTitle'),
+            body: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.modal.uploadedBody'),
+            simple: true
+          });
+        } else if (response.detail) {
+          _components_Modal_Modal__WEBPACK_IMPORTED_MODULE_4__.Modal.info({
+            title: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.modal.emptyTitle'),
+            body: response.detail,
+            simple: true
+          });
+        } else {
+          api.handleError(response);
+        }
+      }
+    } else {
+      const params = form.current.assembleFormData({
+        asJSON: true,
+        full: true,
+        booleansAsNumbers: true
+      });
+      const response = await api.callApi('exportRaw', {
+        params: {
+          pk: pageParams.id,
+          ...params,
+          split_enabled: splitEnabled ? 1 : 0,
+          split_ratios: JSON.stringify(splitRatios)
+        }
+      });
+      if (response) {
+        if (response.ok) {
+          const blob = await response.blob();
+          downloadFile(blob, response.headers.get('filename'));
+          _components_Modal_Modal__WEBPACK_IMPORTED_MODULE_4__.Modal.info({
+            title: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.modal.readyTitle'),
+            body: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.notice.approvedOnly'),
+            simple: true
+          });
+        } else if (response.status === 400) {
+          let detail = (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.notice.noApproved');
+          try {
+            var _payload$detail;
+            const payload = await response.clone().json();
+            detail = (_payload$detail = payload === null || payload === void 0 ? void 0 : payload.detail) !== null && _payload$detail !== void 0 ? _payload$detail : detail;
+          } catch (e) {
+            /* ignore */
+          }
+          _components_Modal_Modal__WEBPACK_IMPORTED_MODULE_4__.Modal.info({
+            title: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.modal.emptyTitle'),
+            body: detail,
+            simple: true
+          });
+        } else {
+          api.handleError(response);
+        }
       }
     }
     setDownloading(false);
@@ -10094,13 +10288,13 @@ const ExportPage = () => {
     clearTimeout(message);
   };
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
-    if (splitEnabled) {
+    if (effectiveSplitEnabled) {
       const total = splitRatios.train + splitRatios.val + splitRatios.test;
       setSplitRatiosValid(total === 100);
     } else {
       setSplitRatiosValid(true);
     }
-  }, [splitEnabled, splitRatios]);
+  }, [effectiveSplitEnabled, splitRatios]);
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     if ((0,_utils_helpers__WEBPACK_IMPORTED_MODULE_9__.isDefined)(pageParams.id)) {
       api.callApi("previousExports", {
@@ -10214,21 +10408,35 @@ const ExportPage = () => {
           type: "hidden",
           name: "exportType",
           value: currentFormat
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(SplitConfig, {
-          enabled: splitEnabled,
-          ratios: splitRatios,
-          ratiosValid: splitRatiosValid,
-          onChangeEnabled: setSplitEnabled,
-          onChangeRatios: setSplitRatios
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(Elem, {
           name: "options",
           style: {
             marginTop: 16
           },
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_3__.Toggle, {
-            label: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.options.downloadAllTasks'),
-            name: "download_all_tasks"
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(_components_Form__WEBPACK_IMPORTED_MODULE_3__.RadioGroup, {
+            label: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.target.label'),
+            name: "export_target",
+            value: exportTarget,
+            onChange: value => setExportTarget(value),
+            labelProps: {
+              size: "large",
+              flat: true
+            },
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_3__.RadioGroup.Button, {
+              value: "local",
+              children: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.target.local')
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_3__.RadioGroup.Button, {
+              value: "dataset",
+              children: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.target.dataset')
+            })]
           })
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(SplitConfig, {
+          enabled: effectiveSplitEnabled,
+          ratios: splitRatios,
+          ratiosValid: splitRatiosValid,
+          onChangeEnabled: setSplitEnabled,
+          onChangeRatios: setSplitRatios,
+          toggleDisabled: exportTarget === 'dataset'
         })]
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(Elem, {
         name: "notice",
@@ -10245,13 +10453,13 @@ const ExportPage = () => {
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(Elem, {
             name: "actions",
             children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(_components_Space_Space__WEBPACK_IMPORTED_MODULE_5__.Space, {
-              children: [downloadingMessage && (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.status.preparing'), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(Elem, {
+              children: [downloadingMessage && (exportTarget === 'dataset' ? (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.status.uploading') : (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.status.preparing')), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(Elem, {
                 tag: _components__WEBPACK_IMPORTED_MODULE_2__.Button,
                 name: "finish",
                 look: "primary",
                 onClick: proceedExport,
                 waiting: downloading,
-                disabled: downloading || splitEnabled && !splitRatiosValid,
+                disabled: downloading || effectiveSplitEnabled && !splitRatiosValid,
                 children: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.actions.export')
               })]
             })
@@ -10305,7 +10513,8 @@ const SplitConfig = ({
   ratios,
   ratiosValid,
   onChangeEnabled,
-  onChangeRatios
+  onChangeRatios,
+  toggleDisabled
 }) => {
   const total = ratios.train + ratios.val + ratios.test;
   const isValid = total === 100;
@@ -10326,7 +10535,8 @@ const SplitConfig = ({
       children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_3__.Toggle, {
         label: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.split.enabled'),
         checked: enabled,
-        onChange: e => onChangeEnabled(e.target.checked)
+        onChange: e => onChangeEnabled(e.target.checked),
+        disabled: toggleDisabled
       })
     }), enabled && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(Elem, {
       name: "inputs",
@@ -32656,6 +32866,22 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
+/***/ "./src/components/Form/Elements/RadioGroup/RadioGroup.styl"
+/*!*****************************************************************!*\
+  !*** ./src/components/Form/Elements/RadioGroup/RadioGroup.styl ***!
+  \*****************************************************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// extracted by mini-css-extract-plugin
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({"radio-group":"ls-radio-group","radio-group__buttons":"ls-radio-group__buttons","radio-group__button":"ls-radio-group__button","radio-group__button_checked":"ls-radio-group__button_checked","radio-group__button_disabled":"ls-radio-group__button_disabled","radio-group__input":"ls-radio-group__input","radio-group_size_large":"ls-radio-group_size_large","radio-group_size_compact":"ls-radio-group_size_compact","radio-group_size_small":"ls-radio-group_size_small","radio-group_simple":"ls-radio-group_simple"});
+
+/***/ },
+
 /***/ "./src/components/Form/Elements/Select/Select.styl"
 /*!*********************************************************!*\
   !*** ./src/components/Form/Elements/Select/Select.styl ***!
@@ -33004,7 +33230,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // extracted by mini-css-extract-plugin
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({"export-page__finish":"ls-export-page__finish","export-page__recent":"ls-export-page__recent","export-page__footer":"ls-export-page__footer","export-page__notice":"ls-export-page__notice","split-config":"ls-split-config","split-config__row":"ls-split-config__row","split-config__inputs":"ls-split-config__inputs","split-config__field":"ls-split-config__field","split-config__total":"ls-split-config__total","split-config__total_invalid":"ls-split-config__total_invalid","split-config__error":"ls-split-config__error","split-config__error_visible":"ls-split-config__error_visible","formats":"ls-formats","formats__list":"ls-formats__list","formats__item":"ls-formats__item","formats__item_active":"ls-formats__item_active","formats__item_selected":"ls-formats__item_selected","formats__name":"ls-formats__name","formats__tag":"ls-formats__tag","formats__description":"ls-formats__description"});
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({"export-page__finish":"ls-export-page__finish","export-page__recent":"ls-export-page__recent","export-page__footer":"ls-export-page__footer","export-page__notice":"ls-export-page__notice","export-page__options":"ls-export-page__options","split-config":"ls-split-config","split-config__row":"ls-split-config__row","split-config__inputs":"ls-split-config__inputs","split-config__field":"ls-split-config__field","split-config__total":"ls-split-config__total","split-config__total_invalid":"ls-split-config__total_invalid","split-config__error":"ls-split-config__error","split-config__error_visible":"ls-split-config__error_visible","formats":"ls-formats","formats__list":"ls-formats__list","formats__item":"ls-formats__item","formats__item_active":"ls-formats__item_active","formats__item_selected":"ls-formats__item_selected","formats__name":"ls-formats__name","formats__tag":"ls-formats__tag","formats__description":"ls-formats__description"});
 
 /***/ },
 

@@ -56,6 +56,7 @@ export const API_CONFIG = {
     export: "/projects/:pk/export",
     previousExports: "/projects/:pk/export/files",
     exportFormats: "/projects/:pk/export/formats",
+    exportToDataset: 'POST:/projects/:pk/export-to-dataset',
 
     // Version
     version: '/version',

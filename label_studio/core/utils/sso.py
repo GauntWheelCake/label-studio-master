@@ -152,6 +152,118 @@ def create_fe_dataset(token, name, datatype, remark='', type=0):
     return None
 
 
+def get_upload_urls(token, upload_prefix, file_objects):
+    """Fetch presigned upload URLs from the external file explorer platform.
+
+    Args:
+        token: Authorization token passed by the upstream platform.
+        upload_prefix: The uploadPrefix returned by create_fe_dataset.
+        file_objects: List of relative file paths, e.g. ['train/result.json'].
+
+    Returns:
+        dict or None: Mapping from full object key to presigned URL, or None
+        when the request fails.
+    """
+    if not token:
+        return None
+
+    if getattr(settings, 'SSO_DEBUG_MOCK', False):
+        logger.warning('SSO_DEBUG_MOCK is enabled; returning mock upload URLs')
+        return _mock_get_upload_urls(upload_prefix, file_objects)
+
+    host = getattr(settings, 'SSO_USERINFO_HOST', '68.68.18.26:31798')
+    if not host.startswith(('http://', 'https://')):
+        host = f'http://{host}'
+    url = f'{host}/api/v1/fileExplorer/feDatasets/getUploadUrl'
+    timeout = getattr(settings, 'SSO_USERINFO_TIMEOUT', 5)
+
+    payload = {
+        'uploadPrefix': upload_prefix,
+        'fileObjects': file_objects,
+    }
+
+    logger.debug('Fetching upload URLs from %s', url)
+    try:
+        response = requests.post(
+            url,
+            headers={'Authorization': f'Bearer {token}', 'Content-Type': 'application/json'},
+            json=payload,
+            timeout=timeout,
+        )
+        response.raise_for_status()
+        data = response.json()
+
+        if data.get('code') == 200:
+            return data.get('data')
+        else:
+            logger.warning('getUploadUrl returned non-200 code: %s', data.get('code'))
+    except Exception as exc:
+        logger.warning('Failed to fetch upload URLs: %s', exc)
+
+    return None
+
+
+def upload_files_to_dataset(token, upload_prefix, files, timeout=30):
+    """Upload local files to the external dataset management storage.
+
+    Args:
+        token: Authorization token passed by the upstream platform.
+        upload_prefix: The uploadPrefix returned by create_fe_dataset.
+        files: List of (absolute_path, file_object) tuples, where file_object
+            is the relative path used in the dataset, e.g. 'train/result.json'.
+        timeout: Timeout in seconds for each PUT request.
+
+    Returns:
+        list: The list of uploaded file_objects.
+
+    Raises:
+        Exception: If fetching upload URLs fails or any PUT upload fails.
+    """
+    if not token:
+        raise Exception('SSO token not found')
+    if not upload_prefix:
+        raise Exception('Upload prefix not configured for this project')
+    if not files:
+        return []
+
+    if getattr(settings, 'SSO_DEBUG_MOCK', False):
+        logger.warning('SSO_DEBUG_MOCK is enabled; skipping real file uploads')
+        return _mock_upload_files_to_dataset(upload_prefix, files)
+
+    file_objects = [file_object for _, file_object in files]
+    urls = get_upload_urls(token, upload_prefix, file_objects)
+    if urls is None:
+        raise Exception('Failed to fetch upload URLs from dataset management')
+
+    uploaded = []
+    for abs_path, file_object in files:
+        key = f'{upload_prefix}/{file_object}'
+        url = urls.get(key)
+        if not url:
+            raise Exception(f'No upload URL returned for {file_object}')
+
+        logger.debug('Uploading %s to dataset management', file_object)
+        with open(abs_path, 'rb') as f:
+            put_response = requests.put(url, data=f, timeout=timeout)
+            put_response.raise_for_status()
+        uploaded.append(file_object)
+
+    return uploaded
+
+
+def _mock_get_upload_urls(upload_prefix, file_objects):
+    """Return deterministic mock upload URLs for local development."""
+    return {
+        f'{upload_prefix}/{fo}': f'http://localhost/mock-upload/{fo}'
+        for fo in file_objects
+    }
+
+
+def _mock_upload_files_to_dataset(upload_prefix, files):
+    """Pretend to upload files in local development."""
+    return [file_object for _, file_object in files]
+
+
 def _mock_create_fe_dataset(name, datatype, remark, type):
     """Return a deterministic mock feDataset response for local development."""
     return {
@@ -160,6 +272,7 @@ def _mock_create_fe_dataset(name, datatype, remark, type):
         'name': name,
         'remark': remark,
         'type': type,
+        'uploadPrefix': 'fe-dataset/12345/1',
     }
 
 

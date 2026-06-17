@@ -176,7 +176,7 @@ export const CreateProject = ({ onClose }) => {
     });
 
     if (response !== null) {
-      await api.callApi('createFeDataset', {
+      const feDatasetRes = await api.callApi('createFeDataset', {
         body: {
           dataType: modelClass,
           name,
@@ -184,6 +184,12 @@ export const CreateProject = ({ onClose }) => {
           type: 0,
         },
       });
+      if (feDatasetRes?.data?.uploadPrefix) {
+        await api.callApi('updateProject', {
+          params: { pk: project.id },
+          body: { fe_dataset_upload_prefix: feDatasetRes.data.uploadPrefix },
+        });
+      }
       history.push(`/projects/${response.id}/data`);
     }
     setWaitingStatus(false);

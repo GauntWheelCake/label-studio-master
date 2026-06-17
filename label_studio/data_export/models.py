@@ -137,7 +137,7 @@ class DataExport(object):
         return splits
 
     @staticmethod
-    def generate_export_file(project, tasks, output_format, get_args, split_enabled=False, split_ratios=None):
+    def generate_export_file(project, tasks, output_format, get_args, split_enabled=False, split_ratios=None, return_files=False):
         # prepare for saving
         now = datetime.now()
         tasks = DataExport._decode_task_urls(tasks)
@@ -168,6 +168,15 @@ class DataExport(object):
                         os.remove(split_input_json)
             else:
                 converter.convert(input_json, tmp_dir, output_format, is_dir=False)
+
+            if return_files:
+                result_files = []
+                for root, _, filenames in os.walk(tmp_dir):
+                    for filename in filenames:
+                        abs_path = os.path.join(root, filename)
+                        rel_path = os.path.relpath(abs_path, tmp_dir).replace('\\', '/')
+                        result_files.append((abs_path, rel_path))
+                return result_files, None, None
 
             files = get_all_files_from_dir(tmp_dir)
             # if only one file is exported - no need to create archive
