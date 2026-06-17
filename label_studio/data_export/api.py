@@ -2,6 +2,7 @@
 """
 import os
 import logging
+import json
 
 from django.conf import settings
 from django.http import HttpResponse
@@ -22,8 +23,8 @@ from .serializers import ExportDataSerializer
 
 logger = logging.getLogger(__name__)
 
-APPROVED_EXPORT_NOTICE = '只有那些已得到批准审核状态的任务才会被包含在导出文件中。'
-NO_APPROVED_TASKS_MESSAGE = '没有可供输出的已批准任务。'
+APPROVED_EXPORT_NOTICE = '导出结果只包含已标注的任务；选择“导出所有任务”时包含全部任务。'
+NO_EXPORTABLE_TASKS_MESSAGE = '没有可供导出的任务。'
 
 
 @method_decorator(name='get', decorator=swagger_auto_schema(
@@ -97,14 +98,13 @@ class ExportAPI(generics.RetrieveAPIView):
 
         logger.debug('Get tasks')
         query = Task.objects.filter(
-            project=project,
-            review_status=Task.ReviewStatus.APPROVED
+            project=project
         ).select_related('project').prefetch_related('annotations', 'predictions')
         if only_finished:
             query = query.filter(annotations__isnull=False)
 
         if not query.exists():
-            return Response({'detail': NO_APPROVED_TASKS_MESSAGE}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': NO_EXPORTABLE_TASKS_MESSAGE}, status=status.HTTP_400_BAD_REQUEST)
 
         task_ids = query.values_list('id', flat=True)
 
@@ -114,7 +114,25 @@ class ExportAPI(generics.RetrieveAPIView):
             tasks += ExportDataSerializer(query.filter(id__in=_task_ids), many=True).data
         logger.debug('Prepare export files')
 
-        export_stream, content_type, filename = DataExport.generate_export_file(project, tasks, export_type, request.GET)
+        split_enabled = bool_from_request(request.GET, 'split_enabled', project.export_split_enabled)
+        split_ratios = project.export_split_ratios or {'train': 80, 'val': 10, 'test': 10}
+        if request.GET.get('split_ratios'):
+            try:
+                split_ratios = json.loads(request.GET['split_ratios'])
+            except Exception:
+                pass
+
+        # Persist user choices on the project for next time.
+        if (project.export_split_enabled != split_enabled or
+                project.export_split_ratios != split_ratios):
+            project.export_split_enabled = split_enabled
+            project.export_split_ratios = split_ratios
+            project.save(update_fields=['export_split_enabled', 'export_split_ratios'])
+
+        export_stream, content_type, filename = DataExport.generate_export_file(
+            project, tasks, export_type, request.GET,
+            split_enabled=split_enabled, split_ratios=split_ratios,
+        )
 
         response = HttpResponse(File(export_stream), content_type=content_type)
         response['Content-Disposition'] = 'attachment; filename="%s"' % filename

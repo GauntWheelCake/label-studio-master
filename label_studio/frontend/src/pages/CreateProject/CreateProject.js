@@ -178,7 +178,7 @@ export const CreateProject = ({ onClose }) => {
     if (response !== null) {
       await api.callApi('createFeDataset', {
         body: {
-          datatype: modelClass,
+          dataType: modelClass,
           name,
           remark: description,
           type: 0,

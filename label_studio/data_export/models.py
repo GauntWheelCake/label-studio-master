@@ -5,6 +5,7 @@ import io
 import hashlib
 import ujson as json
 import os
+import random
 from datetime import datetime
 from copy import deepcopy
 from urllib.parse import unquote
@@ -81,7 +82,62 @@ class DataExport(object):
         return tasks
 
     @staticmethod
-    def generate_export_file(project, tasks, output_format, get_args):
+    def _split_task_ids(task_ids, ratios, seed):
+        """Shuffle task ids and split them into train/val/test folders.
+
+        The ratios are normalized automatically, so they do not have to sum to
+        exactly 100. Splits with a ratio of 0 receive no tasks, and rounding
+        drift is resolved by giving/stealing from the largest split(s).
+
+        Args:
+            task_ids: Iterable of task ids.
+            ratios: Dict like {'train': 80, 'val': 10, 'test': 10}.
+            seed: Seed for reproducible shuffling.
+
+        Returns:
+            Dict mapping split name to list of task ids.
+        """
+        ids = list(task_ids)
+        rng = random.Random(seed)
+        rng.shuffle(ids)
+
+        names = ['train', 'val', 'test']
+        raw_ratios = {name: max(0, float(ratios.get(name, 0) or 0)) for name in names}
+        total = sum(raw_ratios.values())
+        if total <= 0 or not ids:
+            return {name: [] for name in names}
+
+        n = len(ids)
+        # First pass: assign counts by rounding the normalized share.
+        counts = {
+            name: int(round(n * raw_ratios[name] / total))
+            for name in names
+        }
+
+        # Second pass: fix rounding drift without forcing every split to 1.
+        drift = n - sum(counts.values())
+        if drift != 0:
+            for name in sorted(names, key=lambda k: raw_ratios[k], reverse=True):
+                if drift == 0:
+                    break
+                if drift > 0:
+                    counts[name] += 1
+                    drift -= 1
+                elif counts[name] > 0:
+                    counts[name] -= 1
+                    drift += 1
+
+        splits = {}
+        idx = 0
+        for name in names:
+            count = max(0, min(counts[name], n - idx))
+            splits[name] = ids[idx:idx + count]
+            idx += count
+
+        return splits
+
+    @staticmethod
+    def generate_export_file(project, tasks, output_format, get_args, split_enabled=False, split_ratios=None):
         # prepare for saving
         now = datetime.now()
         tasks = DataExport._decode_task_urls(tasks)
@@ -95,7 +151,24 @@ class DataExport(object):
             project_dir=None,
             upload_dir=os.path.join(settings.MEDIA_ROOT, settings.UPLOAD_DIR))
         with get_temp_dir() as tmp_dir:
-            converter.convert(input_json, tmp_dir, output_format, is_dir=False)
+            if split_enabled and split_ratios:
+                task_ids = [t['id'] for t in tasks]
+                splits = DataExport._split_task_ids(task_ids, split_ratios, seed=project.id)
+                task_by_id = {t['id']: t for t in tasks}
+                for split_name, split_ids in splits.items():
+                    split_dir = os.path.join(tmp_dir, split_name)
+                    os.makedirs(split_dir, exist_ok=True)
+                    split_tasks = [task_by_id[task_id] for task_id in split_ids]
+                    split_input_json = os.path.join(split_dir, 'input.json')
+                    with open(split_input_json, 'w', encoding='utf-8') as f:
+                        f.write(json.dumps(split_tasks, ensure_ascii=False))
+                    converter.convert(split_input_json, split_dir, output_format, is_dir=False)
+                    # Remove the intermediate input.json so only the converted result remains.
+                    if os.path.exists(split_input_json):
+                        os.remove(split_input_json)
+            else:
+                converter.convert(input_json, tmp_dir, output_format, is_dir=False)
+
             files = get_all_files_from_dir(tmp_dir)
             # if only one file is exported - no need to create archive
             if len(os.listdir(tmp_dir)) == 1:

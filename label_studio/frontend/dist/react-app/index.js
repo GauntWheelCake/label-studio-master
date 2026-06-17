@@ -3242,7 +3242,13 @@ const Toggle = ({
 }) => {
   var _ref;
   const rootClass = (0,_utils_bem__WEBPACK_IMPORTED_MODULE_1__.cn)('toggle');
+  const isControlled = checked !== undefined;
   const [isChecked, setIsChecked] = react__WEBPACK_IMPORTED_MODULE_0__.useState((_ref = defaultChecked !== null && defaultChecked !== void 0 ? defaultChecked : checked) !== null && _ref !== void 0 ? _ref : false);
+  react__WEBPACK_IMPORTED_MODULE_0__.useEffect(() => {
+    if (isControlled) {
+      setIsChecked(checked);
+    }
+  }, [isControlled, checked]);
   const classList = [rootClass];
   const mods = {};
   if (isChecked) mods.checked = isChecked;
@@ -5958,10 +5964,15 @@ const zhCN = {
   'exportPage.status.preparing': '正在准备文件，这可能需要一些时间。',
   'exportPage.actions.export': '导出',
   'exportPage.formatInfo.description': '您可以从以下格式中选择一种导出数据集：',
-  'exportPage.formatInfo.missingFormat': '找不到需要的导出格式？',
-  'exportPage.formatInfo.contactAdmin': '请联系管理员获取帮助。',
-  'exportPage.notice.approvedOnly': '仅审核通过的任务会包含在导出文件中。',
-  'exportPage.notice.noApproved': '没有可导出的审核通过任务。',
+  'exportPage.notice.approvedOnly': '默认只导出已标注的任务；勾选下方“导出所有任务”可包含未标注任务。',
+  'exportPage.notice.noApproved': '没有可导出的任务。',
+  'exportPage.options.downloadAllTasks': '导出所有任务（包括未标注）',
+  'exportPage.split.enabled': '按 train/val/test 拆分导出',
+  'exportPage.split.train': '训练集 (train)',
+  'exportPage.split.val': '验证集 (val)',
+  'exportPage.split.test': '测试集 (test)',
+  'exportPage.split.total': '比例总和',
+  'exportPage.split.invalidTotal': '比例总和必须等于 100%',
   'exportPage.modal.readyTitle': '导出就绪',
   'exportPage.modal.emptyTitle': '没有可导出的数据',
   'exportPage.formats.JSON.title': '标注平台 JSON',
@@ -7652,7 +7663,7 @@ const CreateProject = ({
     if (response !== null) {
       await api.callApi('createFeDataset', {
         body: {
-          datatype: modelClass,
+          dataType: modelClass,
           name,
           remark: description,
           type: 0
@@ -10012,6 +10023,13 @@ const ExportPage = () => {
   const [downloadingMessage, setDownloadingMessage] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
   const [availableFormats, setAvailableFormats] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
   const [currentFormat, setCurrentFormat] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)('JSON');
+  const [splitEnabled, setSplitEnabled] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
+  const [splitRatios, setSplitRatios] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({
+    train: 80,
+    val: 10,
+    test: 10
+  });
+  const [splitRatiosValid, setSplitRatiosValid] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(true);
 
   /** @type {import('react').RefObject<Form>} */
   const form = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)();
@@ -10025,10 +10043,23 @@ const ExportPage = () => {
       full: true,
       booleansAsNumbers: true
     });
+    if (splitEnabled) {
+      const total = splitRatios.train + splitRatios.val + splitRatios.test;
+      if (total !== 100) {
+        setSplitRatiosValid(false);
+        setDownloading(false);
+        setDownloadingMessage(false);
+        clearTimeout(message);
+        return;
+      }
+    }
+    setSplitRatiosValid(true);
     const response = await api.callApi('exportRaw', {
       params: {
         pk: pageParams.id,
-        ...params
+        ...params,
+        split_enabled: splitEnabled ? 1 : 0,
+        split_ratios: JSON.stringify(splitRatios)
       }
     });
     if (response) {
@@ -10063,6 +10094,14 @@ const ExportPage = () => {
     clearTimeout(message);
   };
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    if (splitEnabled) {
+      const total = splitRatios.train + splitRatios.val + splitRatios.test;
+      setSplitRatiosValid(total === 100);
+    } else {
+      setSplitRatiosValid(true);
+    }
+  }, [splitEnabled, splitRatios]);
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     if ((0,_utils_helpers__WEBPACK_IMPORTED_MODULE_9__.isDefined)(pageParams.id)) {
       api.callApi("previousExports", {
         params: {
@@ -10082,6 +10121,23 @@ const ExportPage = () => {
         const localizedFormats = (formats !== null && formats !== void 0 ? formats : []).map(localizeFormat);
         setAvailableFormats(localizedFormats);
         setCurrentFormat((_localizedFormats$ = localizedFormats[0]) === null || _localizedFormats$ === void 0 ? void 0 : _localizedFormats$.name);
+      });
+      api.callApi("project", {
+        params: {
+          pk: pageParams.id
+        }
+      }).then(project => {
+        if (project) {
+          setSplitEnabled(!!project.export_split_enabled);
+          const ratios = project.export_split_ratios;
+          if (ratios && typeof ratios === 'object' && 'train' in ratios && 'val' in ratios && 'test' in ratios) {
+            setSplitRatios({
+              train: Number(ratios.train) || 0,
+              val: Number(ratios.val) || 0,
+              test: Number(ratios.test) || 0
+            });
+          }
+        }
       });
     }
   }, [pageParams]);
@@ -10152,13 +10208,28 @@ const ExportPage = () => {
         availableFormats: availableFormats,
         selected: currentFormat,
         onClick: format => setCurrentFormat(format.name)
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_3__.Form, {
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(_components_Form__WEBPACK_IMPORTED_MODULE_3__.Form, {
         ref: form,
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_3__.Input, {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_3__.Input, {
           type: "hidden",
           name: "exportType",
           value: currentFormat
-        })
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(SplitConfig, {
+          enabled: splitEnabled,
+          ratios: splitRatios,
+          ratiosValid: splitRatiosValid,
+          onChangeEnabled: setSplitEnabled,
+          onChangeRatios: setSplitRatios
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(Elem, {
+          name: "options",
+          style: {
+            marginTop: 16
+          },
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_3__.Toggle, {
+            label: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.options.downloadAllTasks'),
+            name: "download_all_tasks"
+          })
+        })]
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(Elem, {
         name: "notice",
         children: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.notice.approvedOnly')
@@ -10180,6 +10251,7 @@ const ExportPage = () => {
                 look: "primary",
                 onClick: proceedExport,
                 waiting: downloading,
+                disabled: downloading || splitEnabled && !splitRatiosValid,
                 children: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.actions.export')
               })]
             })
@@ -10225,9 +10297,62 @@ const FormatInfo = ({
           })]
         }, format.name);
       })
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(Elem, {
-      name: "feedback",
-      children: [(0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.formatInfo.missingFormat'), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)("br", {}), (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.formatInfo.contactAdmin')]
+    })]
+  });
+};
+const SplitConfig = ({
+  enabled,
+  ratios,
+  ratiosValid,
+  onChangeEnabled,
+  onChangeRatios
+}) => {
+  const total = ratios.train + ratios.val + ratios.test;
+  const isValid = total === 100;
+  const handleChange = (key, value) => {
+    const num = Math.max(0, Math.min(100, parseInt(value, 10) || 0));
+    onChangeRatios({
+      ...ratios,
+      [key]: num
+    });
+  };
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(Block, {
+    name: "split-config",
+    mod: {
+      visible: enabled
+    },
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(Elem, {
+      name: "row",
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_3__.Toggle, {
+        label: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.split.enabled'),
+        checked: enabled,
+        onChange: e => onChangeEnabled(e.target.checked)
+      })
+    }), enabled && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(Elem, {
+      name: "inputs",
+      children: [['train', 'val', 'test'].map(key => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(Elem, {
+        name: "field",
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_3__.Input, {
+          type: "number",
+          min: 0,
+          max: 100,
+          label: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)(`exportPage.split.${key}`),
+          value: ratios[key],
+          onChange: e => handleChange(key, e.target.value)
+        })
+      }, key)), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(Elem, {
+        name: "total",
+        mod: {
+          invalid: !isValid || !ratiosValid
+        },
+        children: [(0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.split.total'), ": ", total, "%"]
+      }), !isValid && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(Elem, {
+        name: "error",
+        mod: {
+          visible: true
+        },
+        children: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.split.invalidTotal')
+      })]
     })]
   });
 };
@@ -32879,7 +33004,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // extracted by mini-css-extract-plugin
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({"export-page__finish":"ls-export-page__finish","export-page__recent":"ls-export-page__recent","export-page__footer":"ls-export-page__footer","export-page__notice":"ls-export-page__notice","formats":"ls-formats","formats__list":"ls-formats__list","formats__item":"ls-formats__item","formats__item_active":"ls-formats__item_active","formats__item_selected":"ls-formats__item_selected","formats__name":"ls-formats__name","formats__tag":"ls-formats__tag","formats__description":"ls-formats__description"});
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({"export-page__finish":"ls-export-page__finish","export-page__recent":"ls-export-page__recent","export-page__footer":"ls-export-page__footer","export-page__notice":"ls-export-page__notice","split-config":"ls-split-config","split-config__row":"ls-split-config__row","split-config__inputs":"ls-split-config__inputs","split-config__field":"ls-split-config__field","split-config__total":"ls-split-config__total","split-config__total_invalid":"ls-split-config__total_invalid","split-config__error":"ls-split-config__error","split-config__error_visible":"ls-split-config__error_visible","formats":"ls-formats","formats__list":"ls-formats__list","formats__item":"ls-formats__item","formats__item_active":"ls-formats__item_active","formats__item_selected":"ls-formats__item_selected","formats__name":"ls-formats__name","formats__tag":"ls-formats__tag","formats__description":"ls-formats__description"});
 
 /***/ },
 

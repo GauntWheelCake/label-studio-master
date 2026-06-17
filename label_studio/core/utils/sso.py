@@ -39,10 +39,13 @@ def get_sso_user_info(token):
         response.raise_for_status()
         data = response.json()
 
-        if data.get('code') == 200:
-            return data.get('data', {}).get('user')
-        else:
-            logger.warning('SSO userinfo returned non-200 code: %s', data.get('code'))
+        # The external platform returns the user object directly.
+        if isinstance(data, dict) and 'id' in data and 'username' in data:
+            return data
+        logger.warning(
+            'SSO userinfo returned unexpected payload (keys: %s)',
+            list(data.keys()) if isinstance(data, dict) else type(data),
+        )
     except Exception as exc:
         logger.warning('Failed to fetch SSO user info: %s', exc)
 
@@ -122,7 +125,7 @@ def create_fe_dataset(token, name, datatype, remark='', type=0):
     timeout = getattr(settings, 'SSO_USERINFO_TIMEOUT', 5)
 
     payload = {
-        'datatype': datatype,
+        'dataType': datatype,
         'name': name,
         'remark': remark,
         'type': type,
@@ -153,7 +156,7 @@ def _mock_create_fe_dataset(name, datatype, remark, type):
     """Return a deterministic mock feDataset response for local development."""
     return {
         'id': 12345,
-        'datatype': datatype,
+        'dataType': datatype,
         'name': name,
         'remark': remark,
         'type': type,

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router';
 import { Button } from '../../components';
-import { Form, Input } from '../../components/Form';
+import { Form, Input, Toggle } from '../../components/Form';
 import { Modal } from '../../components/Modal/Modal';
 import { Space } from '../../components/Space/Space';
 import { useAPI } from '../../providers/ApiProvider';
@@ -87,6 +87,9 @@ export const ExportPage = () => {
   const [downloadingMessage, setDownloadingMessage] = useState(false);
   const [availableFormats, setAvailableFormats] = useState([]);
   const [currentFormat, setCurrentFormat] = useState('JSON');
+  const [splitEnabled, setSplitEnabled] = useState(false);
+  const [splitRatios, setSplitRatios] = useState({train: 80, val: 10, test: 10});
+  const [splitRatiosValid, setSplitRatiosValid] = useState(true);
 
   /** @type {import('react').RefObject<Form>} */
   const form = useRef();
@@ -104,10 +107,24 @@ export const ExportPage = () => {
       booleansAsNumbers: true,
     });
 
+    if (splitEnabled) {
+      const total = splitRatios.train + splitRatios.val + splitRatios.test;
+      if (total !== 100) {
+        setSplitRatiosValid(false);
+        setDownloading(false);
+        setDownloadingMessage(false);
+        clearTimeout(message);
+        return;
+      }
+    }
+    setSplitRatiosValid(true);
+
     const response = await api.callApi('exportRaw', {
       params: {
         pk: pageParams.id,
         ...params,
+        split_enabled: splitEnabled ? 1 : 0,
+        split_ratios: JSON.stringify(splitRatios),
       },
     });
 
@@ -147,6 +164,15 @@ export const ExportPage = () => {
   };
 
   useEffect(() => {
+    if (splitEnabled) {
+      const total = splitRatios.train + splitRatios.val + splitRatios.test;
+      setSplitRatiosValid(total === 100);
+    } else {
+      setSplitRatiosValid(true);
+    }
+  }, [splitEnabled, splitRatios]);
+
+  useEffect(() => {
     if (isDefined(pageParams.id)) {
       api.callApi("previousExports", {
         params: {
@@ -165,6 +191,25 @@ export const ExportPage = () => {
 
         setAvailableFormats(localizedFormats);
         setCurrentFormat(localizedFormats[0]?.name);
+      });
+
+      api.callApi("project", {
+        params: {
+          pk: pageParams.id,
+        },
+      }).then(project => {
+        if (project) {
+          setSplitEnabled(!!project.export_split_enabled);
+          const ratios = project.export_split_ratios;
+          if (ratios && typeof ratios === 'object' &&
+              'train' in ratios && 'val' in ratios && 'test' in ratios) {
+            setSplitRatios({
+              train: Number(ratios.train) || 0,
+              val: Number(ratios.val) || 0,
+              test: Number(ratios.test) || 0,
+            });
+          }
+        }
       });
     }
   }, [pageParams]);
@@ -238,6 +283,21 @@ export const ExportPage = () => {
         <Form ref={form}>
           <Input type="hidden" name="exportType" value={currentFormat}/>
 
+          <SplitConfig
+            enabled={splitEnabled}
+            ratios={splitRatios}
+            ratiosValid={splitRatiosValid}
+            onChangeEnabled={setSplitEnabled}
+            onChangeRatios={setSplitRatios}
+          />
+
+          <Elem name="options" style={{marginTop: 16}}>
+            <Toggle
+              label={t('exportPage.options.downloadAllTasks')}
+              name="download_all_tasks"
+            />
+          </Elem>
+
           {/* {aggregation} */}
 
           {/*<Form.Row columnCount={3} style={{marginTop: 24}}>*/}
@@ -267,6 +327,7 @@ export const ExportPage = () => {
                   look="primary"
                   onClick={proceedExport}
                   waiting={downloading}
+                  disabled={downloading || (splitEnabled && !splitRatiosValid)}
                 >
                   {t('exportPage.actions.export')}
                 </Elem>
@@ -308,11 +369,52 @@ const FormatInfo = ({availableFormats, selected, onClick}) => {
           </Elem>
         ))}
       </Elem>
-      <Elem name="feedback">
-        {t('exportPage.formatInfo.missingFormat')}
-        <br/>
-        {t('exportPage.formatInfo.contactAdmin')}
+    </Block>
+  );
+};
+
+const SplitConfig = ({enabled, ratios, ratiosValid, onChangeEnabled, onChangeRatios}) => {
+  const total = ratios.train + ratios.val + ratios.test;
+  const isValid = total === 100;
+
+  const handleChange = (key, value) => {
+    const num = Math.max(0, Math.min(100, parseInt(value, 10) || 0));
+    onChangeRatios({...ratios, [key]: num});
+  };
+
+  return (
+    <Block name="split-config" mod={{visible: enabled}}>
+      <Elem name="row">
+        <Toggle
+          label={t('exportPage.split.enabled')}
+          checked={enabled}
+          onChange={e => onChangeEnabled(e.target.checked)}
+        />
       </Elem>
+      {enabled && (
+        <Elem name="inputs">
+          {['train', 'val', 'test'].map(key => (
+            <Elem key={key} name="field">
+              <Input
+                type="number"
+                min={0}
+                max={100}
+                label={t(`exportPage.split.${key}`)}
+                value={ratios[key]}
+                onChange={e => handleChange(key, e.target.value)}
+              />
+            </Elem>
+          ))}
+          <Elem name="total" mod={{invalid: !isValid || !ratiosValid}}>
+            {t('exportPage.split.total')}: {total}%
+          </Elem>
+          {!isValid && (
+            <Elem name="error" mod={{visible: true}}>
+              {t('exportPage.split.invalidTotal')}
+            </Elem>
+          )}
+        </Elem>
+      )}
     </Block>
   );
 };

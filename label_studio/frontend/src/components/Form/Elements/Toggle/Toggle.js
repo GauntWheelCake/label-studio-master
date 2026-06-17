@@ -6,7 +6,14 @@ import './Toggle.styl';
 
 const Toggle = ({className, label, labelProps, description, checked, defaultChecked, onChange, validate, required, skip, ...props}) => {
   const rootClass = cn('toggle');
+  const isControlled = checked !== undefined;
   const [isChecked, setIsChecked] = React.useState(defaultChecked ?? checked ?? false);
+
+  React.useEffect(() => {
+    if (isControlled) {
+      setIsChecked(checked);
+    }
+  }, [isControlled, checked]);
 
   const classList = [rootClass];
   const mods = {};

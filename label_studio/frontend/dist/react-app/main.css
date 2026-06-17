@@ -3127,6 +3127,42 @@ body {
   font-size: 14px;
   color: rgba(0,0,0,0.6);
 }
+.ls-split-config {
+  margin: 24px 0 0;
+}
+.ls-split-config__row {
+  display: flex;
+  align-items: center;
+}
+.ls-split-config__inputs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 16px;
+  margin: 12px 0 0;
+}
+.ls-split-config__field {
+  flex: 1;
+  min-width: 120px;
+}
+.ls-split-config__total {
+  font-size: 14px;
+  color: rgba(0,0,0,0.6);
+  min-width: 100px;
+}
+.ls-split-config__total_invalid {
+  color: #f00;
+}
+.ls-split-config__error {
+  width: 100%;
+  margin-top: 8px;
+  font-size: 14px;
+  color: #f00;
+  display: none;
+}
+.ls-split-config__error_visible {
+  display: block;
+}
 .ls-formats {
   color: rgba(0,0,0,0.7);
   font-size: 16px;

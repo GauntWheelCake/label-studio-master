@@ -140,6 +140,12 @@ class Project(ProjectMixin, models.Model):
     model_class = models.CharField(
         _('model class'), max_length=32, blank=True, null=True, default='',
         help_text='External model classification value (e.g. 101, 102) from the SSO platform dictionary')
+    export_split_enabled = models.BooleanField(
+        _('export split enabled'), default=False,
+        help_text='Whether to split exported tasks into train/val/test folders')
+    export_split_ratios = models.JSONField(
+        _('export split ratios'), default=dict, null=True, blank=True,
+        help_text='Ratios for train/val/test export split, e.g. {"train": 80, "val": 10, "test": 10}')
 
     def __init__(self, *args, **kwargs):
         super(Project, self).__init__(*args, **kwargs)

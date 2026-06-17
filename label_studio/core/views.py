@@ -217,19 +217,19 @@ def fe_datasets(request):
         return JsonResponse({'error': 'Invalid JSON payload'}, status=400)
 
     name = (payload.get('name') or '').strip()
-    datatype = (payload.get('datatype') or '').strip()
+    data_type = (payload.get('dataType') or '').strip()
     remark = (payload.get('remark') or '').strip()
     type_value = payload.get('type', 0)
 
     if not name:
         return JsonResponse({'error': 'name is required'}, status=400)
-    if not datatype:
-        return JsonResponse({'error': 'datatype is required'}, status=400)
+    if not data_type:
+        return JsonResponse({'error': 'dataType is required'}, status=400)
 
     data = create_fe_dataset(
         token,
         name=name,
-        datatype=datatype,
+        datatype=data_type,
         remark=remark,
         type=type_value,
     )
