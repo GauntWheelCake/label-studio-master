@@ -13,6 +13,10 @@ def create_organization(title, created_by):
 
 
 def destroy_organization(org):
+    # Clean up imported files before cascade deletion
+    for project in Project.objects.filter(organization=org).iterator():
+        project.delete_uploaded_files()
+
     with DisableSignals():
         Project.objects.filter(organization=org).delete()
         org.delete()

@@ -23,7 +23,6 @@ from core import utils
 from core.utils.params import get_env
 from core.label_config import generate_time_series_json
 from core.utils.common import collect_versions
-from core.utils.sso import get_sso_dict, create_fe_dataset
 from projects.models import Project
 from ml.models import MLBackend
 from tasks.models import Task
@@ -175,68 +174,6 @@ def static_file_with_host_resolver(path_on_disk, content_type):
             return response
 
     return serve_file
-
-
-@login_required
-@require_http_methods(['GET'])
-def model_class_dict(request):
-    """Proxy for the external SSO model classification dictionary.
-
-    The user's SSO token is read from the session that was populated by
-    :class:`core.middleware.SSOAuthMiddleware`. This avoids exposing the
-    external platform's Authorization header to the frontend and keeps token
-    handling centralized in the backend.
-    """
-    token = request.session.get('sso_token')
-    if not token:
-        return JsonResponse({'error': 'SSO token not found in session'}, status=401)
-
-    items = get_sso_dict(token, dict_name='model_class')
-    if items is None:
-        return JsonResponse({'error': 'Failed to fetch model class dictionary'}, status=502)
-
-    return JsonResponse({'items': items})
-
-
-@login_required
-@require_http_methods(['POST'])
-def fe_datasets(request):
-    """Proxy to create a dataset in the external file explorer platform.
-
-    The payload is forwarded to ``/api/v1/fileExplorer/feDatasets`` using the
-    SSO token stored in the session. This keeps the external Authorization
-    header out of the frontend.
-    """
-    token = request.session.get('sso_token')
-    if not token:
-        return JsonResponse({'error': 'SSO token not found in session'}, status=401)
-
-    try:
-        payload = json.loads(request.body.decode('utf-8') or '{}')
-    except Exception:
-        return JsonResponse({'error': 'Invalid JSON payload'}, status=400)
-
-    name = (payload.get('name') or '').strip()
-    data_type = (payload.get('dataType') or '').strip()
-    remark = (payload.get('remark') or '').strip()
-    type_value = payload.get('type', 0)
-
-    if not name:
-        return JsonResponse({'error': 'name is required'}, status=400)
-    if not data_type:
-        return JsonResponse({'error': 'dataType is required'}, status=400)
-
-    data = create_fe_dataset(
-        token,
-        name=name,
-        datatype=data_type,
-        remark=remark,
-        type=type_value,
-    )
-    if data is None:
-        return JsonResponse({'error': 'Failed to create feDataset'}, status=502)
-
-    return JsonResponse({'data': data})
 
 
 @login_required

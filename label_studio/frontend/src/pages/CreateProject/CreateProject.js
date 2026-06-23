@@ -13,6 +13,7 @@ import { useImportPage } from './Import/useImportPage';
 import { useDraftProject } from './utils/useDraftProject';
 import { t } from '../../i18n';
 import { LsCheck, LsChevronRight } from '../../assets/icons';
+import { createFeDataset, getSsoDict } from '../../utils/datasetManagementApi';
 
 const StepIconProject = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -142,19 +143,27 @@ export const CreateProject = ({ onClose }) => {
 
     const fetchModelClasses = async () => {
       setModelClassLoading(true);
-      const result = await api.callApi('modelClassDict');
+      try {
+        const items = await getSsoDict('model_class');
 
-      if (!cancelled) {
-        setModelClassLoading(false);
-        if (result?.items) {
-          setModelClassOptions(result.items);
+        if (!cancelled) {
+          setModelClassOptions(items);
+        }
+      } catch (err) {
+        console.error('Failed to fetch model classes:', err);
+        if (!cancelled) {
+          setError(err.message || '获取模型分类失败');
+        }
+      } finally {
+        if (!cancelled) {
+          setModelClassLoading(false);
         }
       }
     };
 
     fetchModelClasses();
     return () => { cancelled = true; };
-  }, [api]);
+  }, []);
 
   const projectBody = React.useMemo(() => ({
     title: name,
@@ -176,21 +185,33 @@ export const CreateProject = ({ onClose }) => {
     });
 
     if (response !== null) {
-      const feDatasetRes = await api.callApi('createFeDataset', {
-        body: {
-          dataType: modelClass,
+      try {
+        const feDatasetData = await createFeDataset({
+          dataType: parseInt(modelClass, 10) || 0,
           name,
-          remark: description,
+          remark: description.trim() || '由标注平台自动创建',
           type: 0,
-        },
-      });
-      if (feDatasetRes?.data?.uploadPrefix) {
-        await api.callApi('updateProject', {
-          params: { pk: project.id },
-          body: { fe_dataset_upload_prefix: feDatasetRes.data.uploadPrefix },
+        });
+        if (feDatasetData?.uploadPrefix) {
+          await api.callApi('updateProject', {
+            params: { pk: project.id },
+            body: { fe_dataset_upload_prefix: feDatasetData.uploadPrefix },
+          });
+        }
+        history.push(`/projects/${response.id}/data`);
+      } catch (err) {
+        // Surface the external platform error so it is visible in the UI and
+        // browser console. Still navigate to the project because it was created.
+        console.error('Failed to create feDataset:', err);
+        Modal.info({
+          title: '创建数据集失败',
+          body: err.message || '无法在外部数据集管理平台创建数据集，导出到数据集管理功能将不可用。',
+          simple: true,
+          onOkPress: () => {
+            history.push(`/projects/${response.id}/data`);
+          },
         });
       }
-      history.push(`/projects/${response.id}/data`);
     }
     setWaitingStatus(false);
   }, [project, projectBody, finishUpload, api, modelClass, name, description, history]);

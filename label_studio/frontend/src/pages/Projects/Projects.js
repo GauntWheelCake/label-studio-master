@@ -13,6 +13,7 @@ import { DataManagerPage } from '../DataManager/DataManager';
 import { SettingsPage } from '../Settings';
 import './Projects.styl';
 import { ProjectsList } from './ProjectsList';
+import { storeSsoToken } from '../../utils/datasetManagementApi';
 
 export const ProjectsPage = () => {
   const api = React.useContext(ApiContext);
@@ -42,11 +43,11 @@ export const ProjectsPage = () => {
   }, []);
 
   React.useEffect(() => {
-    // Clean the SSO token from the URL after the page has loaded so users don't
-    // see or share it accidentally. This only touches the query string and does
-    // not trigger a navigation/reload.
+    // Capture the SSO token from the URL before cleaning it, so internal
+    // navigation can still make direct external API calls.
     const url = new URL(window.location.href);
     if (url.searchParams.has('token')) {
+      storeSsoToken(url.searchParams.get('token'));
       url.searchParams.delete('token');
       window.history.replaceState({}, '', url.toString());
     }

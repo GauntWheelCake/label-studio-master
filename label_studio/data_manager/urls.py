@@ -16,6 +16,7 @@ urlpatterns = [
     path("api/dm/project/", api.ProjectStateAPI.as_view()),
     path("api/dm/actions/", api.ProjectActionsAPI.as_view()),
     path("api/dm/tasks/<int:pk>", api.TaskAPI.as_view()),
+    path("api/dm/tasks/next", api.NextTaskAPI.as_view()),
 
     path("projects/<int:pk>/", views.task_page, name='project-data'),
     path("projects/<int:pk>/data/", views.task_page, name='project-data'),

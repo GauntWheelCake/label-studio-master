@@ -60,10 +60,6 @@ export const API_CONFIG = {
 
     // Version
     version: '/version',
-
-    // SSO dictionaries
-    modelClassDict: '/model-class-dict',
-    createFeDataset: 'POST:/fe-datasets',
   },
   alwaysExpectJSON: false,
 };

@@ -5933,10 +5933,7 @@ const API_CONFIG = {
     exportFormats: "/projects/:pk/export/formats",
     exportToDataset: 'POST:/projects/:pk/export-to-dataset',
     // Version
-    version: '/version',
-    // SSO dictionaries
-    modelClassDict: '/model-class-dict',
-    createFeDataset: 'POST:/fe-datasets'
+    version: '/version'
   },
   alwaysExpectJSON: false
 };
@@ -6151,7 +6148,7 @@ const zhCN = {
   'exportPage.formats.YOLO.description': '导出为 YOLOv3 目标检测格式，需要在配置中包含矩形等目标检测标签。',
   'createProject.projectName.label': '项目名称',
   'createProject.projectDescription.label': '项目描述',
-  'createProject.projectDescription.placeholder': '可选：填写项目描述',
+  'createProject.projectDescription.placeholder': '填写项目描述，未填写时将由系统自动生成',
   'createProject.projectModelClass.label': '模型分类',
   'createProject.projectModelClass.placeholder': '请选择模型分类',
   'createProject.steps.name': '项目信息',
@@ -7570,7 +7567,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _utils_useDraftProject__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./utils/useDraftProject */ "./src/pages/CreateProject/utils/useDraftProject.js");
 /* harmony import */ var _i18n__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../../i18n */ "./src/i18n/index.js");
 /* harmony import */ var _assets_icons__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../assets/icons */ "./src/assets/icons/index.js");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var _utils_datasetManagementApi__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../utils/datasetManagementApi */ "./src/utils/datasetManagementApi.js");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 
 
 
@@ -7587,7 +7585,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const StepIconProject = () => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)("svg", {
+
+const StepIconProject = () => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("svg", {
   width: "16",
   height: "16",
   viewBox: "0 0 24 24",
@@ -7596,11 +7595,11 @@ const StepIconProject = () => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTE
   strokeWidth: "2",
   strokeLinecap: "round",
   strokeLinejoin: "round",
-  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)("path", {
+  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("path", {
     d: "M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"
   })
 });
-const StepIconUpload = () => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsxs)("svg", {
+const StepIconUpload = () => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsxs)("svg", {
   width: "16",
   height: "16",
   viewBox: "0 0 24 24",
@@ -7609,18 +7608,18 @@ const StepIconUpload = () => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED
   strokeWidth: "2",
   strokeLinecap: "round",
   strokeLinejoin: "round",
-  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)("path", {
+  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("path", {
     d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
-  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)("polyline", {
+  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("polyline", {
     points: "17 8 12 3 7 8"
-  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)("line", {
+  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("line", {
     x1: "12",
     y1: "3",
     x2: "12",
     y2: "15"
   })]
 });
-const StepIconConfig = () => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsxs)("svg", {
+const StepIconConfig = () => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsxs)("svg", {
   width: "16",
   height: "16",
   viewBox: "0 0 24 24",
@@ -7629,11 +7628,11 @@ const StepIconConfig = () => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED
   strokeWidth: "2",
   strokeLinecap: "round",
   strokeLinejoin: "round",
-  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)("circle", {
+  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("circle", {
     cx: "12",
     cy: "12",
     r: "3"
-  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)("path", {
+  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("path", {
     d: "M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"
   })]
 });
@@ -7649,32 +7648,32 @@ const ProjectName = ({
   modelClassOptions,
   modelClassLoading,
   show = true
-}) => !show ? null : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsxs)("form", {
+}) => !show ? null : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsxs)("form", {
   className: (0,_utils_bem__WEBPACK_IMPORTED_MODULE_7__.cn)("project-name"),
   onSubmit: e => {
     e.preventDefault();
   },
-  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsxs)("div", {
+  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsxs)("div", {
     className: "field field--wide",
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)("label", {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("label", {
       htmlFor: "project_name",
       children: (0,_i18n__WEBPACK_IMPORTED_MODULE_13__.t)('createProject.projectName.label')
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)("input", {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("input", {
       name: "name",
       id: "project_name",
       value: name,
       onChange: e => setName(e.target.value),
       onBlur: onSaveName
-    }), error && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)("span", {
+    }), error && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("span", {
       className: "error",
       children: error
     })]
-  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsxs)("div", {
+  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsxs)("div", {
     className: "field field--wide",
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)("label", {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("label", {
       htmlFor: "project_description",
       children: (0,_i18n__WEBPACK_IMPORTED_MODULE_13__.t)('createProject.projectDescription.label')
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)("textarea", {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("textarea", {
       name: "description",
       id: "project_description",
       placeholder: (0,_i18n__WEBPACK_IMPORTED_MODULE_13__.t)('createProject.projectDescription.placeholder'),
@@ -7682,9 +7681,9 @@ const ProjectName = ({
       value: description,
       onChange: e => setDescription(e.target.value)
     })]
-  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)("div", {
+  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("div", {
     className: "field field--wide",
-    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(_components_Form_Elements__WEBPACK_IMPORTED_MODULE_5__.Select, {
+    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_components_Form_Elements__WEBPACK_IMPORTED_MODULE_5__.Select, {
       name: "model_class",
       label: (0,_i18n__WEBPACK_IMPORTED_MODULE_13__.t)('createProject.projectModelClass.label'),
       placeholder: (0,_i18n__WEBPACK_IMPORTED_MODULE_13__.t)('createProject.projectModelClass.placeholder'),
@@ -7703,27 +7702,27 @@ const WizardSteps = ({
   const steps = [{
     key: 'name',
     label: '项目信息',
-    icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(StepIconProject, {})
+    icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(StepIconProject, {})
   }, {
     key: 'import',
     label: '数据导入',
-    icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(StepIconUpload, {})
+    icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(StepIconUpload, {})
   }, {
     key: 'config',
     label: '标注配置',
-    icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(StepIconConfig, {})
+    icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(StepIconConfig, {})
   }];
   const currentIndex = steps.findIndex(s => s.key === current);
   const stepsClass = (0,_utils_bem__WEBPACK_IMPORTED_MODULE_7__.cn)('wizard-steps');
   const stepClass = (0,_utils_bem__WEBPACK_IMPORTED_MODULE_7__.cn)('wizard-step');
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)("div", {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("div", {
     className: stepsClass.toString(),
     children: steps.map((step, index) => {
       const isCompleted = index < currentIndex;
       const isCurrent = index === currentIndex;
       const canClick = isCompleted;
-      return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsxs)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, {
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsxs)("button", {
+      return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsxs)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsxs)("button", {
           type: "button",
           className: stepClass.mod({
             completed: isCompleted,
@@ -7732,15 +7731,15 @@ const WizardSteps = ({
           }).toString(),
           onClick: () => canClick && (onSelect === null || onSelect === void 0 ? void 0 : onSelect(step.key)),
           disabled: !canClick,
-          children: [isCompleted ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(_assets_icons__WEBPACK_IMPORTED_MODULE_14__.LsCheck, {
+          children: [isCompleted ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_assets_icons__WEBPACK_IMPORTED_MODULE_14__.LsCheck, {
             width: "14",
             height: "14"
-          }) : step.icon, /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)("span", {
+          }) : step.icon, /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("span", {
             children: step.label
           })]
-        }), index < steps.length - 1 && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)("span", {
+        }), index < steps.length - 1 && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("span", {
           className: stepClass.elem('arrow').toString(),
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(_assets_icons__WEBPACK_IMPORTED_MODULE_14__.LsChevronRight, {
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_assets_icons__WEBPACK_IMPORTED_MODULE_14__.LsChevronRight, {
             width: "14",
             height: "14"
           })
@@ -7783,11 +7782,19 @@ const CreateProject = ({
     let cancelled = false;
     const fetchModelClasses = async () => {
       setModelClassLoading(true);
-      const result = await api.callApi('modelClassDict');
-      if (!cancelled) {
-        setModelClassLoading(false);
-        if (result !== null && result !== void 0 && result.items) {
-          setModelClassOptions(result.items);
+      try {
+        const items = await (0,_utils_datasetManagementApi__WEBPACK_IMPORTED_MODULE_15__.getSsoDict)('model_class');
+        if (!cancelled) {
+          setModelClassOptions(items);
+        }
+      } catch (err) {
+        console.error('Failed to fetch model classes:', err);
+        if (!cancelled) {
+          setError(err.message || '获取模型分类失败');
+        }
+      } finally {
+        if (!cancelled) {
+          setModelClassLoading(false);
         }
       }
     };
@@ -7795,7 +7802,7 @@ const CreateProject = ({
     return () => {
       cancelled = true;
     };
-  }, [api]);
+  }, []);
   const projectBody = react__WEBPACK_IMPORTED_MODULE_0__.useMemo(() => ({
     title: name,
     description,
@@ -7813,26 +7820,37 @@ const CreateProject = ({
       body: projectBody
     });
     if (response !== null) {
-      var _feDatasetRes$data;
-      const feDatasetRes = await api.callApi('createFeDataset', {
-        body: {
-          dataType: modelClass,
+      try {
+        const feDatasetData = await (0,_utils_datasetManagementApi__WEBPACK_IMPORTED_MODULE_15__.createFeDataset)({
+          dataType: parseInt(modelClass, 10) || 0,
           name,
-          remark: description,
+          remark: description.trim() || '由标注平台自动创建',
           type: 0
+        });
+        if (feDatasetData !== null && feDatasetData !== void 0 && feDatasetData.uploadPrefix) {
+          await api.callApi('updateProject', {
+            params: {
+              pk: project.id
+            },
+            body: {
+              fe_dataset_upload_prefix: feDatasetData.uploadPrefix
+            }
+          });
         }
-      });
-      if (feDatasetRes !== null && feDatasetRes !== void 0 && (_feDatasetRes$data = feDatasetRes.data) !== null && _feDatasetRes$data !== void 0 && _feDatasetRes$data.uploadPrefix) {
-        await api.callApi('updateProject', {
-          params: {
-            pk: project.id
-          },
-          body: {
-            fe_dataset_upload_prefix: feDatasetRes.data.uploadPrefix
+        history.push(`/projects/${response.id}/data`);
+      } catch (err) {
+        // Surface the external platform error so it is visible in the UI and
+        // browser console. Still navigate to the project because it was created.
+        console.error('Failed to create feDataset:', err);
+        _components_Modal_Modal__WEBPACK_IMPORTED_MODULE_3__.Modal.info({
+          title: '创建数据集失败',
+          body: err.message || '无法在外部数据集管理平台创建数据集，导出到数据集管理功能将不可用。',
+          simple: true,
+          onOkPress: () => {
+            history.push(`/projects/${response.id}/data`);
           }
         });
       }
-      history.push(`/projects/${response.id}/data`);
     }
     setWaitingStatus(false);
   }, [project, projectBody, finishUpload, api, modelClass, name, description, history]);
@@ -7900,30 +7918,30 @@ const CreateProject = ({
       setStep(nextStep);
     }
   };
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(_components_Modal_Modal__WEBPACK_IMPORTED_MODULE_3__.Modal, {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_components_Modal_Modal__WEBPACK_IMPORTED_MODULE_3__.Modal, {
     onHide: () => history.push("/projects"),
     fullscreen: true,
     visible: true,
     bare: true,
     closeOnClickOutside: false,
-    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsxs)("div", {
+    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsxs)("div", {
       className: rootClass,
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsxs)(_components_Modal_Modal__WEBPACK_IMPORTED_MODULE_3__.Modal.Header, {
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)("h1", {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsxs)(_components_Modal_Modal__WEBPACK_IMPORTED_MODULE_3__.Modal.Header, {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("h1", {
           children: (0,_i18n__WEBPACK_IMPORTED_MODULE_13__.t)('createProject.header.title')
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(WizardSteps, {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(WizardSteps, {
           current: step,
           onSelect: handleStepSelect
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
           look: "danger",
           size: "compact",
           onClick: onCancel,
           waiting: waiting,
           children: (0,_i18n__WEBPACK_IMPORTED_MODULE_13__.t)('createProject.actions.delete')
         })]
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsxs)("div", {
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsxs)("div", {
         className: rootClass.elem("body"),
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(ProjectName, {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(ProjectName, {
           name: name,
           setName: setName,
           error: error,
@@ -7935,11 +7953,11 @@ const CreateProject = ({
           modelClassOptions: modelClassOptions,
           modelClassLoading: modelClassLoading,
           show: step === "name"
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(_Import_Import__WEBPACK_IMPORTED_MODULE_10__.ImportPage, {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_Import_Import__WEBPACK_IMPORTED_MODULE_10__.ImportPage, {
           project: project,
           show: step === "import",
           ...pageProps
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(_Config_Config__WEBPACK_IMPORTED_MODULE_8__.ConfigPage, {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_Config_Config__WEBPACK_IMPORTED_MODULE_8__.ConfigPage, {
           project: project,
           onUpdate: setConfig,
           show: step === "config",
@@ -7947,26 +7965,26 @@ const CreateProject = ({
           disableSaveButton: true,
           onValidate: validation => setConfigValid(!(validation !== null && validation !== void 0 && validation.error))
         })]
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)("div", {
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("div", {
         className: rootClass.elem("footer"),
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsxs)(_components_Space_Space__WEBPACK_IMPORTED_MODULE_4__.Space, {
-          children: [step !== 'name' && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsxs)(_components_Space_Space__WEBPACK_IMPORTED_MODULE_4__.Space, {
+          children: [step !== 'name' && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
             size: "compact",
             onClick: goToPrevStep,
             children: "\u4E0A\u4E00\u6B65"
-          }), step === 'name' && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
+          }), step === 'name' && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
             look: "primary",
             size: "compact",
             onClick: goToNextStep,
             disabled: !canGoNext,
             children: "\u4E0B\u4E00\u6B65"
-          }), step === 'import' && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
+          }), step === 'import' && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
             look: "primary",
             size: "compact",
             onClick: goToNextStep,
             disabled: !canGoNext,
             children: "\u4E0B\u4E00\u6B65"
-          }), step === 'config' && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
+          }), step === 'config' && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
             look: "primary",
             size: "compact",
             onClick: onCreate,
@@ -9224,6 +9242,10 @@ DataManagerPage.context = ({
   const [smartLabeling, setSmartLabeling] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
   const isSwitchingTaskRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(false);
   const smartLabelingModalRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
+
+  // Review controls are temporarily disabled; the handlers and state remain in
+  // place so they can be re-enabled quickly if needed.
+  const ENABLE_REVIEW_CONTROLS = false;
   const showReviewError = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(message => {
     let modalInstance;
     const footer = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)(_components_Space_Space__WEBPACK_IMPORTED_MODULE_5__.Space, {
@@ -9836,7 +9858,7 @@ DataManagerPage.context = ({
   const disabledMessage = !hasTask ? '暂无可审阅的任务' : !canReview ? '仅审阅者可执行审核操作' : '';
   const approveDisabled = reviewDisabled || pendingDecision !== null;
   const rejectDisabled = reviewDisabled || pendingDecision !== null;
-  const showReviewControls = mode !== 'explorer';
+  const showReviewControls = ENABLE_REVIEW_CONTROLS && mode !== 'explorer';
   return project && project.id ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsxs)(_components_Space_Space__WEBPACK_IMPORTED_MODULE_5__.Space, {
     size: "small",
     children: [mode !== 'explorer' && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)(_components_Button_Button__WEBPACK_IMPORTED_MODULE_3__.Button, {
@@ -10109,7 +10131,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _utils_helpers__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../utils/helpers */ "./src/utils/helpers.js");
 /* harmony import */ var _ExportPage_styl__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./ExportPage.styl */ "./src/pages/ExportPage/ExportPage.styl");
 /* harmony import */ var _i18n__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../i18n */ "./src/i18n/index.js");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var _utils_datasetManagementApi__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../utils/datasetManagementApi */ "./src/utils/datasetManagementApi.js");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
 
 
 
@@ -10193,53 +10217,76 @@ const ExportPage = () => {
     val: 10,
     test: 10
   });
-  const [splitRatiosValid, setSplitRatiosValid] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(true);
+  const splitRatiosValid = !splitEnabled || splitRatios.train + splitRatios.val + splitRatios.test === 100;
 
   /** @type {import('react').RefObject<Form>} */
   const form = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)();
-  const effectiveSplitEnabled = exportTarget === 'dataset' ? true : splitEnabled;
   const proceedExport = async () => {
     setDownloading(true);
     const message = setTimeout(() => {
       setDownloadingMessage(true);
     }, 1000);
-    if (effectiveSplitEnabled) {
-      const total = splitRatios.train + splitRatios.val + splitRatios.test;
-      if (total !== 100) {
-        setSplitRatiosValid(false);
-        setDownloading(false);
-        setDownloadingMessage(false);
-        clearTimeout(message);
-        return;
-      }
+    if (splitEnabled && !splitRatiosValid) {
+      setDownloading(false);
+      setDownloadingMessage(false);
+      clearTimeout(message);
+      return;
     }
-    setSplitRatiosValid(true);
     if (exportTarget === 'dataset') {
-      const response = await api.callApi('exportToDataset', {
-        params: {
-          pk: pageParams.id
-        },
-        body: {
-          exportType: currentFormat,
-          split_ratios: JSON.stringify(splitRatios)
-        }
-      });
-      if (response) {
-        if (response.status === 'ok') {
+      try {
+        const response = await api.callApi('exportToDataset', {
+          params: {
+            pk: pageParams.id
+          },
+          body: {
+            exportType: currentFormat,
+            split_ratios: JSON.stringify(splitRatios)
+          }
+        });
+        if (!response || response.status !== 'ok') {
+          const detail = (response === null || response === void 0 ? void 0 : response.detail) || '生成导出文件失败';
+          _components_Modal_Modal__WEBPACK_IMPORTED_MODULE_4__.Modal.info({
+            title: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.modal.emptyTitle'),
+            body: detail,
+            simple: true
+          });
+        } else {
+          const {
+            uploadPrefix,
+            files
+          } = response;
+          if (!uploadPrefix) {
+            throw new Error('项目没有配置数据集上传前缀，请先创建数据集');
+          }
+          if (!files || files.length === 0) {
+            throw new Error('没有可上传的导出文件');
+          }
+          const fileObjects = files.map(f => f.path);
+          const urls = await (0,_utils_datasetManagementApi__WEBPACK_IMPORTED_MODULE_12__.getUploadUrls)(uploadPrefix, fileObjects);
+          if (!urls || typeof urls !== 'object') {
+            throw new Error('获取上传地址失败：外部平台返回格式不正确');
+          }
+          for (const file of files) {
+            const keysToTry = [`${uploadPrefix}/${file.path}`, file.path];
+            const matchedKey = keysToTry.find(key => urls[key]);
+            if (!matchedKey) {
+              throw new Error(`没有获取到 ${file.path} 的上传地址`);
+            }
+            await (0,_utils_datasetManagementApi__WEBPACK_IMPORTED_MODULE_12__.uploadFileToUrl)(urls[matchedKey], file.content_base64, file.content_type);
+          }
           _components_Modal_Modal__WEBPACK_IMPORTED_MODULE_4__.Modal.info({
             title: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.modal.uploadedTitle'),
             body: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.modal.uploadedBody'),
             simple: true
           });
-        } else if (response.detail) {
-          _components_Modal_Modal__WEBPACK_IMPORTED_MODULE_4__.Modal.info({
-            title: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.modal.emptyTitle'),
-            body: response.detail,
-            simple: true
-          });
-        } else {
-          api.handleError(response);
         }
+      } catch (err) {
+        console.error('Export to dataset failed:', err);
+        _components_Modal_Modal__WEBPACK_IMPORTED_MODULE_4__.Modal.info({
+          title: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.modal.emptyTitle'),
+          body: err.message || '上传数据集失败',
+          simple: true
+        });
       }
     } else {
       const params = form.current.assembleFormData({
@@ -10287,14 +10334,6 @@ const ExportPage = () => {
     setDownloadingMessage(false);
     clearTimeout(message);
   };
-  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
-    if (effectiveSplitEnabled) {
-      const total = splitRatios.train + splitRatios.val + splitRatios.test;
-      setSplitRatiosValid(total === 100);
-    } else {
-      setSplitRatiosValid(true);
-    }
-  }, [effectiveSplitEnabled, splitRatios]);
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     if ((0,_utils_helpers__WEBPACK_IMPORTED_MODULE_9__.isDefined)(pageParams.id)) {
       api.callApi("previousExports", {
@@ -10381,7 +10420,7 @@ const ExportPage = () => {
   //   </Label>
   // );
 
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Modal_Modal__WEBPACK_IMPORTED_MODULE_4__.Modal, {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Modal_Modal__WEBPACK_IMPORTED_MODULE_4__.Modal, {
     onHide: () => {
       const path = location.pathname.replace(ExportPage.path, '');
       const search = location.search;
@@ -10396,70 +10435,73 @@ const ExportPage = () => {
     // footer="Read more about supported export formats in the Documentation."
     ,
     visible: true,
-    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(Block, {
+    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(Block, {
       name: "export-page",
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(FormatInfo, {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(FormatInfo, {
         availableFormats: availableFormats,
         selected: currentFormat,
         onClick: format => setCurrentFormat(format.name)
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(_components_Form__WEBPACK_IMPORTED_MODULE_3__.Form, {
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(_components_Form__WEBPACK_IMPORTED_MODULE_3__.Form, {
         ref: form,
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_3__.Input, {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_3__.Input, {
           type: "hidden",
           name: "exportType",
           value: currentFormat
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(Elem, {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(Elem, {
           name: "options",
           style: {
             marginTop: 16
           },
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(_components_Form__WEBPACK_IMPORTED_MODULE_3__.RadioGroup, {
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(_components_Form__WEBPACK_IMPORTED_MODULE_3__.RadioGroup, {
             label: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.target.label'),
             name: "export_target",
             value: exportTarget,
-            onChange: value => setExportTarget(value),
+            onChange: value => {
+              setExportTarget(value);
+              if (value === 'dataset') setSplitEnabled(true);
+            },
             labelProps: {
               size: "large",
               flat: true
             },
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_3__.RadioGroup.Button, {
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_3__.RadioGroup.Button, {
               value: "local",
               children: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.target.local')
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_3__.RadioGroup.Button, {
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_3__.RadioGroup.Button, {
               value: "dataset",
               children: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.target.dataset')
             })]
           })
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(SplitConfig, {
-          enabled: effectiveSplitEnabled,
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(SplitConfig, {
+          enabled: splitEnabled,
           ratios: splitRatios,
           ratiosValid: splitRatiosValid,
           onChangeEnabled: setSplitEnabled,
           onChangeRatios: setSplitRatios,
           toggleDisabled: exportTarget === 'dataset'
         })]
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(Elem, {
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(Elem, {
         name: "notice",
         children: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.notice.approvedOnly')
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(Elem, {
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(Elem, {
         name: "footer",
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(_components_Space_Space__WEBPACK_IMPORTED_MODULE_5__.Space, {
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(_components_Space_Space__WEBPACK_IMPORTED_MODULE_5__.Space, {
           style: {
             width: '100%'
           },
           spread: true,
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(Elem, {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(Elem, {
             name: "recent"
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(Elem, {
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(Elem, {
             name: "actions",
-            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(_components_Space_Space__WEBPACK_IMPORTED_MODULE_5__.Space, {
-              children: [downloadingMessage && (exportTarget === 'dataset' ? (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.status.uploading') : (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.status.preparing')), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(Elem, {
+            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(_components_Space_Space__WEBPACK_IMPORTED_MODULE_5__.Space, {
+              children: [downloadingMessage && (exportTarget === 'dataset' ? (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.status.uploading') : (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.status.preparing')), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(Elem, {
                 tag: _components__WEBPACK_IMPORTED_MODULE_2__.Button,
                 name: "finish",
                 look: "primary",
                 onClick: proceedExport,
                 waiting: downloading,
-                disabled: downloading || effectiveSplitEnabled && !splitRatiosValid,
+                disabled: downloading || splitEnabled && !splitRatiosValid,
                 children: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.actions.export')
               })]
             })
@@ -10474,32 +10516,32 @@ const FormatInfo = ({
   selected,
   onClick
 }) => {
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(Block, {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(Block, {
     name: "formats",
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(Elem, {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(Elem, {
       name: "info",
       children: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.formatInfo.description')
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(Elem, {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(Elem, {
       name: "list",
       children: availableFormats.map(format => {
         var _format$tags, _format$tags$map;
-        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(Elem, {
+        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(Elem, {
           name: "item",
           mod: {
             active: !format.disabled,
             selected: format.name === selected
           },
           onClick: !format.disabled ? () => onClick(format) : null,
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(Elem, {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(Elem, {
             name: "name",
-            children: [format.title, /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Space_Space__WEBPACK_IMPORTED_MODULE_5__.Space, {
+            children: [format.title, /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Space_Space__WEBPACK_IMPORTED_MODULE_5__.Space, {
               size: "small",
-              children: (_format$tags = format.tags) === null || _format$tags === void 0 ? void 0 : (_format$tags$map = _format$tags.map) === null || _format$tags$map === void 0 ? void 0 : _format$tags$map.call(_format$tags, (tag, index) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(Elem, {
+              children: (_format$tags = format.tags) === null || _format$tags === void 0 ? void 0 : (_format$tags$map = _format$tags.map) === null || _format$tags$map === void 0 ? void 0 : _format$tags$map.call(_format$tags, (tag, index) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(Elem, {
                 name: "tag",
                 children: tag
               }, index))
             })]
-          }), format.description && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(Elem, {
+          }), format.description && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(Elem, {
             name: "description",
             children: format.description
           })]
@@ -10517,7 +10559,6 @@ const SplitConfig = ({
   toggleDisabled
 }) => {
   const total = ratios.train + ratios.val + ratios.test;
-  const isValid = total === 100;
   const handleChange = (key, value) => {
     const num = Math.max(0, Math.min(100, parseInt(value, 10) || 0));
     onChangeRatios({
@@ -10525,24 +10566,24 @@ const SplitConfig = ({
       [key]: num
     });
   };
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(Block, {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(Block, {
     name: "split-config",
     mod: {
       visible: enabled
     },
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(Elem, {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(Elem, {
       name: "row",
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_3__.Toggle, {
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_3__.Toggle, {
         label: (0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.split.enabled'),
         checked: enabled,
         onChange: e => onChangeEnabled(e.target.checked),
         disabled: toggleDisabled
       })
-    }), enabled && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(Elem, {
+    }), enabled && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(Elem, {
       name: "inputs",
-      children: [['train', 'val', 'test'].map(key => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(Elem, {
+      children: [['train', 'val', 'test'].map(key => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(Elem, {
         name: "field",
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_3__.Input, {
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_Form__WEBPACK_IMPORTED_MODULE_3__.Input, {
           type: "number",
           min: 0,
           max: 100,
@@ -10550,13 +10591,13 @@ const SplitConfig = ({
           value: ratios[key],
           onChange: e => handleChange(key, e.target.value)
         })
-      }, key)), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(Elem, {
+      }, key)), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(Elem, {
         name: "total",
         mod: {
-          invalid: !isValid || !ratiosValid
+          invalid: !ratiosValid
         },
         children: [(0,_i18n__WEBPACK_IMPORTED_MODULE_11__.t)('exportPage.split.total'), ": ", total, "%"]
-      }), !isValid && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(Elem, {
+      }), !ratiosValid && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(Elem, {
         name: "error",
         mod: {
           visible: true
@@ -11109,7 +11150,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Settings__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../Settings */ "./src/pages/Settings/index.js");
 /* harmony import */ var _Projects_styl__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./Projects.styl */ "./src/pages/Projects/Projects.styl");
 /* harmony import */ var _ProjectsList__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./ProjectsList */ "./src/pages/Projects/ProjectsList.js");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var _utils_datasetManagementApi__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../utils/datasetManagementApi */ "./src/utils/datasetManagementApi.js");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
 
 
 
@@ -11148,11 +11191,11 @@ const ProjectsPage = () => {
     fetchProjects();
   }, []);
   react__WEBPACK_IMPORTED_MODULE_0__.useEffect(() => {
-    // Clean the SSO token from the URL after the page has loaded so users don't
-    // see or share it accidentally. This only touches the query string and does
-    // not trigger a navigation/reload.
+    // Capture the SSO token from the URL before cleaning it, so internal
+    // navigation can still make direct external API calls.
     const url = new URL(window.location.href);
     if (url.searchParams.has('token')) {
+      (0,_utils_datasetManagementApi__WEBPACK_IMPORTED_MODULE_14__.storeSsoToken)(url.searchParams.get('token'));
       url.searchParams.delete('token');
       window.history.replaceState({}, '', url.toString());
     }
@@ -11163,24 +11206,24 @@ const ProjectsPage = () => {
       showButton: true
     });
   }, [projectsList.length]);
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_8__.Block, {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_8__.Block, {
     name: "projects-page",
-    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsxs)(_components_Oneof_Oneof__WEBPACK_IMPORTED_MODULE_3__.Oneof, {
+    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsxs)(_components_Oneof_Oneof__WEBPACK_IMPORTED_MODULE_3__.Oneof, {
       value: networkState,
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_8__.Elem, {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_8__.Elem, {
         name: "loading",
         case: "loading",
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_components_Spinner_Spinner__WEBPACK_IMPORTED_MODULE_4__.Spinner, {
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(_components_Spinner_Spinner__WEBPACK_IMPORTED_MODULE_4__.Spinner, {
           size: 64
         })
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsxs)(_utils_bem__WEBPACK_IMPORTED_MODULE_8__.Elem, {
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsxs)(_utils_bem__WEBPACK_IMPORTED_MODULE_8__.Elem, {
         name: "content",
         case: "loaded",
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_ProjectsList__WEBPACK_IMPORTED_MODULE_13__.ProjectsList, {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(_ProjectsList__WEBPACK_IMPORTED_MODULE_13__.ProjectsList, {
           projects: projectsList,
           openModal: openModal,
           onProjectDelete: handleProjectDelete
-        }), modal && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_CreateProject_CreateProject__WEBPACK_IMPORTED_MODULE_9__.CreateProject, {
+        }), modal && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(_CreateProject_CreateProject__WEBPACK_IMPORTED_MODULE_9__.CreateProject, {
           onClose: closeModal
         })]
       })]
@@ -11201,7 +11244,7 @@ ProjectsPage.routes = ({
   exact: true,
   component: () => {
     const params = (0,react_router__WEBPACK_IMPORTED_MODULE_1__.useParams)();
-    return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(react_router__WEBPACK_IMPORTED_MODULE_1__.Redirect, {
+    return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(react_router__WEBPACK_IMPORTED_MODULE_1__.Redirect, {
       to: `/projects/${params.id}/data`
     });
   },
@@ -11215,7 +11258,7 @@ ProjectsPage.context = ({
   showButton
 }) => {
   if (!showButton) return null;
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_14__.jsx)(_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_15__.jsx)(_components__WEBPACK_IMPORTED_MODULE_2__.Button, {
     onClick: openModal,
     look: "primary",
     size: "compact",
@@ -12029,20 +12072,21 @@ const text = {
 };
 const DEFAULT_BACKEND_TITLE = 'Default Smart Labeling Backend';
 const DEFAULT_BACKEND_DESCRIPTION = 'Faster R-CNN default ML backend for smart pre-annotation.';
-const PRODUCTION_ML_BACKEND_URL = 'http://68.68.18.26:9000';
 const uniq = items => [...new Set(items.filter(Boolean))];
 const getDefaultBackendCandidates = () => {
+  var _window$APP_SETTINGS;
   const location = window.location;
   const protocol = (location === null || location === void 0 ? void 0 : location.protocol) || 'http:';
   const hostname = (location === null || location === void 0 ? void 0 : location.hostname) || 'localhost';
   const hostLike = ['localhost', '127.0.0.1', '0.0.0.0'].includes(hostname);
+  const configuredMlHost = (_window$APP_SETTINGS = window.APP_SETTINGS) === null || _window$APP_SETTINGS === void 0 ? void 0 : _window$APP_SETTINGS.mlHost;
   if (hostLike) {
     // Local development: direct host process first, then host access from Docker.
     return uniq([`${protocol}//127.0.0.1:9091`, 'http://host.docker.internal:9091']);
   }
 
-  // Server deployment: use the fixed ML backend first, then the current server host.
-  return uniq([PRODUCTION_ML_BACKEND_URL, `${protocol}//${hostname}:9000`]);
+  // Server deployment: use the configured ML backend first, then the current server host.
+  return uniq([...(configuredMlHost ? [configuredMlHost] : []), `${protocol}//${hostname}:9000`]);
 };
 const showInfoModal = (title, body) => {
   let modalRef;
@@ -13969,6 +14013,221 @@ function* Palette(colors = LABELS_PALETTE) {
   }
 }
 window.Palette = Palette;
+
+/***/ },
+
+/***/ "./src/utils/datasetManagementApi.js"
+/*!*******************************************!*\
+  !*** ./src/utils/datasetManagementApi.js ***!
+  \*******************************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   clearSsoToken: () => (/* binding */ clearSsoToken),
+/* harmony export */   createFeDataset: () => (/* binding */ createFeDataset),
+/* harmony export */   getSsoDict: () => (/* binding */ getSsoDict),
+/* harmony export */   getSsoToken: () => (/* binding */ getSsoToken),
+/* harmony export */   getUploadUrls: () => (/* binding */ getUploadUrls),
+/* harmony export */   storeSsoToken: () => (/* binding */ storeSsoToken),
+/* harmony export */   uploadFileToUrl: () => (/* binding */ uploadFileToUrl)
+/* harmony export */ });
+/**
+ * Direct client for the external dataset-management platform.
+ *
+ * These APIs are called from the browser so that request/response details are
+ * visible in the developer tools Network tab. They require the upstream SSO
+ * token (including the "Bearer " prefix) and the external platform must allow
+ * CORS from the Label Studio origin.
+ */
+
+const SSO_TOKEN_KEY = 'label_studio_sso_token';
+
+/**
+ * Normalize the configured SSO host to a full URL prefix.
+ *
+ * When the platform is placed behind an Nginx reverse proxy, the backend can
+ * expose an empty ssoHost so that the browser requests external APIs via
+ * relative paths (e.g. /api/v1/fileExplorer/...). This keeps all traffic on the
+ * same origin and avoids CORS.
+ */
+function getSsoHost() {
+  var _window$APP_SETTINGS;
+  const host = (_window$APP_SETTINGS = window.APP_SETTINGS) === null || _window$APP_SETTINGS === void 0 ? void 0 : _window$APP_SETTINGS.ssoHost;
+  if (host === '' || host === null || host === undefined) return '';
+  if (host.startsWith('http://') || host.startsWith('https://')) return host;
+  return `http://${host}`;
+}
+
+/**
+ * Persist the SSO token so it survives internal navigation after the token is
+ * cleaned from the URL.
+ */
+function storeSsoToken(token) {
+  if (!token) return;
+  try {
+    localStorage.setItem(SSO_TOKEN_KEY, token);
+  } catch (e) {
+    console.warn('Failed to persist SSO token', e);
+  }
+}
+
+/**
+ * Read the SSO token from localStorage or the current URL query string.
+ */
+function getSsoToken() {
+  try {
+    const fromStorage = localStorage.getItem(SSO_TOKEN_KEY);
+    if (fromStorage) return fromStorage;
+  } catch (e) {
+    // ignore
+  }
+  const url = new URL(window.location.href);
+  const fromUrl = url.searchParams.get('token');
+  if (fromUrl) {
+    storeSsoToken(fromUrl);
+    return fromUrl;
+  }
+  return null;
+}
+
+/**
+ * Clear the stored SSO token.
+ */
+function clearSsoToken() {
+  try {
+    localStorage.removeItem(SSO_TOKEN_KEY);
+  } catch (e) {
+    // ignore
+  }
+}
+async function request(path, {
+  method = 'GET',
+  body
+} = {}) {
+  var _data$data, _data3;
+  const token = getSsoToken();
+  if (!token) {
+    throw new Error('SSO token not found');
+  }
+  const headers = {
+    'Authorization': token.toLowerCase().startsWith('bearer ') ? token : `Bearer ${token}`
+  };
+  const init = {
+    method,
+    headers,
+    mode: 'cors',
+    credentials: 'omit'
+  };
+  if (body !== undefined) {
+    headers['Content-Type'] = 'application/json';
+    init.body = JSON.stringify(body);
+  }
+  const url = `${getSsoHost()}${path}`;
+  const response = await fetch(url, init);
+  let data;
+  try {
+    data = await response.json();
+  } catch (e) {
+    data = null;
+  }
+  if (!response.ok) {
+    var _data, _data2;
+    const message = ((_data = data) === null || _data === void 0 ? void 0 : _data.msg) || ((_data2 = data) === null || _data2 === void 0 ? void 0 : _data2.message) || response.statusText || `HTTP ${response.status}`;
+    const err = new Error(message);
+    err.status = response.status;
+    err.response = data;
+    throw err;
+  }
+
+  // The external platform returns {code, data, msg, traceId}. Success is
+  // indicated by code 0 (e.g. feDatasets) or code 200 (e.g. getUploadUrl).
+  if (data && 'code' in data && data.code !== 0 && data.code !== 200) {
+    const message = data.msg || `平台返回错误码 ${data.code}`;
+    const err = new Error(message);
+    err.status = response.status;
+    err.response = data;
+    throw err;
+  }
+  return (_data$data = (_data3 = data) === null || _data3 === void 0 ? void 0 : _data3.data) !== null && _data$data !== void 0 ? _data$data : data;
+}
+
+/**
+ * Fetch a dictionary from the external SSO platform.
+ *
+ * @param {string} dictName
+ * @returns {Promise<Array<{label: string, value: string, id: string}>>}
+ */
+async function getSsoDict(dictName) {
+  const payload = await request(`/api/v1/admin/user/dict/${dictName}`);
+  const details = (payload === null || payload === void 0 ? void 0 : payload.dictDetails) || [];
+  return details.filter(d => d.id != null).map(d => ({
+    label: d.label,
+    value: String(d.id),
+    id: String(d.id)
+  }));
+}
+
+/**
+ * Create a dataset in the external file explorer platform.
+ *
+ * @param {Object} payload
+ * @param {number} payload.dataType
+ * @param {string} payload.name
+ * @param {string} payload.remark
+ * @param {number} payload.type
+ */
+async function createFeDataset(payload) {
+  return request('/api/v1/fileExplorer/feDatasets', {
+    method: 'POST',
+    body: payload
+  });
+}
+
+/**
+ * Fetch presigned upload URLs from the external platform.
+ *
+ * @param {string} uploadPrefix
+ * @param {string[]} fileObjects
+ */
+async function getUploadUrls(uploadPrefix, fileObjects) {
+  return request('/api/v1/fileExplorer/feDatasets/getUploadUrl', {
+    method: 'POST',
+    body: {
+      uploadPrefix,
+      fileObjects
+    }
+  });
+}
+
+/**
+ * Upload a single file to a presigned URL.
+ *
+ * @param {string} url
+ * @param {string} contentBase64
+ * @param {string} contentType
+ */
+async function uploadFileToUrl(url, contentBase64, contentType) {
+  const byteCharacters = atob(contentBase64);
+  const byteNumbers = new Array(byteCharacters.length);
+  for (let i = 0; i < byteCharacters.length; i++) {
+    byteNumbers[i] = byteCharacters.charCodeAt(i);
+  }
+  const byteArray = new Uint8Array(byteNumbers);
+  const blob = new Blob([byteArray], {
+    type: contentType || 'application/octet-stream'
+  });
+  const response = await fetch(url, {
+    method: 'PUT',
+    body: blob,
+    mode: 'cors',
+    credentials: 'omit'
+  });
+  if (!response.ok) {
+    throw new Error(`文件上传失败: ${response.status} ${response.statusText}`);
+  }
+}
 
 /***/ },
 
@@ -33214,7 +33473,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // extracted by mini-css-extract-plugin
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({"datamanager":"ls-datamanager","label-studio-dm":"ls-label-studio-dm"});
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({"datamanager":"ls-datamanager","dm-spinner-rotate":"ls-dm-spinner-rotate","label-studio-dm":"ls-label-studio-dm"});
 
 /***/ },
 

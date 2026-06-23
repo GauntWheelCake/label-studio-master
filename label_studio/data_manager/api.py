@@ -4,12 +4,13 @@ import logging
 
 from django_filters.rest_framework import DjangoFilterBackend
 from django.utils.decorators import method_decorator
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import NotFound
 from drf_yasg.utils import swagger_auto_schema
 from django.db.models import Sum
 from ordered_set import OrderedSet
@@ -219,6 +220,33 @@ class TaskAPI(APIView):
         serializer = self.get_serializer_class()(task, many=False, context=context)
         data = serializer.data
         return Response(data)
+
+
+class NextTaskAPI(APIView):
+    permission_required = all_permissions.projects_view
+
+    @swagger_auto_schema(tags=["Data Manager"])
+    def get(self, request):
+        """
+        get:
+        Next task for label stream
+
+        Return the next task to annotate for the specified project.
+        """
+        pk = int_from_request(request.GET, "project", None)
+        if pk is None:
+            return Response({'detail': 'project parameter is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        project = get_object_with_check_and_log(request, Project, pk=pk)
+        self.check_object_permissions(request, project)
+
+        from projects.api import ProjectNextTaskAPI
+        api = ProjectNextTaskAPI(kwargs={'pk': pk})
+        api.request = request
+        try:
+            return api.get(request)
+        except NotFound:
+            return Response({'detail': 'No more tasks found'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class ProjectColumnsAPI(APIView):

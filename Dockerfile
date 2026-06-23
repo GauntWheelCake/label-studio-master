@@ -9,7 +9,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # 系统依赖
 RUN apt-get update && apt-get install -y \
-    build-essential postgresql postgresql-client python3.8 python3-pip python3.8-dev \
+    build-essential postgresql postgresql-client python3.8 python3-pip python3.8-dev gcc\
     uwsgi git libxml2-dev libxslt-dev zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 
@@ -18,6 +18,13 @@ RUN chgrp -R 0 /var/log /var/cache /var/run /run /tmp /etc/uwsgi && \
 
 # 先复制依赖清单（利用缓存）
 COPY deploy/requirements.txt /label-studio/
+
+
+# 配置国内pip镜像源，解决SSL/连接超时
+RUN mkdir -p /root/.pip && echo "[global]" > /root/.pip/pip.conf \
+    && echo "index-url = https://pypi.tuna.tsinghua.edu.cn/simple" >> /root/.pip/pip.conf \
+    && echo "[install]" >> /root/.pip/pip.conf \
+    && echo "trusted-host = pypi.tuna.tsinghua.edu.cn" >> /root/.pip/pip.conf
 
 # 安装后端依赖
 RUN python3 -m pip install --upgrade pip \
@@ -41,6 +48,7 @@ COPY . /label-studio
 RUN find /label-studio/deploy -type f -name "*.sh" -exec sed -i 's/\r$//' {} \; -exec chmod +x {} \;
 
 # 开发模式安装项目
+RUN touch /label-studio/README.md
 RUN python3.8 /label-studio/setup.py develop
 
 EXPOSE 8080
@@ -59,3 +67,5 @@ RUN mkdir -p /label-studio-assets/core-static-build /label-studio-assets/fronten
 ENTRYPOINT ["/label-studio/deploy/docker-entrypoint.sh"]
 # 用 JSON 写法更稳
 CMD ["bash", "/label-studio/deploy/start_label_studio.sh"]
+
+

@@ -593,6 +593,10 @@ DataManagerPage.context = ({dmRef}) => {
   const isSwitchingTaskRef = useRef(false);
   const smartLabelingModalRef = useRef(null);
 
+  // Review controls are temporarily disabled; the handlers and state remain in
+  // place so they can be re-enabled quickly if needed.
+  const ENABLE_REVIEW_CONTROLS = false;
+
   const showReviewError = useCallback((message) => {
     let modalInstance;
     const footer = (
@@ -1227,7 +1231,7 @@ DataManagerPage.context = ({dmRef}) => {
       : '';
   const approveDisabled = reviewDisabled || pendingDecision !== null;
   const rejectDisabled = reviewDisabled || pendingDecision !== null;
-  const showReviewControls = mode !== 'explorer';
+  const showReviewControls = ENABLE_REVIEW_CONTROLS && mode !== 'explorer';
 
   return project && project.id ? (
     <Space size="small">

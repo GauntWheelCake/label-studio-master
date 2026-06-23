@@ -85,7 +85,7 @@ export const zhCN = {
   'exportPage.formats.YOLO.description': '导出为 YOLOv3 目标检测格式，需要在配置中包含矩形等目标检测标签。',
   'createProject.projectName.label': '项目名称',
   'createProject.projectDescription.label': '项目描述',
-  'createProject.projectDescription.placeholder': '可选：填写项目描述',
+  'createProject.projectDescription.placeholder': '填写项目描述，未填写时将由系统自动生成',
   'createProject.projectModelClass.label': '模型分类',
   'createProject.projectModelClass.placeholder': '请选择模型分类',
   'createProject.steps.name': '项目信息',

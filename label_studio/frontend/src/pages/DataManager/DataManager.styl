@@ -1,6 +1,35 @@
 .datamanager
   height calc(100vh - var(--header-height))
 
+  // Replace DataManager's built-in opossum loader with a plain CSS spinner.
+  // The loader image has alt="opossum loader" and is rendered inside two
+  // nested divs. We hide the image and render a spinner on its container.
+  img[alt="opossum loader"]
+    display: none !important
+
+  div:has(> img[alt="opossum loader"])
+    position: relative
+
+    &::after
+      content: ""
+      position: absolute
+      top: 50%
+      left: 50%
+      width: 32px
+      height: 32px
+      margin: -16px 0 0 -16px
+      border: 3px solid rgba(#FA8C16, 0.25)
+      border-top-color: #FA8C16
+      border-radius: 50%
+      animation: dm-spinner-rotate 0.8s linear infinite
+
   // hack to change background of selected annotation in LSF inside DM
   #label-studio-dm [class*=Annotations_annotation_selected]
     background: #e3f1ff
+
+@keyframes dm-spinner-rotate
+  from
+    transform: rotate(0deg)
+
+  to
+    transform: rotate(360deg)

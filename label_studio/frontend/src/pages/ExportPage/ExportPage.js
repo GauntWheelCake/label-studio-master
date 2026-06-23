@@ -10,6 +10,7 @@ import { BemWithSpecifiContext } from '../../utils/bem';
 import { isDefined } from '../../utils/helpers';
 import "./ExportPage.styl";
 import { t } from '../../i18n';
+import { getUploadUrls, uploadFileToUrl } from '../../utils/datasetManagementApi';
 
 const formatNameAliases = {
   BRUSH: {
@@ -90,12 +91,11 @@ export const ExportPage = () => {
   const [exportTarget, setExportTarget] = useState('local');
   const [splitEnabled, setSplitEnabled] = useState(false);
   const [splitRatios, setSplitRatios] = useState({train: 80, val: 10, test: 10});
-  const [splitRatiosValid, setSplitRatiosValid] = useState(true);
+
+  const splitRatiosValid = !splitEnabled || (splitRatios.train + splitRatios.val + splitRatios.test === 100);
 
   /** @type {import('react').RefObject<Form>} */
   const form = useRef();
-
-  const effectiveSplitEnabled = exportTarget === 'dataset' ? true : splitEnabled;
 
   const proceedExport = async () => {
     setDownloading(true);
@@ -104,45 +104,73 @@ export const ExportPage = () => {
       setDownloadingMessage(true);
     }, 1000);
 
-    if (effectiveSplitEnabled) {
-      const total = splitRatios.train + splitRatios.val + splitRatios.test;
-      if (total !== 100) {
-        setSplitRatiosValid(false);
-        setDownloading(false);
-        setDownloadingMessage(false);
-        clearTimeout(message);
-        return;
-      }
+    if (splitEnabled && !splitRatiosValid) {
+      setDownloading(false);
+      setDownloadingMessage(false);
+      clearTimeout(message);
+      return;
     }
-    setSplitRatiosValid(true);
 
     if (exportTarget === 'dataset') {
-      const response = await api.callApi('exportToDataset', {
-        params: {
-          pk: pageParams.id,
-        },
-        body: {
-          exportType: currentFormat,
-          split_ratios: JSON.stringify(splitRatios),
-        },
-      });
+      try {
+        const response = await api.callApi('exportToDataset', {
+          params: {
+            pk: pageParams.id,
+          },
+          body: {
+            exportType: currentFormat,
+            split_ratios: JSON.stringify(splitRatios),
+          },
+        });
 
-      if (response) {
-        if (response.status === 'ok') {
+        if (!response || response.status !== 'ok') {
+          const detail = response?.detail || '生成导出文件失败';
+          Modal.info({
+            title: t('exportPage.modal.emptyTitle'),
+            body: detail,
+            simple: true,
+          });
+        } else {
+          const { uploadPrefix, files } = response;
+          if (!uploadPrefix) {
+            throw new Error('项目没有配置数据集上传前缀，请先创建数据集');
+          }
+          if (!files || files.length === 0) {
+            throw new Error('没有可上传的导出文件');
+          }
+
+          const fileObjects = files.map(f => f.path);
+          const urls = await getUploadUrls(uploadPrefix, fileObjects);
+
+          if (!urls || typeof urls !== 'object') {
+            throw new Error('获取上传地址失败：外部平台返回格式不正确');
+          }
+
+          for (const file of files) {
+            const keysToTry = [
+              `${uploadPrefix}/${file.path}`,
+              file.path,
+            ];
+            const matchedKey = keysToTry.find(key => urls[key]);
+            if (!matchedKey) {
+              throw new Error(`没有获取到 ${file.path} 的上传地址`);
+            }
+            await uploadFileToUrl(urls[matchedKey], file.content_base64, file.content_type);
+          }
+
           Modal.info({
             title: t('exportPage.modal.uploadedTitle'),
             body: t('exportPage.modal.uploadedBody'),
             simple: true,
           });
-        } else if (response.detail) {
-          Modal.info({
-            title: t('exportPage.modal.emptyTitle'),
-            body: response.detail,
-            simple: true,
-          });
-        } else {
-          api.handleError(response);
         }
+      } catch (err) {
+        console.error('Export to dataset failed:', err);
+        Modal.info({
+          title: t('exportPage.modal.emptyTitle'),
+          body: err.message || '上传数据集失败',
+          simple: true,
+        });
       }
     } else {
       const params = form.current.assembleFormData({
@@ -195,15 +223,6 @@ export const ExportPage = () => {
     setDownloadingMessage(false);
     clearTimeout(message);
   };
-
-  useEffect(() => {
-    if (effectiveSplitEnabled) {
-      const total = splitRatios.train + splitRatios.val + splitRatios.test;
-      setSplitRatiosValid(total === 100);
-    } else {
-      setSplitRatiosValid(true);
-    }
-  }, [effectiveSplitEnabled, splitRatios]);
 
   useEffect(() => {
     if (isDefined(pageParams.id)) {
@@ -321,7 +340,10 @@ export const ExportPage = () => {
               label={t('exportPage.target.label')}
               name="export_target"
               value={exportTarget}
-              onChange={value => setExportTarget(value)}
+              onChange={value => {
+                setExportTarget(value);
+                if (value === 'dataset') setSplitEnabled(true);
+              }}
               labelProps={{size: "large", flat: true}}
             >
               <RadioGroup.Button value="local">{t('exportPage.target.local')}</RadioGroup.Button>
@@ -330,7 +352,7 @@ export const ExportPage = () => {
           </Elem>
 
           <SplitConfig
-            enabled={effectiveSplitEnabled}
+            enabled={splitEnabled}
             ratios={splitRatios}
             ratiosValid={splitRatiosValid}
             onChangeEnabled={setSplitEnabled}
@@ -361,7 +383,7 @@ export const ExportPage = () => {
                   look="primary"
                   onClick={proceedExport}
                   waiting={downloading}
-                  disabled={downloading || (effectiveSplitEnabled && !splitRatiosValid)}
+                  disabled={downloading || (splitEnabled && !splitRatiosValid)}
                 >
                   {t('exportPage.actions.export')}
                 </Elem>
@@ -409,7 +431,6 @@ const FormatInfo = ({availableFormats, selected, onClick}) => {
 
 const SplitConfig = ({enabled, ratios, ratiosValid, onChangeEnabled, onChangeRatios, toggleDisabled}) => {
   const total = ratios.train + ratios.val + ratios.test;
-  const isValid = total === 100;
 
   const handleChange = (key, value) => {
     const num = Math.max(0, Math.min(100, parseInt(value, 10) || 0));
@@ -440,10 +461,10 @@ const SplitConfig = ({enabled, ratios, ratiosValid, onChangeEnabled, onChangeRat
               />
             </Elem>
           ))}
-          <Elem name="total" mod={{invalid: !isValid || !ratiosValid}}>
+          <Elem name="total" mod={{invalid: !ratiosValid}}>
             {t('exportPage.split.total')}: {total}%
           </Elem>
-          {!isValid && (
+          {!ratiosValid && (
             <Elem name="error" mod={{visible: true}}>
               {t('exportPage.split.invalidTotal')}
             </Elem>

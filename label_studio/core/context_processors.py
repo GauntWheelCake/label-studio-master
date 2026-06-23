@@ -81,10 +81,21 @@ def settings(request):
     else:
         user_settings = _django_user_settings(request.user)
 
+    # Frontend dataset-management APIs can be served through a reverse proxy on
+    # the same origin. In that case SSO_DATASET_API_HOST should be empty so the
+    # browser uses relative URLs. It defaults to the SSO userinfo host.
+    sso_host = getattr(
+        django_settings, 'SSO_DATASET_API_HOST', django_settings.SSO_USERINFO_HOST
+    )
+    if sso_host and not sso_host.startswith(('http://', 'https://')):
+        sso_host = f'http://{sso_host}'
+
     app_settings = {
         'user': user_settings,
         'debug': django_settings.DEBUG,
         'hostname': django_settings.HOSTNAME,
+        'ssoHost': sso_host,
+        'mlHost': getattr(django_settings, 'ML_HOST', ''),
         'sharedAdminMode': django_settings.ENABLE_SHARED_ADMIN_MODE,
         'version': versions,
     }

@@ -1,8 +1,10 @@
 """This file and its contents are licensed under the Apache License 2.0. Please see the included NOTICE for copyright information and LICENSE for a copy of the license.
 """
-import os
-import logging
+import base64
 import json
+import logging
+import os
+import tempfile
 
 from django.conf import settings
 from django.http import HttpResponse
@@ -16,7 +18,6 @@ from rest_framework.views import APIView
 
 from core.permissions import all_permissions
 from core.utils.common import get_object_with_check_and_log, bool_from_request, batch
-from core.utils.sso import upload_files_to_dataset
 from projects.models import Project
 from tasks.models import Task
 from .models import DataExport
@@ -26,6 +27,60 @@ logger = logging.getLogger(__name__)
 
 APPROVED_EXPORT_NOTICE = '导出结果只包含已标注的任务。'
 NO_EXPORTABLE_TASKS_MESSAGE = '没有可供导出的任务。'
+
+
+def _get_exportable_tasks(project):
+    """Query and serialize annotated tasks for export.
+
+    Returns the serialized task list, or ``None`` when no exportable tasks
+    exist.
+    """
+    logger.debug('Get exportable tasks')
+    query = Task.objects.filter(
+        project=project,
+        annotations__isnull=False,
+    ).select_related('project').prefetch_related('annotations', 'predictions')
+
+    if not query.exists():
+        return None
+
+    task_ids = query.values_list('id', flat=True)
+    tasks = []
+    logger.debug('Serialize tasks for export')
+    for _task_ids in batch(task_ids, 1000):
+        tasks += ExportDataSerializer(query.filter(id__in=_task_ids), many=True).data
+    return tasks
+
+
+def _persist_split_settings(project, request_data, persist_enabled=False):
+    """Parse and persist split settings from request data.
+
+    Returns the effective ``(split_enabled, split_ratios)`` tuple.
+    """
+    split_ratios = project.export_split_ratios or {'train': 80, 'val': 10, 'test': 10}
+    if request_data.get('split_ratios'):
+        try:
+            split_ratios = json.loads(request_data['split_ratios'])
+        except Exception:
+            pass
+
+    split_enabled = project.export_split_enabled
+    if persist_enabled and request_data.get('split_enabled') is not None:
+        split_enabled = bool_from_request(request_data, 'split_enabled', split_enabled)
+
+    fields = []
+    if project.export_split_ratios != split_ratios:
+        project.export_split_ratios = split_ratios
+        fields.append('export_split_ratios')
+    if persist_enabled and project.export_split_enabled != split_enabled:
+        project.export_split_enabled = split_enabled
+        fields.append('export_split_enabled')
+
+    if fields:
+        project.save(update_fields=fields)
+
+    return split_enabled, split_ratios
+
 
 
 @method_decorator(name='get', decorator=swagger_auto_schema(
@@ -92,38 +147,15 @@ class ExportAPI(generics.RetrieveAPIView):
         project = self.get_object()
         export_type = request.GET.get('exportType')
 
-        logger.debug('Get tasks')
-        query = Task.objects.filter(
-            project=project,
-            annotations__isnull=False,
-        ).select_related('project').prefetch_related('annotations', 'predictions')
-
-        if not query.exists():
+        tasks = _get_exportable_tasks(project)
+        if tasks is None:
             return Response({'detail': NO_EXPORTABLE_TASKS_MESSAGE}, status=status.HTTP_400_BAD_REQUEST)
 
-        task_ids = query.values_list('id', flat=True)
+        split_enabled, split_ratios = _persist_split_settings(
+            project, request.GET, persist_enabled=True,
+        )
 
-        logger.debug('Serialize tasks for export')
-        tasks = []
-        for _task_ids in batch(task_ids, 1000):
-            tasks += ExportDataSerializer(query.filter(id__in=_task_ids), many=True).data
         logger.debug('Prepare export files')
-
-        split_enabled = bool_from_request(request.GET, 'split_enabled', project.export_split_enabled)
-        split_ratios = project.export_split_ratios or {'train': 80, 'val': 10, 'test': 10}
-        if request.GET.get('split_ratios'):
-            try:
-                split_ratios = json.loads(request.GET['split_ratios'])
-            except Exception:
-                pass
-
-        # Persist user choices on the project for next time.
-        if (project.export_split_enabled != split_enabled or
-                project.export_split_ratios != split_ratios):
-            project.export_split_enabled = split_enabled
-            project.export_split_ratios = split_ratios
-            project.save(update_fields=['export_split_enabled', 'export_split_ratios'])
-
         export_stream, content_type, filename = DataExport.generate_export_file(
             project, tasks, export_type, request.GET,
             split_enabled=split_enabled, split_ratios=split_ratios,
@@ -136,8 +168,11 @@ class ExportAPI(generics.RetrieveAPIView):
 
 
 class ExportToDatasetAPI(generics.RetrieveAPIView):
-    """Export annotated tasks and upload the resulting files to the external
-    dataset management platform.
+    """Export annotated tasks and return the resulting files to the frontend.
+
+    The frontend is responsible for calling the external dataset management
+    APIs directly (creating the dataset, fetching presigned URLs, and uploading
+    files). This endpoint only generates and serializes the export files.
     """
     permission_required = all_permissions.projects_change
 
@@ -148,40 +183,42 @@ class ExportToDatasetAPI(generics.RetrieveAPIView):
         project = self.get_object()
         export_type = request.data.get('exportType') or request.GET.get('exportType')
 
-        split_ratios = project.export_split_ratios or {'train': 80, 'val': 10, 'test': 10}
-        if request.data.get('split_ratios'):
-            try:
-                split_ratios = json.loads(request.data['split_ratios'])
-            except Exception:
-                pass
+        _, split_ratios = _persist_split_settings(project, request.data)
 
-        # Persist the chosen ratios for next time.
-        if project.export_split_ratios != split_ratios:
-            project.export_split_ratios = split_ratios
-            project.save(update_fields=['export_split_ratios'])
-
-        logger.debug('Get tasks for dataset export')
-        query = Task.objects.filter(
-            project=project,
-            annotations__isnull=False,
-        ).select_related('project').prefetch_related('annotations', 'predictions')
-
-        if not query.exists():
+        tasks = _get_exportable_tasks(project)
+        if tasks is None:
             return Response({'detail': NO_EXPORTABLE_TASKS_MESSAGE}, status=status.HTTP_400_BAD_REQUEST)
 
-        task_ids = query.values_list('id', flat=True)
-
-        logger.debug('Serialize tasks for dataset export')
-        tasks = []
-        for _task_ids in batch(task_ids, 1000):
-            tasks += ExportDataSerializer(query.filter(id__in=_task_ids), many=True).data
         logger.debug('Prepare export files for dataset upload')
-
         try:
-            files, _, _ = DataExport.generate_export_file(
-                project, tasks, export_type, request.GET,
-                split_enabled=True, split_ratios=split_ratios, return_files=True,
-            )
+            with tempfile.TemporaryDirectory() as tmp_dir:
+                files, _, _ = DataExport.generate_export_file(
+                    project, tasks, export_type, request.GET,
+                    split_enabled=True, split_ratios=split_ratios, return_files=True, output_dir=tmp_dir,
+                )
+
+                if not files:
+                    return Response({'detail': '没有可上传的导出文件'}, status=status.HTTP_400_BAD_REQUEST)
+
+                serialized_files = []
+                for abs_path, rel_path in files:
+                    with open(abs_path, 'rb') as f:
+                        content = f.read()
+                    ext = os.path.splitext(rel_path)[-1].lower()
+                    content_type = {
+                        '.json': 'application/json',
+                        '.csv': 'text/csv',
+                        '.txt': 'text/plain',
+                        '.xml': 'application/xml',
+                        '.png': 'image/png',
+                        '.jpg': 'image/jpeg',
+                        '.jpeg': 'image/jpeg',
+                    }.get(ext, 'application/octet-stream')
+                    serialized_files.append({
+                        'path': rel_path.replace('\\', '/'),
+                        'content_type': content_type,
+                        'content_base64': base64.b64encode(content).decode('utf-8'),
+                    })
         except Exception as exc:
             logger.exception('Failed to generate export files for dataset upload')
             return Response(
@@ -189,22 +226,12 @@ class ExportToDatasetAPI(generics.RetrieveAPIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
-        if not files:
-            return Response({'detail': '没有可上传的导出文件'}, status=status.HTTP_400_BAD_REQUEST)
-
-        token = request.session.get('sso_token')
-        upload_prefix = project.fe_dataset_upload_prefix
-        try:
-            uploaded = upload_files_to_dataset(token, upload_prefix, files, timeout=30)
-        except Exception as exc:
-            logger.exception('Failed to upload export files to dataset management')
-            return Response(
-                {'detail': f'上传数据集失败: {exc}'},
-                status=status.HTTP_502_BAD_GATEWAY,
-            )
-
-        logger.info('Project %s exported %d files to dataset management', project.id, len(uploaded))
-        return Response({'status': 'ok', 'uploaded': uploaded})
+        logger.info('Project %s prepared %d export files for dataset upload', project.id, len(serialized_files))
+        return Response({
+            'status': 'ok',
+            'uploadPrefix': project.fe_dataset_upload_prefix,
+            'files': serialized_files,
+        })
 
 
 @method_decorator(name='get', decorator=swagger_auto_schema(

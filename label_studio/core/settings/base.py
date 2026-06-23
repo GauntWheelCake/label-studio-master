@@ -38,14 +38,25 @@ if HOSTNAME:
 INTERNAL_PORT = '8080'
 
 # SSO platform integration: host for /api/v1/admin/auth/userinfo
-# Override with the SSO_USERINFO_HOST environment variable.
+# Configure via the SSO_USERINFO_HOST environment variable.
 # Accept either "host:port" or a full "http(s)://host:port" URL prefix.
-_SSO_USERINFO_HOST = get_env('SSO_USERINFO_HOST', '68.68.18.26:31798')
-if _SSO_USERINFO_HOST.startswith(('http://', 'https://')):
-    SSO_USERINFO_URL = f'{_SSO_USERINFO_HOST}/api/v1/admin/auth/userinfo'
-else:
-    SSO_USERINFO_URL = f'http://{_SSO_USERINFO_HOST}/api/v1/admin/auth/userinfo'
+# The actual value is required at runtime; build-time may leave it empty.
+SSO_USERINFO_HOST = get_env('SSO_USERINFO_HOST', '')
 SSO_USERINFO_TIMEOUT = int(get_env('SSO_USERINFO_TIMEOUT', '5'))
+
+# Host used by the frontend for direct dataset-management API calls.
+# Defaults to the SSO userinfo host. Set to an empty string when an Nginx
+# reverse proxy serves the external dataset APIs under the same origin as
+# Label Studio, so the browser uses relative URLs and avoids CORS.
+SSO_DATASET_API_HOST = get_env('SSO_DATASET_API_HOST', SSO_USERINFO_HOST)
+
+# ML backend host exposed to the frontend for default smart annotation backend
+# candidates. Configure via the ML_HOST environment variable. Accept either
+# "host:port" or a full "http(s)://host:port" URL prefix.
+_ML_HOST = get_env('ML_HOST', '')
+if _ML_HOST and not _ML_HOST.startswith(('http://', 'https://')):
+    _ML_HOST = f'http://{_ML_HOST}'
+ML_HOST = _ML_HOST
 
 # Local development helper: when True, bypass the external SSO userinfo call
 # and return a mock user for any non-empty token. Never enable in production.

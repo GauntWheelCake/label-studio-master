@@ -10,7 +10,7 @@ from django.http import HttpResponsePermanentRedirect, HttpResponseRedirect
 from rest_framework.authtoken.models import Token
 from django.utils.deprecation import MiddlewareMixin
 from django.core.handlers.base import BaseHandler
-from django.core.exceptions import MiddlewareNotUsed
+from django.core.exceptions import ImproperlyConfigured, MiddlewareNotUsed
 from django.middleware.common import CommonMiddleware
 from django.conf import settings
 from django.utils import timezone
@@ -131,24 +131,37 @@ class SSOAuthMiddleware(MiddlewareMixin):
     )
 
     def process_request(self, request):
-        token = request.GET.get('token')
+        token = self._extract_token(request)
         has_session_user = bool(request.session.get('sso_user'))
 
         logger.warning(
-            '[SSOAuthMiddleware] path=%s token=%s session_user=%s mock=%s',
+            '[SSOAuthMiddleware] path=%s token=%s(%s) session_user=%s mock=%s',
             request.path_info,
             'present' if token else 'absent',
+            self._mask_token(token),
             'present' if has_session_user else 'absent',
             getattr(settings, 'SSO_DEBUG_MOCK', False),
         )
 
         if token:
             sso_user = get_sso_user_info(token)
+            effective_token = token
+            used_workaround = False
+
+            # Workaround: some upstream platforms put raw JWT in the URL query
+            # string without URL-encoding '+' characters. Django decodes '+' as
+            # space, which corrupts the token. Retry with spaces replaced by '+'.
+            if not sso_user and ' ' in token:
+                logger.warning('[SSOAuthMiddleware] retrying token with spaces-as-plus workaround')
+                effective_token = token.replace(' ', '+')
+                used_workaround = True
+                sso_user = get_sso_user_info(effective_token)
+
             if sso_user:
-                logger.warning('[SSOAuthMiddleware] token valid, user=%s', sso_user.get('username'))
+                logger.warning('[SSOAuthMiddleware] token valid, user=%s workaround=%s', sso_user.get('username'), used_workaround)
                 user = self._get_or_create_sso_user(sso_user)
                 self._ensure_sso_organization(user, request)
-                request.session['sso_token'] = token
+                request.session['sso_token'] = effective_token
                 request.session['sso_user'] = sso_user
                 self._login_user(request, user)
                 return
@@ -172,8 +185,39 @@ class SSOAuthMiddleware(MiddlewareMixin):
             return HttpResponseRedirect(self._sso_host())
 
         logger.warning('[SSOAuthMiddleware] exempt path, allowing anonymous')
+
+    def _extract_token(self, request):
+        """Read token from query string or Authorization header.
+
+        The upstream platform may pass either a raw JWT or the full
+        Authorization value (e.g. "Bearer xxx") in ?token=. Keep the value
+        as-is; downstream SSO helpers will use it directly as the
+        Authorization header.
+        """
+        token = (request.GET.get('token') or '').strip()
+        if token:
+            return token
+
+        auth_header = request.META.get('HTTP_AUTHORIZATION', '')
+        if auth_header.lower().startswith('bearer '):
+            return auth_header.strip()
+
+        return ''
+
+    def _mask_token(self, token):
+        """Return a safe token preview for logging."""
+        if not token:
+            return ''
+        if len(token) <= 16:
+            return '*' * len(token)
+        return f'{token[:8]}...{token[-4:]}(len={len(token)})'
     def _sso_host(self):
-        host = getattr(settings, 'SSO_USERINFO_HOST', '68.68.18.26:31798')
+        host = settings.SSO_USERINFO_HOST
+        if not host:
+            raise ImproperlyConfigured(
+                'SSO_USERINFO_HOST environment variable must be set. '
+                'Example: SSO_USERINFO_HOST=68.68.18.26:31798'
+            )
         if not host.startswith(('http://', 'https://')):
             host = f'http://{host}'
         return host
@@ -193,13 +237,20 @@ class SSOAuthMiddleware(MiddlewareMixin):
 
     def _get_or_create_sso_user(self, sso_user):
         User = get_user_model()
-        sso_id = str(sso_user.get('id', ''))
+        sso_id = str(sso_user.get('id') or '')
+        username_from_sso = str(sso_user.get('username') or '').strip()
+
+        # Some SSO implementations return id=null but provide a unique username.
+        # Prefer id, fallback to username.
         if not sso_id:
-            raise ValueError('SSO user info is missing "id"')
+            sso_id = username_from_sso
+
+        if not sso_id:
+            raise ValueError('SSO user info is missing both "id" and "username"')
 
         username = f"sso_{sso_id}"
         email = sso_user.get('email', '') or f"{username}@localhost"
-        first_name = sso_user.get('nickName', '')
+        first_name = sso_user.get('nickName') or ''
 
         try:
             user, created = User.objects.get_or_create(

@@ -201,6 +201,11 @@ class ProjectAPI(APIViewVirtualRedirectMixin,
         return super(ProjectAPI, self).patch(request, *args, **kwargs)
 
     def perform_destroy(self, instance):
+        # Clean up uploaded files from storage before deleting the project.
+        # FileField.delete() works for local paths (including Docker -v mounts)
+        # and remote storage backends.
+        instance.delete_uploaded_files()
+
         # we don't need to relaculate counters if we delete whole project
         with DisableSignals():
             instance.delete()

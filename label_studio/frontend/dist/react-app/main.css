@@ -3316,8 +3316,59 @@ body {
 .ls-datamanager {
   height: calc(100vh - var(--header-height));
 }
+.ls-datamanager img[alt="opossum loader"] {
+  display: none !important;
+}
+.ls-datamanager div:has(> img[alt="opossum loader"]) {
+  position: relative;
+}
+.ls-datamanager div:has(> img[alt="opossum loader"])::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 32px;
+  height: 32px;
+  margin: -16px 0 0 -16px;
+  border: 3px solid rgba(250,140,22,0.25);
+  border-top-color: #fa8c16;
+  border-radius: 50%;
+  animation: ls-dm-spinner-rotate 0.8s linear infinite;
+}
 .ls-datamanager #ls-label-studio-dm [class*=Annotations_annotation_selected] {
   background: #e3f1ff;
+}
+@-moz-keyframes ls-dm-spinner-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes ls-dm-spinner-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@-o-keyframes ls-dm-spinner-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes ls-dm-spinner-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .ls-dl {

@@ -423,6 +423,20 @@ class Project(ProjectMixin, models.Model):
         predictions.delete()
         return {'deleted_predictions': count}
 
+    def delete_uploaded_files(self):
+        """Delete physical files imported into this project from storage.
+
+        Uses FileField.delete() so it works for local filesystems (including
+        Docker -v mounts) and remote storage backends alike.
+        """
+        from data_import.models import FileUpload
+        for file_upload in FileUpload.objects.filter(project=self).iterator():
+            try:
+                file_upload.file.delete(save=False)
+                logger.info('Deleted uploaded file for project %s: %s', self.id, file_upload.file.name)
+            except Exception as exc:
+                logger.warning('Failed to delete uploaded file for project %s: %s', self.id, exc)
+
     def get_updated_weights(self):
         outputs = parse_config(self.label_config)
         control_weights = {}

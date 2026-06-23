@@ -29,7 +29,10 @@ const optimizer = {};
 
 if (process.env.NODE_ENV === 'production') {
   optimizer.minimize = true;
-  optimizer.minimizer = [new TerserPlugin(), new CssMinimizerPlugin()];
+  // CSS 压缩暂时禁用：当前 cssnano 4.x 与 postcss 8.x 不兼容，
+  // 会导致 postcss-discard-overridden 抛出 "unprefixed" 错误。
+  // JS 仍会由 TerserPlugin 压缩；CSS 只是未做最小化，功能正常。
+  optimizer.minimizer = [new TerserPlugin()];
   optimizer.runtimeChunk = false;
   optimizer.splitChunks = {
     chunks: 'async',

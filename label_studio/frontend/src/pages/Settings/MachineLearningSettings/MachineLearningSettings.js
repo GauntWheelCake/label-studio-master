@@ -42,7 +42,6 @@ const text = {
 
 const DEFAULT_BACKEND_TITLE = 'Default Smart Labeling Backend';
 const DEFAULT_BACKEND_DESCRIPTION = 'Faster R-CNN default ML backend for smart pre-annotation.';
-const PRODUCTION_ML_BACKEND_URL = 'http://68.68.18.26:9000';
 
 const uniq = (items) => [...new Set(items.filter(Boolean))];
 
@@ -51,6 +50,7 @@ const getDefaultBackendCandidates = () => {
   const protocol = location?.protocol || 'http:';
   const hostname = location?.hostname || 'localhost';
   const hostLike = ['localhost', '127.0.0.1', '0.0.0.0'].includes(hostname);
+  const configuredMlHost = window.APP_SETTINGS?.mlHost;
 
   if (hostLike) {
     // Local development: direct host process first, then host access from Docker.
@@ -60,9 +60,9 @@ const getDefaultBackendCandidates = () => {
     ]);
   }
 
-  // Server deployment: use the fixed ML backend first, then the current server host.
+  // Server deployment: use the configured ML backend first, then the current server host.
   return uniq([
-    PRODUCTION_ML_BACKEND_URL,
+    ...(configuredMlHost ? [configuredMlHost] : []),
     `${protocol}//${hostname}:9000`,
   ]);
 };

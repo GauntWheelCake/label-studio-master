@@ -23,6 +23,14 @@ class FileUpload(models.Model):
     project = models.ForeignKey('projects.Project', related_name='file_uploads', on_delete=models.CASCADE)
     file = models.FileField(upload_to=settings.UPLOAD_DIR)
 
+    def delete(self, *args, **kwargs):
+        """Delete the physical file from storage before removing the DB row."""
+        try:
+            self.file.delete(save=False)
+        except Exception as exc:
+            logger.warning('Failed to delete uploaded file %s: %s', self.file.name, exc)
+        super().delete(*args, **kwargs)
+
     @property
     def filepath(self):
         return self.file.path
