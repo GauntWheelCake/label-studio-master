@@ -90,13 +90,26 @@ def settings(request):
     if sso_host and not sso_host.startswith(('http://', 'https://')):
         sso_host = f'http://{sso_host}'
 
+    # Expose current user's API token so the frontend can store it in
+    # sessionStorage for ML backend integration.
+    user_token = ''
+    if hasattr(request.user, 'auth_token'):
+        try:
+            user_token = request.user.auth_token.key
+        except Exception:
+            pass
+
     app_settings = {
         'user': user_settings,
         'debug': django_settings.DEBUG,
         'hostname': django_settings.HOSTNAME,
         'ssoHost': sso_host,
+        'ssoDebugMock': django_settings.SSO_DEBUG_MOCK,
         'mlHost': getattr(django_settings, 'ML_HOST', ''),
+        'mlImageHost': getattr(django_settings, 'ML_IMAGE_HOST', ''),
+        'mlTextHost': getattr(django_settings, 'ML_TEXT_HOST', ''),
         'sharedAdminMode': django_settings.ENABLE_SHARED_ADMIN_MODE,
+        'userToken': user_token,
         'version': versions,
     }
 

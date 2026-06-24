@@ -9,12 +9,14 @@ import { modal } from '../../../components/Modal/Modal';
 import { useAPI } from '../../../providers/ApiProvider';
 import { ProjectContext } from '../../../providers/ProjectProvider';
 import { MachineLearningList } from './MachineLearningList';
+import { getDefaultBackendCandidates } from './backendCandidates';
 import './MachineLearningSettings.styl';
 
 const text = {
   title: '\u667a\u80fd\u6807\u6ce8',
   description: '\u8fde\u63a5\u4e00\u4e2a\u667a\u80fd\u6807\u6ce8\u6a21\u578b\uff0c\u4e3a\u9879\u76ee\u6570\u636e\u751f\u6210 AI \u521d\u7a3f\u3002\u751f\u6210\u7ed3\u679c\u9700\u8981\u4eba\u5de5\u786e\u8ba4\u6216\u4fee\u6539\u540e\uff0c\u624d\u4f1a\u6210\u4e3a\u6b63\u5f0f\u6807\u6ce8\u3002',
-  connectDefault: '\u8fde\u63a5\u9ed8\u8ba4\u667a\u80fd\u6807\u6ce8\u6a21\u578b',
+  connectDefaultImage: '\u8fde\u63a5\u9ed8\u8ba4\u56fe\u50cf\u6a21\u578b',
+  connectDefaultText: '\u8fde\u63a5\u9ed8\u8ba4\u6587\u672c\u6a21\u578b',
   connectCustom: '\u8fde\u63a5\u81ea\u5b9a\u4e49\u6a21\u578b\u670d\u52a1',
   editTitle: '\u7f16\u8f91\u667a\u80fd\u6807\u6ce8\u6a21\u578b',
   addTitle: '\u8fde\u63a5\u667a\u80fd\u6807\u6ce8\u6a21\u578b',
@@ -31,41 +33,21 @@ const text = {
   modelVersionDescription: '\u9009\u62e9\u5411\u6807\u6ce8\u5458\u5c55\u793a\u54ea\u4e00\u4e2a\u6a21\u578b\u7248\u672c\u751f\u6210\u7684 AI \u521d\u7a3f\u3002',
   modelVersionPlaceholder: '\u672a\u9009\u62e9\u6a21\u578b\u7248\u672c',
   reset: '\u91cd\u7f6e',
-  connecting: '\u6b63\u5728\u5c1d\u8bd5\u8fde\u63a5\u9ed8\u8ba4\u667a\u80fd\u6807\u6ce8\u6a21\u578b...',
+  connectingImage: '\u6b63\u5728\u5c1d\u8bd5\u8fde\u63a5\u9ed8\u8ba4\u56fe\u50cf\u6a21\u578b...',
+  connectingText: '\u6b63\u5728\u5c1d\u8bd5\u8fde\u63a5\u9ed8\u8ba4\u6587\u672c\u6a21\u578b...',
   defaultConnected: '\u9ed8\u8ba4\u667a\u80fd\u6807\u6ce8\u6a21\u578b\u5df2\u8fde\u63a5',
   defaultFailed: '\u672a\u80fd\u81ea\u52a8\u8fde\u63a5\u9ed8\u8ba4\u667a\u80fd\u6807\u6ce8\u6a21\u578b',
   defaultConnectingTitle: '\u6b63\u5728\u8fde\u63a5\u9ed8\u8ba4\u667a\u80fd\u6807\u6ce8\u6a21\u578b',
   defaultConnectingBody: '\u6b63\u5728\u6d4b\u8bd5\u5e76\u4fdd\u5b58\u9ed8\u8ba4\u667a\u80fd\u6807\u6ce8\u6a21\u578b\uff0c\u8bf7\u52ff\u8df3\u8f6c\u5230\u5176\u4ed6\u9875\u9762\u6216\u5237\u65b0\u6d4f\u89c8\u5668\u3002',
   backendConsoleHint: '\u8bf7\u540c\u65f6\u786e\u8ba4 ML \u540e\u7aef\u63a7\u5236\u53f0\u5df2\u8fde\u63a5\u6167\u6807\u7cfb\u7edf\uff0c\u5426\u5219\u53ef\u80fd\u53ea\u80fd\u4fdd\u5b58\u8fde\u63a5\uff0c\u65e0\u6cd5\u6b63\u5e38\u63a8\u7406\u3002',
+  textBackendNotConfigured: '\u9ed8\u8ba4\u6587\u672c\u6a21\u578b\u672a\u914d\u7f6e',
   ok: '\u77e5\u9053\u4e86',
 };
 
-const DEFAULT_BACKEND_TITLE = 'Default Smart Labeling Backend';
-const DEFAULT_BACKEND_DESCRIPTION = 'Faster R-CNN default ML backend for smart pre-annotation.';
-
-const uniq = (items) => [...new Set(items.filter(Boolean))];
-
-const getDefaultBackendCandidates = () => {
-  const location = window.location;
-  const protocol = location?.protocol || 'http:';
-  const hostname = location?.hostname || 'localhost';
-  const hostLike = ['localhost', '127.0.0.1', '0.0.0.0'].includes(hostname);
-  const configuredMlHost = window.APP_SETTINGS?.mlHost;
-
-  if (hostLike) {
-    // Local development: direct host process first, then host access from Docker.
-    return uniq([
-      `${protocol}//127.0.0.1:9091`,
-      'http://host.docker.internal:9091',
-    ]);
-  }
-
-  // Server deployment: use the configured ML backend first, then the current server host.
-  return uniq([
-    ...(configuredMlHost ? [configuredMlHost] : []),
-    `${protocol}//${hostname}:9000`,
-  ]);
-};
+const DEFAULT_IMAGE_BACKEND_TITLE = 'Default Image Smart Labeling Backend';
+const DEFAULT_IMAGE_BACKEND_DESCRIPTION = 'Faster R-CNN default image ML backend for smart pre-annotation.';
+const DEFAULT_TEXT_BACKEND_TITLE = 'Default Text Smart Labeling Backend';
+const DEFAULT_TEXT_BACKEND_DESCRIPTION = 'Transformers default text ML backend for smart pre-annotation.';
 
 const showInfoModal = (title, body) => {
   let modalRef;
@@ -95,8 +77,9 @@ export const MachineLearningSettings = () => {
   const [mlError, setMLError] = useState();
   const [backends, setBackends] = useState([]);
   const [versions, setVersions] = useState([]);
-  const [connectingDefault, setConnectingDefault] = useState(false);
-  const defaultCandidates = useMemo(getDefaultBackendCandidates, []);
+  const [connectingBackend, setConnectingBackend] = useState(null);
+  const imageBackendCandidates = useMemo(() => getDefaultBackendCandidates('image'), []);
+  const textBackendCandidates = useMemo(() => getDefaultBackendCandidates('text'), []);
 
   const resetMLVersion = useCallback(async (e) => {
     e.preventDefault();
@@ -127,19 +110,19 @@ export const MachineLearningSettings = () => {
     setVersions(versions);
   }, [api, project.id]);
 
-  const connectDefaultBackend = useCallback(async () => {
-    if (!project?.id || connectingDefault) return;
+  const connectDefaultBackend = useCallback(async (backendType, candidates, title, description) => {
+    if (!project?.id || connectingBackend || candidates.length === 0) return;
 
-    setConnectingDefault(true);
+    setConnectingBackend(backendType);
     const failures = [];
     const progressModal = showBlockingModal(text.defaultConnectingTitle, text.defaultConnectingBody);
 
     try {
       let connectedUrl = null;
-      for (const url of defaultCandidates) {
+      for (const url of candidates) {
         const existing = backends.find((backend) => backend.url === url);
         if (existing) {
-          showInfoModal(text.defaultConnected, `${existing.title || DEFAULT_BACKEND_TITLE}\n${url}\n\n${text.backendConsoleHint}`);
+          showInfoModal(text.defaultConnected, `${existing.title || title}\n${url}\n\n${text.backendConsoleHint}`);
           return;
         }
 
@@ -149,9 +132,9 @@ export const MachineLearningSettings = () => {
           params: {},
           body: {
             project: project.id,
-            title: DEFAULT_BACKEND_TITLE,
+            title,
             url,
-            description: DEFAULT_BACKEND_DESCRIPTION,
+            description,
           },
           errorFilter: () => true,
         });
@@ -169,7 +152,7 @@ export const MachineLearningSettings = () => {
       if (connectedUrl) {
         await fetchBackends();
         await fetchMLVersions();
-        showInfoModal(text.defaultConnected, `${DEFAULT_BACKEND_TITLE}\n${connectedUrl}\n\n${text.backendConsoleHint}`);
+        showInfoModal(text.defaultConnected, `${title}\n${connectedUrl}\n\n${text.backendConsoleHint}`);
         return;
       }
 
@@ -179,9 +162,9 @@ export const MachineLearningSettings = () => {
       );
     } finally {
       progressModal?.close?.();
-      setConnectingDefault(false);
+      setConnectingBackend(null);
     }
-  }, [api, backends, connectingDefault, defaultCandidates, fetchBackends, fetchMLVersions, project?.id]);
+  }, [api, backends, connectingBackend, fetchBackends, fetchMLVersions, project?.id]);
 
   const showMLFormModal = useCallback((backend) => {
     const action = backend ? 'updateMLBackend' : 'addMLBackend';
@@ -253,8 +236,30 @@ export const MachineLearningSettings = () => {
       </Description>
 
       <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
-        <Button look="primary" waiting={connectingDefault} onClick={connectDefaultBackend}>
-          {connectingDefault ? text.connecting : text.connectDefault}
+        <Button
+          look="primary"
+          waiting={connectingBackend === 'image'}
+          onClick={() => connectDefaultBackend(
+            'image',
+            imageBackendCandidates,
+            DEFAULT_IMAGE_BACKEND_TITLE,
+            DEFAULT_IMAGE_BACKEND_DESCRIPTION
+          )}
+        >
+          {connectingBackend === 'image' ? text.connectingImage : text.connectDefaultImage}
+        </Button>
+        <Button
+          waiting={connectingBackend === 'text'}
+          disabled={textBackendCandidates.length === 0}
+          title={textBackendCandidates.length === 0 ? text.textBackendNotConfigured : undefined}
+          onClick={() => connectDefaultBackend(
+            'text',
+            textBackendCandidates,
+            DEFAULT_TEXT_BACKEND_TITLE,
+            DEFAULT_TEXT_BACKEND_DESCRIPTION
+          )}
+        >
+          {connectingBackend === 'text' ? text.connectingText : text.connectDefaultText}
         </Button>
         <Button onClick={() => showMLFormModal()}>
           {text.connectCustom}

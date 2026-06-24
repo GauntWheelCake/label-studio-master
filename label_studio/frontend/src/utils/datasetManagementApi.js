@@ -9,6 +9,33 @@
 
 const SSO_TOKEN_KEY = 'label_studio_sso_token';
 
+const MOCK_DICTS = {
+  model_class: [
+    { label: '\u822a\u7a7a\u822a\u5929', value: '101', id: '101' },
+    { label: '\u751f\u547d\u79d1\u5b66', value: '102', id: '102' },
+    { label: '\u52a8\u529b\u5b66\u4eff\u771f', value: '103', id: '103' },
+    { label: '\u4eba\u5de5\u667a\u80fd', value: '201', id: '201' },
+    { label: 'CAE\u524d\u540e\u5904\u7406', value: '301', id: '301' },
+    { label: '\u7535\u78c1\u4eff\u771f', value: '302', id: '302' },
+    { label: '\u5929\u6c14\u9884\u62a5', value: '303', id: '303' },
+    { label: '\u9065\u611f\u6d4b\u7ed8', value: '401', id: '401' },
+    { label: '\u534a\u5bfc\u4f53', value: '402', id: '402' },
+    { label: '\u56fe\u50cf\u5904\u7406', value: '10001', id: '10001' },
+  ],
+};
+
+function isSsoDebugMock() {
+  return window.APP_SETTINGS?.ssoDebugMock === true || window.APP_SETTINGS?.ssoDebugMock === 'true';
+}
+
+function slugify(value) {
+  return String(value || 'dataset')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '') || 'dataset';
+}
+
 /**
  * Normalize the configured SSO host to a full URL prefix.
  *
@@ -128,6 +155,10 @@ async function request(path, { method = 'GET', body } = {}) {
  * @returns {Promise<Array<{label: string, value: string, id: string}>>}
  */
 export async function getSsoDict(dictName) {
+  if (isSsoDebugMock()) {
+    return MOCK_DICTS[dictName] ?? [];
+  }
+
   const payload = await request(`/api/v1/admin/user/dict/${dictName}`);
   const details = payload?.dictDetails || [];
   return details
@@ -149,6 +180,16 @@ export async function getSsoDict(dictName) {
  * @param {number} payload.type
  */
 export async function createFeDataset(payload) {
+  if (isSsoDebugMock()) {
+    const dataType = payload?.dataType || 0;
+    const name = slugify(payload?.name);
+
+    return {
+      id: `mock-dataset-${dataType}-${name}`,
+      uploadPrefix: `mock/${dataType}/${name}`,
+    };
+  }
+
   return request('/api/v1/fileExplorer/feDatasets', {
     method: 'POST',
     body: payload,

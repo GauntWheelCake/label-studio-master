@@ -37,6 +37,12 @@ if HOSTNAME:
 
 INTERNAL_PORT = '8080'
 
+
+def _normalize_optional_url(value):
+    if value and not value.startswith(('http://', 'https://')):
+        return f'http://{value}'
+    return value
+
 # SSO platform integration: host for /api/v1/admin/auth/userinfo
 # Configure via the SSO_USERINFO_HOST environment variable.
 # Accept either "host:port" or a full "http(s)://host:port" URL prefix.
@@ -53,10 +59,10 @@ SSO_DATASET_API_HOST = get_env('SSO_DATASET_API_HOST', SSO_USERINFO_HOST)
 # ML backend host exposed to the frontend for default smart annotation backend
 # candidates. Configure via the ML_HOST environment variable. Accept either
 # "host:port" or a full "http(s)://host:port" URL prefix.
-_ML_HOST = get_env('ML_HOST', '')
-if _ML_HOST and not _ML_HOST.startswith(('http://', 'https://')):
-    _ML_HOST = f'http://{_ML_HOST}'
-ML_HOST = _ML_HOST
+ML_HOST = _normalize_optional_url(get_env('ML_HOST', ''))
+ML_IMAGE_HOST = _normalize_optional_url(get_env('ML_IMAGE_HOST', ML_HOST))
+ML_TEXT_HOST = _normalize_optional_url(get_env('ML_TEXT_HOST', ''))
+ML_LABEL_STUDIO_URL = _normalize_optional_url(get_env('ML_LABEL_STUDIO_URL', ''))
 
 # Local development helper: when True, bypass the external SSO userinfo call
 # and return a mock user for any non-empty token. Never enable in production.

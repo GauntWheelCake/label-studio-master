@@ -185,10 +185,15 @@ class MLApi(BaseHTTPAPI):
         return self._request('validate', request={'config': config}, timeout=self._validate_request_timeout)
 
     def setup(self, project):
+        label_studio_url = (
+            getattr(settings, 'ML_LABEL_STUDIO_URL', '')
+            or settings.HOSTNAME
+            or ('http://localhost:' + settings.INTERNAL_PORT)
+        )
         return self._request('setup', request={
             'project': self._create_project_uid(project),
             'schema': project.label_config,
-            'hostname': settings.HOSTNAME if settings.HOSTNAME else ('http://localhost:' + settings.INTERNAL_PORT),
+            'hostname': label_studio_url,
             'access_token': project.created_by.auth_token.key
         })
 

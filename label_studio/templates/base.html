@@ -86,6 +86,19 @@
     );
   </script>
 
+  <script>
+    // Store current user's API token in sessionStorage so it's available
+    // across all pages and can be read by the ML backend connection flow.
+    (function() {
+      try {
+        var token = window.APP_SETTINGS && window.APP_SETTINGS.userToken;
+        if (token) {
+          sessionStorage.setItem('label_studio_api_token', token);
+        }
+      } catch (e) { /* sessionStorage not available */ }
+    })();
+  </script>
+
   <script src="{{settings.HOSTNAME}}/react-app/index.js?v={{ versions.backend.commit }}"></script>
 
   <div id="dynamic-content">
