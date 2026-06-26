@@ -31,14 +31,35 @@ def retrieve_tasks_predictions(project, queryset, **kwargs):
     task_ids = list(queryset.values_list('id', flat=True))
     before_count = Prediction.objects.filter(task__id__in=task_ids).count()
 
-    evaluate_predictions(queryset, connected_backends)
+    request = kwargs.get('request')
+    user = request.user if request is not None else None
+    prediction_summary = evaluate_predictions(queryset, connected_backends, user=user)
 
     after_count = Prediction.objects.filter(task__id__in=task_ids).count()
     created_count = max(after_count - before_count, 0)
+    failures = prediction_summary.get('failures', [])
+    failed_count = prediction_summary.get('failed_predictions', len(failures))
+
+    detail = 'AI 初稿生成完成：已处理 ' + str(queryset.count()) + ' 条任务，新增 ' + str(created_count) + ' 条 AI 初稿。'
+    if failed_count:
+        preview = failures[:5]
+        failure_lines = []
+        for failure in preview:
+            task_id = failure.get('task_id', '-')
+            message = failure.get('message') or failure.get('code') or '未知错误'
+            failure_lines.append('Task ' + str(task_id) + '：' + str(message))
+        detail += '\n失败 ' + str(failed_count) + ' 条。'
+        if failure_lines:
+            detail += '\n' + '\n'.join(failure_lines)
+        if failed_count > len(preview):
+            detail += '\n其余 ' + str(failed_count - len(preview)) + ' 条失败已写入服务日志。'
 
     return {
         'processed_items': queryset.count(),
-        'detail': 'AI 初稿生成完成：已处理 ' + str(queryset.count()) + ' 条任务，新增 ' + str(created_count) + ' 条 AI 初稿。'
+        'created_predictions': created_count,
+        'failed_predictions': failed_count,
+        'failures': failures,
+        'detail': detail
     }
 
 

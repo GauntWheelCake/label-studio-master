@@ -741,7 +741,16 @@ DataManagerPage.context = ({dmRef}) => {
       return;
     }
 
-    const selected = dmRef.store.taskStore?.selected;
+    const taskStore = dmRef.store.taskStore;
+    const selected = [
+      taskStore?.selected,
+      taskStore?.current,
+      taskStore?.currentTask,
+      taskStore?.task,
+      dmRef.lsf?.task,
+      dmRef.lsf?.store?.task,
+      dmRef.lsf?.store?.completionStore?.selected?.task,
+    ].find((candidate) => resolveTaskId(candidate));
     const id = resolveTaskId(selected);
     const status = resolveReviewStatus(selected);
 
@@ -1008,7 +1017,7 @@ DataManagerPage.context = ({dmRef}) => {
 
     modalInstance = modal({
       title,
-      body: () => <div>{message}</div>,
+      body: () => <div style={{ whiteSpace: 'pre-wrap' }}>{message}</div>,
       footer: (
         <Space align="end">
           <Button
@@ -1143,7 +1152,23 @@ DataManagerPage.context = ({dmRef}) => {
       } else {
         await refreshCurrentView();
       }
-      showSmartLabelingResult('\u0041\u0049 \u521d\u7a3f\u751f\u6210\u5b8c\u6210', result?.detail || '\u0041\u0049 \u521d\u7a3f\u5df2\u751f\u6210\uff0c\u8bf7\u8fdb\u5165\u6807\u6ce8\u9875\u786e\u8ba4\u6216\u4fee\u6539\u3002');
+      const failureLines = Array.isArray(result?.failures)
+        ? result.failures.slice(0, 5).map((failure) => {
+          const taskId = failure?.task_id ?? '-';
+          const message = failure?.message || failure?.code || '\u672a\u77e5\u9519\u8bef';
+
+          return `Task ${taskId}\uff1a${message}`;
+        })
+        : [];
+      const hasFailureDetail = typeof result?.detail === 'string' && result.detail.includes('\u5931\u8d25');
+      const failureSummary = result?.failed_predictions && !hasFailureDetail
+        ? `\n\u5931\u8d25 ${result.failed_predictions} \u6761${failureLines.length ? `\n${failureLines.join('\n')}` : ''}`
+        : '';
+
+      showSmartLabelingResult(
+        '\u0041\u0049 \u521d\u7a3f\u751f\u6210\u5b8c\u6210',
+        `${result?.detail || '\u0041\u0049 \u521d\u7a3f\u5df2\u751f\u6210\uff0c\u8bf7\u8fdb\u5165\u6807\u6ce8\u9875\u786e\u8ba4\u6216\u4fee\u6539\u3002'}${failureSummary}`
+      );
     } catch (error) {
       console.error('[smart-labeling] Failed to generate AI drafts', error);
       showSmartLabelingResult('\u667a\u80fd\u9884\u6807\u6ce8\u5931\u8d25', error?.message || '\u8bf7\u68c0\u67e5\u667a\u80fd\u6807\u6ce8\u6a21\u578b\u662f\u5426\u5df2\u8fde\u63a5\uff0c\u6216\u7a0d\u540e\u91cd\u8bd5\u3002');
@@ -1190,7 +1215,9 @@ DataManagerPage.context = ({dmRef}) => {
       title: '\u751f\u6210 AI \u521d\u7a3f',
       body: () => (
         <div>
-          <p>{'\u5c06\u4e3a\u5f53\u524d\u9009\u4e2d\u7684\u4efb\u52a1\u751f\u6210 AI \u521d\u7a3f\u3002\u751f\u6210\u540e\u9700\u8981\u4eba\u5de5\u786e\u8ba4\u6216\u4fee\u6539\uff0c\u624d\u4f1a\u6210\u4e3a\u6b63\u5f0f\u6807\u6ce8\u3002'}</p>
+          <p>{isCurrentTaskMode
+            ? '\u5c06\u4ec5\u4e3a\u5f53\u524d\u6253\u5f00\u7684\u4efb\u52a1\u751f\u6210 AI \u521d\u7a3f\u3002\u751f\u6210\u540e\u9700\u8981\u4eba\u5de5\u786e\u8ba4\u6216\u4fee\u6539\uff0c\u624d\u4f1a\u6210\u4e3a\u6b63\u5f0f\u6807\u6ce8\u3002'
+            : '\u5c06\u4e3a\u6570\u636e\u5217\u8868\u4e2d\u5f53\u524d\u52fe\u9009\u7684\u4efb\u52a1\u751f\u6210 AI \u521d\u7a3f\u3002\u751f\u6210\u540e\u9700\u8981\u4eba\u5de5\u786e\u8ba4\u6216\u4fee\u6539\uff0c\u624d\u4f1a\u6210\u4e3a\u6b63\u5f0f\u6807\u6ce8\u3002'}</p>
           <p style={{ marginTop: 12, fontWeight: 600 }}>{'\u672c\u6b21\u5c06\u8c03\u7528\u7684\u673a\u5668\u5b66\u4e60\u540e\u7aef\uff1a'}</p>
           <pre style={{ whiteSpace: 'pre-wrap', margin: 0 }}>{formatBackendList(connectedBackends)}</pre>
         </div>
@@ -1244,16 +1271,14 @@ DataManagerPage.context = ({dmRef}) => {
         </Button>
       )}
 
-      {(mode === 'explorer' || currentTaskId) && (
-        <Button
-          size="compact"
-          look="primary"
-          waiting={smartLabeling}
-          onClick={confirmSmartLabeling}
-        >
-          {'\u667a\u80fd\u9884\u6807\u6ce8'}
-        </Button>
-      )}
+      <Button
+        size="compact"
+        look="primary"
+        waiting={smartLabeling}
+        onClick={confirmSmartLabeling}
+      >
+        {'\u667a\u80fd\u9884\u6807\u6ce8'}
+      </Button>
 
       {showReviewControls && (
         <Space size="small">

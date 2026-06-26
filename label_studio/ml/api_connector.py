@@ -165,15 +165,36 @@ class MLApi(BaseHTTPAPI):
         }
         return self._request('train', request, verbose=False)
 
-    def make_predictions(self, tasks, model_version, project):
+    def _get_label_studio_url(self):
+        return (
+            getattr(settings, 'ML_LABEL_STUDIO_URL', '')
+            or os.getenv('LABEL_STUDIO_INTERNAL_URL', '').strip()
+            or settings.HOSTNAME
+            or os.getenv('LABEL_STUDIO_URL', '').strip()
+            or 'http://huibiao-system:' + settings.INTERNAL_PORT
+        )
+
+    def _get_user_token(self, project, user=None):
+        token_user = user if user is not None and hasattr(user, 'auth_token') else project.created_by
+        return token_user.auth_token.key
+
+    def make_predictions(self, tasks, model_version, project, user=None, extra_params=None):
+        params = {
+            'login': project.task_data_login,
+            'password': project.task_data_password
+        }
+        if extra_params:
+            params.update(extra_params)
+
         request = {
             'tasks': tasks,
             'model_version': model_version,
             'project': self._create_project_uid(project),
             'label_config': project.label_config,
-            'params': {
-                'login': project.task_data_login,
-                'password': project.task_data_password
+            'params': params,
+            'label_studio': {
+                'url': self._get_label_studio_url(),
+                'api_token': self._get_user_token(project, user=user)
             }
         }
         return self._request('predict', request, verbose=False)
@@ -185,11 +206,7 @@ class MLApi(BaseHTTPAPI):
         return self._request('validate', request={'config': config}, timeout=self._validate_request_timeout)
 
     def setup(self, project):
-        label_studio_url = (
-            getattr(settings, 'ML_LABEL_STUDIO_URL', '')
-            or settings.HOSTNAME
-            or ('http://localhost:' + settings.INTERNAL_PORT)
-        )
+        label_studio_url = self._get_label_studio_url()
         return self._request('setup', request={
             'project': self._create_project_uid(project),
             'schema': project.label_config,

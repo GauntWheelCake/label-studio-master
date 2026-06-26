@@ -232,14 +232,20 @@ def get_prepared_queryset(request, project):
     return queryset
 
 
-def evaluate_predictions(tasks, ml_backends=None):
+def evaluate_predictions(tasks, ml_backends=None, user=None):
     """ Call ML backend for prediction evaluation of the task queryset
     """
     if not tasks:
-        return
+        return {'created_predictions': 0, 'failed_predictions': 0, 'failures': []}
 
     project = tasks[0].project
+    summary = {'created_predictions': 0, 'failed_predictions': 0, 'failures': []}
 
     for ml_backend in ml_backends or project.ml_backends.all():
         # tasks = tasks.filter(~Q(predictions__model_version=ml_backend.model_version))
-        ml_backend.predict_many_tasks(tasks)
+        result = ml_backend.predict_many_tasks(tasks, user=user) or {}
+        summary['created_predictions'] += result.get('created_predictions', 0)
+        summary['failed_predictions'] += result.get('failed_predictions', 0)
+        summary['failures'].extend(result.get('failures', []))
+
+    return summary

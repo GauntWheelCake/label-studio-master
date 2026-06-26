@@ -284,6 +284,7 @@ def smart_annotation_batch_predict(request):
     model_version = model_version_override or ml_backend.model_version or 'manual-batch'
     total_created = 0
     total_processed = 0
+    failures = []
 
     for i in range(0, len(task_ids), batch_size):
         batch_ids = task_ids[i:i + batch_size]
@@ -294,6 +295,7 @@ def smart_annotation_batch_predict(request):
             tasks_ser,
             model_version,
             project,
+            user=request.user,
             extra_params={'confidence_threshold': min_confidence}
         )
 
@@ -307,6 +309,19 @@ def smart_annotation_batch_predict(request):
 
         prepared = []
         for task_data, response in zip(tasks_ser, responses):
+            if response.get('error'):
+                failure = response['error'] if isinstance(response['error'], dict) else {
+                    'code': 'prediction_failed',
+                    'message': response['error'],
+                }
+                failure['task_id'] = failure.get('task_id') or task_data['id']
+                failures.append(failure)
+                logger.warning(
+                    'Smart annotation prediction skipped for task %s: %s',
+                    task_data['id'],
+                    failure.get('message'),
+                )
+                continue
             result_items = response.get('result', []) or []
             filtered = []
             for item in result_items:
@@ -336,5 +351,7 @@ def smart_annotation_batch_predict(request):
         'max_confidence': max_confidence,
         'processed_tasks': total_processed,
         'created_predictions': total_created,
+        'failed_predictions': len(failures),
+        'failures': failures[:20],
         'total_tasks_selected': len(task_ids)
     })

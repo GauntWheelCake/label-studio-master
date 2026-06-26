@@ -141,6 +141,63 @@ def test_predictions(
         assert ml_backend.model_version == actual_prediction.model_version
 
 
+@pytest.mark.django_db
+def test_predict_many_tasks_saves_single_task_prediction(business_client):
+    project = make_project(_project_for_text_choices_onto_A_B_classes, business_client.user)
+    task = Task.objects.create(data=_2_tasks_with_textA_and_textB[0], project=project)
+    ml_backend = MLBackend.objects.get(project=project)
+    ml_backend.model_version = 'single-task-v1'
+    ml_backend.save()
+
+    with requests_mock.Mocker() as m:
+        m.get('http://localhost:8999/health', text=json.dumps({'status': 'UP'}))
+        m.post(
+            'http://localhost:8999/predict',
+            text=json.dumps({'results': [_2_prediction_results_for_textA_textB[0]]})
+        )
+
+        summary = ml_backend.predict_many_tasks([task], user=business_client.user)
+
+    assert summary['created_predictions'] == 1
+    assert summary['failed_predictions'] == 0
+    assert summary['failures'] == []
+    assert Prediction.objects.filter(task=task, model_version='single-task-v1').count() == 1
+
+
+@pytest.mark.django_db
+def test_predict_many_tasks_returns_single_task_failure_to_caller(business_client):
+    project = make_project(_project_for_text_choices_onto_A_B_classes, business_client.user)
+    task = Task.objects.create(data=_2_tasks_with_textA_and_textB[0], project=project)
+    ml_backend = MLBackend.objects.get(project=project)
+    ml_backend.model_version = 'single-task-v1'
+    ml_backend.save()
+
+    with requests_mock.Mocker() as m:
+        m.get('http://localhost:8999/health', text=json.dumps({'status': 'UP'}))
+        m.post(
+            'http://localhost:8999/predict',
+            text=json.dumps({
+                'results': [{
+                    'result': [],
+                    'score': 0,
+                    'error': {
+                        'code': 'image_download_failed',
+                        'message': 'Failed to download image: 401 Unauthorized',
+                    },
+                }]
+            })
+        )
+
+        summary = ml_backend.predict_many_tasks([task], user=business_client.user)
+
+    assert summary['created_predictions'] == 0
+    assert summary['failed_predictions'] == 1
+    assert summary['failures'][0]['task_id'] == task.id
+    assert summary['failures'][0]['code'] == 'image_download_failed'
+    assert '401 Unauthorized' in summary['failures'][0]['message']
+    assert Prediction.objects.filter(task=task).count() == 0
+
+
 @pytest.mark.skipif(not redis_healthcheck(), reason='Starting predictions requires Redis server enabled')
 @pytest.mark.parametrize('test_name, project_config, setup_returns_model_version, tasks, annotations, '
                          'input_predictions, prediction_call_count, num_project_stats, num_ground_truth_in_stats, '

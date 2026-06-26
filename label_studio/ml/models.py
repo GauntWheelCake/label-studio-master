@@ -126,7 +126,7 @@ class MLBackend(models.Model):
                 MLBackendTrainJob.objects.create(job_id=current_train_job, ml_backend=self)
         self.save()
 
-    def predict_many_tasks(self, tasks):
+    def predict_many_tasks(self, tasks, user=None):
         self.update_state()
         if self.not_ready:
             logger.debug(f'ML backend {self} is not ready')
@@ -137,64 +137,145 @@ class MLBackend(models.Model):
             tasks = Task.objects.filter(id__in=[task.id for task in tasks])
 
         tasks_ser = TaskSimpleSerializer(tasks, many=True).data
-        ml_api_result = self.api.make_predictions(tasks_ser, self.model_version, self.project)
+        ml_api_result = self.api.make_predictions(tasks_ser, self.model_version, self.project, user=user)
         if ml_api_result.is_error:
             logger.warning(f'Prediction not created for project {self}: {ml_api_result.error_message}')
-            return
+            return {
+                'created_predictions': 0,
+                'failed_predictions': len(tasks_ser),
+                'failures': [{
+                    'task_id': task['id'],
+                    'code': 'ml_backend_request_failed',
+                    'message': ml_api_result.error_message,
+                } for task in tasks_ser],
+            }
 
         responses = ml_api_result.response['results']
 
         if len(responses) == 0:
             logger.warning(f'ML backend returned empty prediction for project {self}')
-            return
+            return {'created_predictions': 0, 'failed_predictions': 0, 'failures': []}
 
-        # ML Backend doesn't support batch of tasks, do it one by one
-        elif len(responses) == 1:
+        # ML Backend doesn't support batch of tasks, do it one by one.
+        # A single response is valid when the request contained exactly one task.
+        elif len(tasks_ser) > 1 and len(responses) == 1:
             logger.warning(f"'ML backend '{self.title}' doesn't support batch processing of tasks, "
                            f"switched to one-by-one task retrieving")
+            summary = {'created_predictions': 0, 'failed_predictions': 0, 'failures': []}
             for task in tasks:
-                self.predict_one_task(task)
-            return
+                result = self.predict_one_task(task, user=user) or {}
+                summary['created_predictions'] += result.get('created_predictions', 0)
+                summary['failed_predictions'] += result.get('failed_predictions', 0)
+                summary['failures'].extend(result.get('failures', []))
+            return summary
 
         # wrong result number
         elif len(responses) != len(tasks_ser):
             logger.warning(f'ML backend returned response number {len(responses)} != task number {len(tasks_ser)}')
 
         predictions = []
+        failures = []
         for task, response in zip(tasks_ser, responses):
+            if response.get('error'):
+                failure = response['error'] if isinstance(response['error'], dict) else {
+                    'code': 'prediction_failed',
+                    'message': response['error'],
+                }
+                failure['task_id'] = failure.get('task_id') or task['id']
+                failures.append(failure)
+                logger.warning(
+                    'Prediction skipped for task %s from ML backend %s: %s',
+                    task['id'],
+                    self,
+                    failure.get('message'),
+                )
+                continue
             predictions.append({
                 'task': task['id'],
                 'result': response['result'],
                 'score': response.get('score'),
                 'model_version': self.model_version
             })
+        if not predictions:
+            logger.warning(f'ML backend returned no savable predictions for project {self}')
+            return {
+                'created_predictions': 0,
+                'failed_predictions': len(failures),
+                'failures': failures,
+            }
         with conditional_atomic():
             prediction_ser = PredictionSerializer(data=predictions, many=True)
             prediction_ser.is_valid(raise_exception=True)
             prediction_ser.save()
+        return {
+            'created_predictions': len(predictions),
+            'failed_predictions': len(failures),
+            'failures': failures,
+        }
 
-    def predict_one_task(self, task):
+    def predict_one_task(self, task, user=None):
         self.update_state()
         if self.not_ready:
             logger.debug(f'ML backend {self} is not ready to predict {task}')
-            return
+            return {
+                'created_predictions': 0,
+                'failed_predictions': 1,
+                'failures': [{
+                    'task_id': task.id,
+                    'code': 'ml_backend_not_ready',
+                    'message': self.error_message or 'ML backend is not ready',
+                }],
+            }
         if task.predictions.filter(model_version=self.model_version).exists():
             # prediction already exists
             logger.info(f'Skip creating prediction with ML backend {self} for task {task}: model version '
                         f'{self.model_version} is up-to-date')
-            return
+            return {'created_predictions': 0, 'failed_predictions': 0, 'failures': []}
         ml_api = self.api
 
         task_ser = TaskSimpleSerializer(task).data
-        ml_api_result = ml_api.make_predictions([task_ser], self.model_version, self.project)
+        ml_api_result = ml_api.make_predictions([task_ser], self.model_version, self.project, user=user)
         if ml_api_result.is_error:
             logger.warning(f'Prediction not created for project {self}: {ml_api_result.error_message}')
-            return
+            return {
+                'created_predictions': 0,
+                'failed_predictions': 1,
+                'failures': [{
+                    'task_id': task_ser['id'],
+                    'code': 'ml_backend_request_failed',
+                    'message': ml_api_result.error_message,
+                }],
+            }
         results = ml_api_result.response['results']
         if len(results) == 0:
             logger.error(f'ML backend returned empty prediction for project {self}')
-            return
+            return {
+                'created_predictions': 0,
+                'failed_predictions': 1,
+                'failures': [{
+                    'task_id': task_ser['id'],
+                    'code': 'empty_prediction_response',
+                    'message': 'ML backend returned empty prediction response',
+                }],
+            }
         prediction_response = results[0]
+        if prediction_response.get('error'):
+            failure = prediction_response['error'] if isinstance(prediction_response['error'], dict) else {
+                'code': 'prediction_failed',
+                'message': prediction_response['error'],
+            }
+            failure['task_id'] = failure.get('task_id') or task_ser['id']
+            logger.warning(
+                'Prediction skipped for task %s from ML backend %s: %s',
+                task_ser['id'],
+                self,
+                failure.get('message'),
+            )
+            return {
+                'created_predictions': 0,
+                'failed_predictions': 1,
+                'failures': [failure],
+            }
         task_id = task_ser['id']
         r = prediction_response['result']
         score = prediction_response.get('score')
@@ -210,7 +291,7 @@ class MLBackend(models.Model):
             )
             logger.debug(f'Prediction {prediction} created')
 
-        return prediction
+        return {'created_predictions': 1, 'failed_predictions': 0, 'failures': [], 'prediction': prediction}
 
 
 class MLBackendPredictionJob(models.Model):

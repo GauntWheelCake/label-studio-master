@@ -367,7 +367,7 @@ class ProjectNextTaskAPI(generics.RetrieveAPIView):
         # call machine learning api and format response
         if project.show_collab_predictions and not next_task.predictions.exists():
             for ml_backend in project.ml_backends.all():
-                ml_backend.predict_one_task(next_task)
+                ml_backend.predict_one_task(next_task, user=request.user)
 
         # serialize task
         context = {'request': request, 'project': project, 'resolve_uri': True,
