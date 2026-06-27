@@ -7,6 +7,47 @@ from ml.models import MLBackendState
 from tasks.models import Annotation, Prediction, Task, update_is_labeled_after_removing_annotation
 
 
+def _get_requested_ml_backend_id(request):
+    if request is None:
+        return None
+    data = getattr(request, 'data', {}) or {}
+    backend_id = data.get('ml_backend_id')
+    if backend_id in (None, ''):
+        return None
+    try:
+        return int(backend_id)
+    except (TypeError, ValueError):
+        return None
+
+
+def _select_prediction_backend(project, connected_backends, request):
+    requested_backend_id = _get_requested_ml_backend_id(request)
+
+    if requested_backend_id is None:
+        if len(connected_backends) == 1:
+            return connected_backends[0], None
+        return None, {
+            'response_code': 400,
+            'detail': '当前项目连接了多个智能标注模型，请先选择一个模型后再进行智能预标注。',
+        }
+
+    project_backend_ids = {backend.id for backend in project.ml_backends.all()}
+    if requested_backend_id not in project_backend_ids:
+        return None, {
+            'response_code': 400,
+            'detail': '选择的智能标注模型不属于当前项目，请刷新页面后重新选择。',
+        }
+
+    for backend in connected_backends:
+        if backend.id == requested_backend_id:
+            return backend, None
+
+    return None, {
+        'response_code': 400,
+        'detail': '选择的智能标注模型当前未连接，请先在“项目设置 > 智能标注”中检查模型服务。',
+    }
+
+
 def retrieve_tasks_predictions(project, queryset, **kwargs):
     """Retrieve predictions by task ids and present them as AI drafts."""
     ml_backends = list(project.ml_backends.all())
@@ -33,7 +74,11 @@ def retrieve_tasks_predictions(project, queryset, **kwargs):
 
     request = kwargs.get('request')
     user = request.user if request is not None else None
-    prediction_summary = evaluate_predictions(queryset, connected_backends, user=user)
+    selected_backend, selection_error = _select_prediction_backend(project, connected_backends, request)
+    if selection_error:
+        return selection_error
+
+    prediction_summary = evaluate_predictions(queryset, [selected_backend], user=user)
 
     after_count = Prediction.objects.filter(task__id__in=task_ids).count()
     created_count = max(after_count - before_count, 0)
@@ -59,6 +104,9 @@ def retrieve_tasks_predictions(project, queryset, **kwargs):
         'created_predictions': created_count,
         'failed_predictions': failed_count,
         'failures': failures,
+        'ml_backend_id': selected_backend.id,
+        'ml_backend_title': selected_backend.title,
+        'ml_backend_url': selected_backend.url,
         'detail': detail
     }
 

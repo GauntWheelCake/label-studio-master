@@ -7,8 +7,16 @@ import requests_mock
 import re
 import boto3
 import logging
+import django
 
-from moto import mock_s3
+try:
+    from moto import mock_s3
+except ImportError:
+    from moto import mock_aws as mock_s3
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings.label_studio')
+django.setup()
+
 from copy import deepcopy
 from django.conf import settings
 from projects.models import Project

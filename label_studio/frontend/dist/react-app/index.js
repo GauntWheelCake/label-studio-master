@@ -9242,6 +9242,7 @@ DataManagerPage.context = ({
   const [smartLabeling, setSmartLabeling] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
   const isSwitchingTaskRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(false);
   const smartLabelingModalRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
+  const isMountedRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(true);
 
   // Review controls are temporarily disabled; the handlers and state remain in
   // place so they can be re-enabled quickly if needed.
@@ -9377,20 +9378,47 @@ DataManagerPage.context = ({
     const status = (_ref9 = (_task$review_status = task.review_status) !== null && _task$review_status !== void 0 ? _task$review_status : (_task$task2 = task.task) === null || _task$task2 === void 0 ? void 0 : _task$task2.review_status) !== null && _ref9 !== void 0 ? _ref9 : 'pending';
     return String(status || 'pending').toLowerCase();
   }, []);
+  const getActiveTaskInfo = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => {
+    var _dmRef$store, _dmRef$store2, _dmRef$lsf, _dmRef$lsf2, _dmRef$lsf2$store, _dmRef$lsf3, _dmRef$lsf3$store, _dmRef$lsf3$store$com, _dmRef$lsf3$store$com2;
+    const taskStore = dmRef === null || dmRef === void 0 ? void 0 : (_dmRef$store = dmRef.store) === null || _dmRef$store === void 0 ? void 0 : _dmRef$store.taskStore;
+    const selected = [taskStore === null || taskStore === void 0 ? void 0 : taskStore.selected, taskStore === null || taskStore === void 0 ? void 0 : taskStore.selectedTask, taskStore === null || taskStore === void 0 ? void 0 : taskStore.current, taskStore === null || taskStore === void 0 ? void 0 : taskStore.currentTask, taskStore === null || taskStore === void 0 ? void 0 : taskStore.task, (_dmRef$store2 = dmRef.store) === null || _dmRef$store2 === void 0 ? void 0 : _dmRef$store2.task, dmRef.task, (_dmRef$lsf = dmRef.lsf) === null || _dmRef$lsf === void 0 ? void 0 : _dmRef$lsf.task, (_dmRef$lsf2 = dmRef.lsf) === null || _dmRef$lsf2 === void 0 ? void 0 : (_dmRef$lsf2$store = _dmRef$lsf2.store) === null || _dmRef$lsf2$store === void 0 ? void 0 : _dmRef$lsf2$store.task, (_dmRef$lsf3 = dmRef.lsf) === null || _dmRef$lsf3 === void 0 ? void 0 : (_dmRef$lsf3$store = _dmRef$lsf3.store) === null || _dmRef$lsf3$store === void 0 ? void 0 : (_dmRef$lsf3$store$com = _dmRef$lsf3$store.completionStore) === null || _dmRef$lsf3$store$com === void 0 ? void 0 : (_dmRef$lsf3$store$com2 = _dmRef$lsf3$store$com.selected) === null || _dmRef$lsf3$store$com2 === void 0 ? void 0 : _dmRef$lsf3$store$com2.task].find(candidate => resolveTaskId(candidate));
+    const id = resolveTaskId(selected);
+    const status = resolveReviewStatus(selected);
+    if (id) return {
+      id,
+      status
+    };
+    const searchParams = new URLSearchParams(location.search || '');
+    const taskIdFromLocation = searchParams.get('task') || searchParams.get('task_id') || searchParams.get('taskID');
+    return {
+      id: taskIdFromLocation ? Number(taskIdFromLocation) : null,
+      status: status || 'pending'
+    };
+  }, [dmRef, location.search, resolveReviewStatus, resolveTaskId]);
   const extractTaskInfo = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => {
-    var _dmRef$lsf, _dmRef$lsf2, _dmRef$lsf2$store, _dmRef$lsf3, _dmRef$lsf3$store, _dmRef$lsf3$store$com, _dmRef$lsf3$store$com2;
     if (!(dmRef !== null && dmRef !== void 0 && dmRef.store)) {
+      if (!isMountedRef.current) return;
       setCurrentTaskId(null);
       setCurrentReviewStatus('pending');
       return;
     }
-    const taskStore = dmRef.store.taskStore;
-    const selected = [taskStore === null || taskStore === void 0 ? void 0 : taskStore.selected, taskStore === null || taskStore === void 0 ? void 0 : taskStore.current, taskStore === null || taskStore === void 0 ? void 0 : taskStore.currentTask, taskStore === null || taskStore === void 0 ? void 0 : taskStore.task, (_dmRef$lsf = dmRef.lsf) === null || _dmRef$lsf === void 0 ? void 0 : _dmRef$lsf.task, (_dmRef$lsf2 = dmRef.lsf) === null || _dmRef$lsf2 === void 0 ? void 0 : (_dmRef$lsf2$store = _dmRef$lsf2.store) === null || _dmRef$lsf2$store === void 0 ? void 0 : _dmRef$lsf2$store.task, (_dmRef$lsf3 = dmRef.lsf) === null || _dmRef$lsf3 === void 0 ? void 0 : (_dmRef$lsf3$store = _dmRef$lsf3.store) === null || _dmRef$lsf3$store === void 0 ? void 0 : (_dmRef$lsf3$store$com = _dmRef$lsf3$store.completionStore) === null || _dmRef$lsf3$store$com === void 0 ? void 0 : (_dmRef$lsf3$store$com2 = _dmRef$lsf3$store$com.selected) === null || _dmRef$lsf3$store$com2 === void 0 ? void 0 : _dmRef$lsf3$store$com2.task].find(candidate => resolveTaskId(candidate));
-    const id = resolveTaskId(selected);
-    const status = resolveReviewStatus(selected);
+    const {
+      id,
+      status
+    } = getActiveTaskInfo();
+    if (!isMountedRef.current) return;
     setCurrentTaskId(id);
     setCurrentReviewStatus(status || 'pending');
-  }, [dmRef, resolveReviewStatus, resolveTaskId]);
+  }, [dmRef, getActiveTaskInfo]);
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    isMountedRef.current = true;
+    return () => {
+      var _smartLabelingModalRe, _smartLabelingModalRe2;
+      isMountedRef.current = false;
+      (_smartLabelingModalRe = smartLabelingModalRef.current) === null || _smartLabelingModalRe === void 0 ? void 0 : (_smartLabelingModalRe2 = _smartLabelingModalRe.close) === null || _smartLabelingModalRe2 === void 0 ? void 0 : _smartLabelingModalRe2.call(_smartLabelingModalRe);
+      smartLabelingModalRef.current = null;
+    };
+  }, []);
   const selectNextTask = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async () => {
     if (!(dmRef !== null && dmRef !== void 0 && dmRef.store)) return;
     const taskStore = dmRef.store.taskStore;
@@ -9400,8 +9428,8 @@ DataManagerPage.context = ({
       if (typeof taskStore.nextTask === 'function') {
         nextTaskResult = await taskStore.nextTask();
       } else {
-        var _dmRef$store$currentV, _dmRef$store, _dmRef$store2, _dmRef$store2$viewsSt, _view$selected, _view$selected2, _view$conjunction, _view$serializedFilte, _dmRef$apiCall;
-        const view = (_dmRef$store$currentV = (_dmRef$store = dmRef.store) === null || _dmRef$store === void 0 ? void 0 : _dmRef$store.currentView) !== null && _dmRef$store$currentV !== void 0 ? _dmRef$store$currentV : (_dmRef$store2 = dmRef.store) === null || _dmRef$store2 === void 0 ? void 0 : (_dmRef$store2$viewsSt = _dmRef$store2.viewsStore) === null || _dmRef$store2$viewsSt === void 0 ? void 0 : _dmRef$store2$viewsSt.selected;
+        var _dmRef$store$currentV, _dmRef$store3, _dmRef$store4, _dmRef$store4$viewsSt, _view$selected, _view$selected2, _view$conjunction, _view$serializedFilte, _dmRef$apiCall;
+        const view = (_dmRef$store$currentV = (_dmRef$store3 = dmRef.store) === null || _dmRef$store3 === void 0 ? void 0 : _dmRef$store3.currentView) !== null && _dmRef$store$currentV !== void 0 ? _dmRef$store$currentV : (_dmRef$store4 = dmRef.store) === null || _dmRef$store4 === void 0 ? void 0 : (_dmRef$store4$viewsSt = _dmRef$store4.viewsStore) === null || _dmRef$store4$viewsSt === void 0 ? void 0 : _dmRef$store4$viewsSt.selected;
         const hasSelectedItems = view === null || view === void 0 ? void 0 : (_view$selected = view.selected) === null || _view$selected === void 0 ? void 0 : _view$selected.hasSelected;
         const selectedItems = hasSelectedItems && view !== null && view !== void 0 && (_view$selected2 = view.selected) !== null && _view$selected2 !== void 0 && _view$selected2.snapshot ? view.selected.snapshot : {
           all: true,
@@ -9429,8 +9457,8 @@ DataManagerPage.context = ({
         if (!apiResult || apiResult !== null && apiResult !== void 0 && apiResult.error) {
           var _apiResult$$meta;
           if ((apiResult === null || apiResult === void 0 ? void 0 : apiResult.status) === 404 || (apiResult === null || apiResult === void 0 ? void 0 : (_apiResult$$meta = apiResult.$meta) === null || _apiResult$$meta === void 0 ? void 0 : _apiResult$$meta.status) === 404) {
-            var _dmRef$store3, _dmRef$store3$SDK, _dmRef$store3$SDK$inv;
-            (_dmRef$store3 = dmRef.store) === null || _dmRef$store3 === void 0 ? void 0 : (_dmRef$store3$SDK = _dmRef$store3.SDK) === null || _dmRef$store3$SDK === void 0 ? void 0 : (_dmRef$store3$SDK$inv = _dmRef$store3$SDK.invoke) === null || _dmRef$store3$SDK$inv === void 0 ? void 0 : _dmRef$store3$SDK$inv.call(_dmRef$store3$SDK, 'labelStreamFinished');
+            var _dmRef$store5, _dmRef$store5$SDK, _dmRef$store5$SDK$inv;
+            (_dmRef$store5 = dmRef.store) === null || _dmRef$store5 === void 0 ? void 0 : (_dmRef$store5$SDK = _dmRef$store5.SDK) === null || _dmRef$store5$SDK === void 0 ? void 0 : (_dmRef$store5$SDK$inv = _dmRef$store5$SDK.invoke) === null || _dmRef$store5$SDK$inv === void 0 ? void 0 : _dmRef$store5$SDK$inv.call(_dmRef$store5$SDK, 'labelStreamFinished');
           }
           return;
         }
@@ -9468,10 +9496,10 @@ DataManagerPage.context = ({
       (0,_services_breadrumbs__WEBPACK_IMPORTED_MODULE_9__.deleteCrumb)('dm-crumb');
     } else {
       (0,_services_breadrumbs__WEBPACK_IMPORTED_MODULE_9__.addAction)(dmPath, e => {
-        var _dmRef$store4, _dmRef$store4$closeLa;
+        var _dmRef$store6, _dmRef$store6$closeLa;
         e.preventDefault();
         e.stopPropagation();
-        dmRef === null || dmRef === void 0 ? void 0 : (_dmRef$store4 = dmRef.store) === null || _dmRef$store4 === void 0 ? void 0 : (_dmRef$store4$closeLa = _dmRef$store4.closeLabeling) === null || _dmRef$store4$closeLa === void 0 ? void 0 : _dmRef$store4$closeLa.call(_dmRef$store4);
+        dmRef === null || dmRef === void 0 ? void 0 : (_dmRef$store6 = dmRef.store) === null || _dmRef$store6 === void 0 ? void 0 : (_dmRef$store6$closeLa = _dmRef$store6.closeLabeling) === null || _dmRef$store6$closeLa === void 0 ? void 0 : _dmRef$store6$closeLa.call(_dmRef$store6);
       });
       (0,_services_breadrumbs__WEBPACK_IMPORTED_MODULE_9__.addCrumb)({
         key: "dm-crumb",
@@ -9573,9 +9601,9 @@ DataManagerPage.context = ({
     };
   }, [dmRef, extractTaskInfo, resolveTaskId]);
   const sendReviewDecision = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async (decision, options = {}) => {
-    var _dmRef$store5, _dmRef$store5$taskSto;
+    var _dmRef$store7, _dmRef$store7$taskSto;
     if (!dmRef) return;
-    const selected = (_dmRef$store5 = dmRef.store) === null || _dmRef$store5 === void 0 ? void 0 : (_dmRef$store5$taskSto = _dmRef$store5.taskStore) === null || _dmRef$store5$taskSto === void 0 ? void 0 : _dmRef$store5$taskSto.selected;
+    const selected = (_dmRef$store7 = dmRef.store) === null || _dmRef$store7 === void 0 ? void 0 : (_dmRef$store7$taskSto = _dmRef$store7.taskStore) === null || _dmRef$store7$taskSto === void 0 ? void 0 : _dmRef$store7$taskSto.selected;
     const taskId = resolveTaskId(selected);
     if (!taskId) return;
     setPendingDecision(decision);
@@ -9596,8 +9624,8 @@ DataManagerPage.context = ({
         throw new Error(responseDetail || result.error || '提交审核结果失败');
       }
       if (result) {
-        var _dmRef$store6, _dmRef$store6$taskSto, _result$review_status;
-        const loadTask = (_dmRef$store6 = dmRef.store) === null || _dmRef$store6 === void 0 ? void 0 : (_dmRef$store6$taskSto = _dmRef$store6.taskStore) === null || _dmRef$store6$taskSto === void 0 ? void 0 : _dmRef$store6$taskSto.loadTask;
+        var _dmRef$store8, _dmRef$store8$taskSto, _result$review_status;
+        const loadTask = (_dmRef$store8 = dmRef.store) === null || _dmRef$store8 === void 0 ? void 0 : (_dmRef$store8$taskSto = _dmRef$store8.taskStore) === null || _dmRef$store8$taskSto === void 0 ? void 0 : _dmRef$store8$taskSto.loadTask;
         if (typeof loadTask === 'function') {
           await loadTask.call(dmRef.store.taskStore, taskId, {
             select: true
@@ -9633,8 +9661,8 @@ DataManagerPage.context = ({
     });
   }, [requestRejectComment, sendReviewDecision]);
   const refreshCurrentView = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async () => {
-    var _dmRef$store$currentV2, _dmRef$store7, _dmRef$store8, _dmRef$store8$viewsSt, _dmRef$store9, _dmRef$store9$taskSto;
-    const view = (_dmRef$store$currentV2 = dmRef === null || dmRef === void 0 ? void 0 : (_dmRef$store7 = dmRef.store) === null || _dmRef$store7 === void 0 ? void 0 : _dmRef$store7.currentView) !== null && _dmRef$store$currentV2 !== void 0 ? _dmRef$store$currentV2 : dmRef === null || dmRef === void 0 ? void 0 : (_dmRef$store8 = dmRef.store) === null || _dmRef$store8 === void 0 ? void 0 : (_dmRef$store8$viewsSt = _dmRef$store8.viewsStore) === null || _dmRef$store8$viewsSt === void 0 ? void 0 : _dmRef$store8$viewsSt.selected;
+    var _dmRef$store$currentV2, _dmRef$store9, _dmRef$store0, _dmRef$store0$viewsSt, _dmRef$store1, _dmRef$store1$taskSto;
+    const view = (_dmRef$store$currentV2 = dmRef === null || dmRef === void 0 ? void 0 : (_dmRef$store9 = dmRef.store) === null || _dmRef$store9 === void 0 ? void 0 : _dmRef$store9.currentView) !== null && _dmRef$store$currentV2 !== void 0 ? _dmRef$store$currentV2 : dmRef === null || dmRef === void 0 ? void 0 : (_dmRef$store0 = dmRef.store) === null || _dmRef$store0 === void 0 ? void 0 : (_dmRef$store0$viewsSt = _dmRef$store0.viewsStore) === null || _dmRef$store0$viewsSt === void 0 ? void 0 : _dmRef$store0$viewsSt.selected;
     if (typeof (view === null || view === void 0 ? void 0 : view.reload) === 'function') {
       await view.reload();
       return;
@@ -9643,7 +9671,7 @@ DataManagerPage.context = ({
       await view.fetchTasks();
       return;
     }
-    if (typeof (dmRef === null || dmRef === void 0 ? void 0 : (_dmRef$store9 = dmRef.store) === null || _dmRef$store9 === void 0 ? void 0 : (_dmRef$store9$taskSto = _dmRef$store9.taskStore) === null || _dmRef$store9$taskSto === void 0 ? void 0 : _dmRef$store9$taskSto.reload) === 'function') {
+    if (typeof (dmRef === null || dmRef === void 0 ? void 0 : (_dmRef$store1 = dmRef.store) === null || _dmRef$store1 === void 0 ? void 0 : (_dmRef$store1$taskSto = _dmRef$store1.taskStore) === null || _dmRef$store1$taskSto === void 0 ? void 0 : _dmRef$store1$taskSto.reload) === 'function') {
       await dmRef.store.taskStore.reload();
     }
   }, [dmRef]);
@@ -9672,8 +9700,8 @@ DataManagerPage.context = ({
     });
   }, []);
   const showSmartLabelingProgress = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => {
-    var _smartLabelingModalRe, _smartLabelingModalRe2;
-    (_smartLabelingModalRe = smartLabelingModalRef.current) === null || _smartLabelingModalRe === void 0 ? void 0 : (_smartLabelingModalRe2 = _smartLabelingModalRe.close) === null || _smartLabelingModalRe2 === void 0 ? void 0 : _smartLabelingModalRe2.call(_smartLabelingModalRe);
+    var _smartLabelingModalRe3, _smartLabelingModalRe4;
+    (_smartLabelingModalRe3 = smartLabelingModalRef.current) === null || _smartLabelingModalRe3 === void 0 ? void 0 : (_smartLabelingModalRe4 = _smartLabelingModalRe3.close) === null || _smartLabelingModalRe4 === void 0 ? void 0 : _smartLabelingModalRe4.call(_smartLabelingModalRe3);
     smartLabelingModalRef.current = (0,_components_Modal_Modal__WEBPACK_IMPORTED_MODULE_4__.modal)({
       title: '\u6b63\u5728\u8fdb\u884c\u667a\u80fd\u6807\u6ce8',
       allowClose: false,
@@ -9684,13 +9712,13 @@ DataManagerPage.context = ({
     });
   }, []);
   const closeSmartLabelingProgress = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => {
-    var _smartLabelingModalRe3, _smartLabelingModalRe4;
-    (_smartLabelingModalRe3 = smartLabelingModalRef.current) === null || _smartLabelingModalRe3 === void 0 ? void 0 : (_smartLabelingModalRe4 = _smartLabelingModalRe3.close) === null || _smartLabelingModalRe4 === void 0 ? void 0 : _smartLabelingModalRe4.call(_smartLabelingModalRe3);
+    var _smartLabelingModalRe5, _smartLabelingModalRe6;
+    (_smartLabelingModalRe5 = smartLabelingModalRef.current) === null || _smartLabelingModalRe5 === void 0 ? void 0 : (_smartLabelingModalRe6 = _smartLabelingModalRe5.close) === null || _smartLabelingModalRe6 === void 0 ? void 0 : _smartLabelingModalRe6.call(_smartLabelingModalRe5);
     smartLabelingModalRef.current = null;
   }, []);
   const getSmartLabelingSelection = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => {
-    var _dmRef$store$currentV3, _dmRef$store0, _dmRef$store1, _dmRef$store1$viewsSt, _view$selected3, _view$selected4;
-    const view = (_dmRef$store$currentV3 = dmRef === null || dmRef === void 0 ? void 0 : (_dmRef$store0 = dmRef.store) === null || _dmRef$store0 === void 0 ? void 0 : _dmRef$store0.currentView) !== null && _dmRef$store$currentV3 !== void 0 ? _dmRef$store$currentV3 : dmRef === null || dmRef === void 0 ? void 0 : (_dmRef$store1 = dmRef.store) === null || _dmRef$store1 === void 0 ? void 0 : (_dmRef$store1$viewsSt = _dmRef$store1.viewsStore) === null || _dmRef$store1$viewsSt === void 0 ? void 0 : _dmRef$store1$viewsSt.selected;
+    var _dmRef$store$currentV3, _dmRef$store10, _dmRef$store11, _dmRef$store11$viewsS, _view$selected3, _view$selected4;
+    const view = (_dmRef$store$currentV3 = dmRef === null || dmRef === void 0 ? void 0 : (_dmRef$store10 = dmRef.store) === null || _dmRef$store10 === void 0 ? void 0 : _dmRef$store10.currentView) !== null && _dmRef$store$currentV3 !== void 0 ? _dmRef$store$currentV3 : dmRef === null || dmRef === void 0 ? void 0 : (_dmRef$store11 = dmRef.store) === null || _dmRef$store11 === void 0 ? void 0 : (_dmRef$store11$viewsS = _dmRef$store11.viewsStore) === null || _dmRef$store11$viewsS === void 0 ? void 0 : _dmRef$store11$viewsS.selected;
     const hasSelectedItems = view === null || view === void 0 ? void 0 : (_view$selected3 = view.selected) === null || _view$selected3 === void 0 ? void 0 : _view$selected3.hasSelected;
     const selectedItems = hasSelectedItems && view !== null && view !== void 0 && (_view$selected4 = view.selected) !== null && _view$selected4 !== void 0 && _view$selected4.snapshot ? view.selected.snapshot : null;
     return {
@@ -9729,12 +9757,12 @@ DataManagerPage.context = ({
       }
     };
   }, [getSmartLabelingSelection]);
-  const buildCurrentTaskSmartLabelingRequest = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => ({
+  const buildCurrentTaskSmartLabelingRequestFor = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(taskId => ({
     selectedItems: {
       all: false,
-      included: [currentTaskId]
+      included: [taskId]
     }
-  }), [currentTaskId]);
+  }), []);
   const loadSmartLabelingBackends = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async () => {
     var _dmRef$apiCall3;
     if (!dmRef || !(project !== null && project !== void 0 && project.id)) return [];
@@ -9757,13 +9785,14 @@ DataManagerPage.context = ({
     setSmartLabeling(true);
     showSmartLabelingProgress();
     try {
-      var _dmRef$apiCall4, _result$response3, _dmRef$lsf4, _dmRef$store10, _dmRef$store10$taskSt;
+      var _dmRef$apiCall4, _result$response3, _dmRef$lsf4, _dmRef$store12, _dmRef$store12$taskSt;
       const result = await ((_dmRef$apiCall4 = dmRef.apiCall) === null || _dmRef$apiCall4 === void 0 ? void 0 : _dmRef$apiCall4.call(dmRef, 'invokeAction', {
         project: project.id,
         id: 'retrieve_tasks_predictions'
       }, {
         body: requestBody !== null && requestBody !== void 0 ? requestBody : buildSmartLabelingRequest()
       }));
+      if (!isMountedRef.current) return;
       if (result !== null && result !== void 0 && result.error || result !== null && result !== void 0 && (_result$response3 = result.response) !== null && _result$response3 !== void 0 && _result$response3.detail) {
         var _result$response4;
         const detail = (result === null || result === void 0 ? void 0 : (_result$response4 = result.response) === null || _result$response4 === void 0 ? void 0 : _result$response4.detail) || (result === null || result === void 0 ? void 0 : result.detail) || (result === null || result === void 0 ? void 0 : result.error);
@@ -9772,7 +9801,7 @@ DataManagerPage.context = ({
       if (mode !== 'explorer' && currentTaskId && typeof ((_dmRef$lsf4 = dmRef.lsf) === null || _dmRef$lsf4 === void 0 ? void 0 : _dmRef$lsf4.loadTask) === 'function') {
         await dmRef.lsf.loadTask(currentTaskId);
         extractTaskInfo();
-      } else if (mode !== 'explorer' && currentTaskId && typeof ((_dmRef$store10 = dmRef.store) === null || _dmRef$store10 === void 0 ? void 0 : (_dmRef$store10$taskSt = _dmRef$store10.taskStore) === null || _dmRef$store10$taskSt === void 0 ? void 0 : _dmRef$store10$taskSt.loadTask) === 'function') {
+      } else if (mode !== 'explorer' && currentTaskId && typeof ((_dmRef$store12 = dmRef.store) === null || _dmRef$store12 === void 0 ? void 0 : (_dmRef$store12$taskSt = _dmRef$store12.taskStore) === null || _dmRef$store12$taskSt === void 0 ? void 0 : _dmRef$store12$taskSt.loadTask) === 'function') {
         var _dmRef$store$taskStor, _dmRef$store$taskStor2;
         const task = await dmRef.store.taskStore.loadTask.call(dmRef.store.taskStore, currentTaskId, {
           select: true
@@ -9792,17 +9821,21 @@ DataManagerPage.context = ({
       const failureSummary = result !== null && result !== void 0 && result.failed_predictions && !hasFailureDetail ? `\n\u5931\u8d25 ${result.failed_predictions} \u6761${failureLines.length ? `\n${failureLines.join('\n')}` : ''}` : '';
       showSmartLabelingResult('\u0041\u0049 \u521d\u7a3f\u751f\u6210\u5b8c\u6210', `${(result === null || result === void 0 ? void 0 : result.detail) || '\u0041\u0049 \u521d\u7a3f\u5df2\u751f\u6210\uff0c\u8bf7\u8fdb\u5165\u6807\u6ce8\u9875\u786e\u8ba4\u6216\u4fee\u6539\u3002'}${failureSummary}`);
     } catch (error) {
+      if (!isMountedRef.current) return;
       console.error('[smart-labeling] Failed to generate AI drafts', error);
       showSmartLabelingResult('\u667a\u80fd\u9884\u6807\u6ce8\u5931\u8d25', (error === null || error === void 0 ? void 0 : error.message) || '\u8bf7\u68c0\u67e5\u667a\u80fd\u6807\u6ce8\u6a21\u578b\u662f\u5426\u5df2\u8fde\u63a5\uff0c\u6216\u7a0d\u540e\u91cd\u8bd5\u3002');
     } finally {
+      if (!isMountedRef.current) return;
       closeSmartLabelingProgress();
       setSmartLabeling(false);
     }
   }, [buildSmartLabelingRequest, closeSmartLabelingProgress, currentTaskId, dmRef, extractTaskInfo, mode, project === null || project === void 0 ? void 0 : project.id, refreshCurrentView, showSmartLabelingProgress, showSmartLabelingResult, smartLabeling]);
   const confirmSmartLabeling = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async () => {
+    var _getActiveTaskInfo$id, _connectedBackends$;
     const isCurrentTaskMode = mode !== 'explorer';
-    const requestBody = isCurrentTaskMode ? buildCurrentTaskSmartLabelingRequest() : buildSmartLabelingRequest();
-    if (isCurrentTaskMode && !currentTaskId) {
+    const activeTaskId = isCurrentTaskMode ? (_getActiveTaskInfo$id = getActiveTaskInfo().id) !== null && _getActiveTaskInfo$id !== void 0 ? _getActiveTaskInfo$id : currentTaskId : null;
+    const requestBody = isCurrentTaskMode ? buildCurrentTaskSmartLabelingRequestFor(activeTaskId) : buildSmartLabelingRequest();
+    if (isCurrentTaskMode && !activeTaskId) {
       showSmartLabelingResult('\u8bf7\u5148\u6253\u5f00\u4efb\u52a1', '\u8bf7\u5148\u6253\u5f00\u9700\u8981\u667a\u80fd\u9884\u6807\u6ce8\u7684\u4efb\u52a1\uff0c\u7136\u540e\u518d\u70b9\u51fb\u201c\u667a\u80fd\u9884\u6807\u6ce8\u201d\u3002');
       return;
     }
@@ -9817,6 +9850,8 @@ DataManagerPage.context = ({
       return;
     }
     let modalInstance;
+    let selectedBackendId = (_connectedBackends$ = connectedBackends[0]) === null || _connectedBackends$ === void 0 ? void 0 : _connectedBackends$.id;
+    const requiresBackendChoice = connectedBackends.length > 1;
     modalInstance = (0,_components_Modal_Modal__WEBPACK_IMPORTED_MODULE_4__.modal)({
       title: '\u751f\u6210 AI \u521d\u7a3f',
       body: () => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsxs)("div", {
@@ -9827,8 +9862,34 @@ DataManagerPage.context = ({
             marginTop: 12,
             fontWeight: 600
           },
-          children: '\u672c\u6b21\u5c06\u8c03\u7528\u7684\u673a\u5668\u5b66\u4e60\u540e\u7aef\uff1a'
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)("pre", {
+          children: requiresBackendChoice ? '\u8bf7\u9009\u62e9\u672c\u6b21\u8981\u8c03\u7528\u7684\u673a\u5668\u5b66\u4e60\u540e\u7aef\uff1a' : '\u672c\u6b21\u5c06\u8c03\u7528\u7684\u673a\u5668\u5b66\u4e60\u540e\u7aef\uff1a'
+        }), requiresBackendChoice ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)("div", {
+          style: {
+            display: 'grid',
+            gap: 8
+          },
+          children: connectedBackends.map(backend => {
+            const title = backend.title || `\u6a21\u578b ${backend.id}`;
+            const url = backend.url ? `\uff08${backend.url}\uff09` : '';
+            return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsxs)("label", {
+              style: {
+                display: 'flex',
+                gap: 8,
+                alignItems: 'flex-start'
+              },
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)("input", {
+                type: "radio",
+                name: "smart-labeling-backend",
+                defaultChecked: backend.id === selectedBackendId,
+                onChange: () => {
+                  selectedBackendId = backend.id;
+                }
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)("span", {
+                children: `${title}${url}`
+              })]
+            }, backend.id);
+          })
+        }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)("pre", {
           style: {
             whiteSpace: 'pre-wrap',
             margin: 0
@@ -9850,14 +9911,21 @@ DataManagerPage.context = ({
           look: "primary",
           onClick: () => {
             var _modalInstance5;
+            if (!selectedBackendId) {
+              showSmartLabelingResult('\u8bf7\u9009\u62e9\u6a21\u578b', '\u8bf7\u5148\u9009\u62e9\u672c\u6b21\u8981\u8c03\u7528\u7684\u667a\u80fd\u6807\u6ce8\u6a21\u578b\u3002');
+              return;
+            }
             (_modalInstance5 = modalInstance) === null || _modalInstance5 === void 0 ? void 0 : _modalInstance5.close();
-            runSmartLabeling(requestBody);
+            runSmartLabeling({
+              ...requestBody,
+              ml_backend_id: selectedBackendId
+            });
           },
           children: '\u5f00\u59cb\u751f\u6210'
         })]
       })
     });
-  }, [buildCurrentTaskSmartLabelingRequest, buildSmartLabelingRequest, currentTaskId, formatBackendList, hasSmartLabelingSelection, loadSmartLabelingBackends, mode, runSmartLabeling, showSmartLabelingResult]);
+  }, [buildCurrentTaskSmartLabelingRequestFor, buildSmartLabelingRequest, currentTaskId, formatBackendList, getActiveTaskInfo, hasSmartLabelingSelection, loadSmartLabelingBackends, mode, runSmartLabeling, showSmartLabelingResult]);
   const reviewStatusTranslations = createReviewStatusTranslations();
   const statusText = (0,_reviewStatus__WEBPACK_IMPORTED_MODULE_17__.localizeReviewStatus)({
     translations: reviewStatusTranslations,
@@ -9876,8 +9944,8 @@ DataManagerPage.context = ({
     children: [mode !== 'explorer' && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)(_components_Button_Button__WEBPACK_IMPORTED_MODULE_3__.Button, {
       size: "compact",
       onClick: () => {
-        var _dmRef$store11, _dmRef$store11$closeL;
-        return dmRef === null || dmRef === void 0 ? void 0 : (_dmRef$store11 = dmRef.store) === null || _dmRef$store11 === void 0 ? void 0 : (_dmRef$store11$closeL = _dmRef$store11.closeLabeling) === null || _dmRef$store11$closeL === void 0 ? void 0 : _dmRef$store11$closeL.call(_dmRef$store11);
+        var _dmRef$store13, _dmRef$store13$closeL;
+        return dmRef === null || dmRef === void 0 ? void 0 : (_dmRef$store13 = dmRef.store) === null || _dmRef$store13 === void 0 ? void 0 : (_dmRef$store13$closeL = _dmRef$store13.closeLabeling) === null || _dmRef$store13$closeL === void 0 ? void 0 : _dmRef$store13$closeL.call(_dmRef$store13);
       },
       children: '\u8fd4\u56de'
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)(_components_Button_Button__WEBPACK_IMPORTED_MODULE_3__.Button, {
@@ -12084,7 +12152,7 @@ const text = {
   defaultConnectingTitle: '\u6b63\u5728\u8fde\u63a5\u9ed8\u8ba4\u667a\u80fd\u6807\u6ce8\u6a21\u578b',
   defaultConnectingBody: '\u6b63\u5728\u6d4b\u8bd5\u5e76\u4fdd\u5b58\u9ed8\u8ba4\u667a\u80fd\u6807\u6ce8\u6a21\u578b\uff0c\u8bf7\u52ff\u8df3\u8f6c\u5230\u5176\u4ed6\u9875\u9762\u6216\u5237\u65b0\u6d4f\u89c8\u5668\u3002',
   backendConsoleHint: '\u8fde\u63a5\u4fdd\u5b58\u540e\u5373\u53ef\u4ece\u6807\u6ce8\u5e73\u53f0\u53d1\u8d77\u667a\u80fd\u6807\u6ce8\uff0c\u65e0\u9700\u518d\u5230 ML \u540e\u7aef\u63a7\u5236\u53f0\u4fdd\u5b58\u914d\u7f6e\u3002',
-  textBackendNotConfigured: '\u9ed8\u8ba4\u6587\u672c\u6a21\u578b\u672a\u914d\u7f6e',
+  textBackendNotConfigured: '\u9ed8\u8ba4\u6587\u672c\u6a21\u578b\u672a\u914d\u7f6e\uff0c\u8bf7\u68c0\u67e5\u73af\u5883\u53d8\u91cf ML_TEXT_HOST \u662f\u5426\u5df2\u8bbe\u7f6e\u3002',
   ok: '\u77e5\u9053\u4e86'
 };
 const DEFAULT_IMAGE_BACKEND_TITLE = 'Default Image Smart Labeling Backend';
@@ -12299,6 +12367,7 @@ const MachineLearningSettings = () => {
         onClick: () => connectDefaultBackend('image', imageBackendCandidates, DEFAULT_IMAGE_BACKEND_TITLE, DEFAULT_IMAGE_BACKEND_DESCRIPTION),
         children: connectingBackend === 'image' ? text.connectingImage : text.connectDefaultImage
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
+        look: "primary",
         waiting: connectingBackend === 'text',
         disabled: textBackendCandidates.length === 0,
         title: textBackendCandidates.length === 0 ? text.textBackendNotConfigured : undefined,

@@ -40,7 +40,7 @@ const text = {
   defaultConnectingTitle: '\u6b63\u5728\u8fde\u63a5\u9ed8\u8ba4\u667a\u80fd\u6807\u6ce8\u6a21\u578b',
   defaultConnectingBody: '\u6b63\u5728\u6d4b\u8bd5\u5e76\u4fdd\u5b58\u9ed8\u8ba4\u667a\u80fd\u6807\u6ce8\u6a21\u578b\uff0c\u8bf7\u52ff\u8df3\u8f6c\u5230\u5176\u4ed6\u9875\u9762\u6216\u5237\u65b0\u6d4f\u89c8\u5668\u3002',
   backendConsoleHint: '\u8fde\u63a5\u4fdd\u5b58\u540e\u5373\u53ef\u4ece\u6807\u6ce8\u5e73\u53f0\u53d1\u8d77\u667a\u80fd\u6807\u6ce8\uff0c\u65e0\u9700\u518d\u5230 ML \u540e\u7aef\u63a7\u5236\u53f0\u4fdd\u5b58\u914d\u7f6e\u3002',
-  textBackendNotConfigured: '\u9ed8\u8ba4\u6587\u672c\u6a21\u578b\u672a\u914d\u7f6e',
+  textBackendNotConfigured: '\u9ed8\u8ba4\u6587\u672c\u6a21\u578b\u672a\u914d\u7f6e\uff0c\u8bf7\u68c0\u67e5\u73af\u5883\u53d8\u91cf ML_TEXT_HOST \u662f\u5426\u5df2\u8bbe\u7f6e\u3002',
   ok: '\u77e5\u9053\u4e86',
 };
 
@@ -249,6 +249,7 @@ export const MachineLearningSettings = () => {
           {connectingBackend === 'image' ? text.connectingImage : text.connectDefaultImage}
         </Button>
         <Button
+          look="primary"
           waiting={connectingBackend === 'text'}
           disabled={textBackendCandidates.length === 0}
           title={textBackendCandidates.length === 0 ? text.textBackendNotConfigured : undefined}

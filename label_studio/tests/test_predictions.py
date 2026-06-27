@@ -3,9 +3,11 @@
 import pytest
 import requests_mock
 import json
+from types import SimpleNamespace
 
 from projects.models import Project
 from ml.models import MLBackend
+from data_manager.actions.basic import _select_prediction_backend, retrieve_tasks_predictions
 from tasks.models import Task, Prediction, Annotation
 from .utils import make_project
 from core.redis import redis_healthcheck
@@ -196,6 +198,38 @@ def test_predict_many_tasks_returns_single_task_failure_to_caller(business_clien
     assert summary['failures'][0]['code'] == 'image_download_failed'
     assert '401 Unauthorized' in summary['failures'][0]['message']
     assert Prediction.objects.filter(task=task).count() == 0
+
+
+def test_select_prediction_backend_requires_selection_when_multiple_connected():
+    image_backend = SimpleNamespace(id=1, title='Image backend', url='http://localhost:8999')
+    text_backend = SimpleNamespace(id=2, title='Text backend', url='http://localhost:9001')
+    project = SimpleNamespace(ml_backends=SimpleNamespace(all=lambda: [image_backend, text_backend]))
+
+    selected_backend, error = _select_prediction_backend(
+        project,
+        [image_backend, text_backend],
+        request=SimpleNamespace(data={}),
+    )
+
+    assert selected_backend is None
+    assert error['response_code'] == 400
+    result = error
+    assert '选择' in result['detail']
+
+
+def test_select_prediction_backend_uses_requested_backend_only():
+    image_backend = SimpleNamespace(id=1, title='Image backend', url='http://localhost:8999')
+    text_backend = SimpleNamespace(id=2, title='Text backend', url='http://localhost:9001')
+    project = SimpleNamespace(ml_backends=SimpleNamespace(all=lambda: [image_backend, text_backend]))
+
+    selected_backend, error = _select_prediction_backend(
+        project,
+        [image_backend, text_backend],
+        request=SimpleNamespace(data={'ml_backend_id': text_backend.id}),
+    )
+
+    assert error is None
+    assert selected_backend is text_backend
 
 
 @pytest.mark.skipif(not redis_healthcheck(), reason='Starting predictions requires Redis server enabled')

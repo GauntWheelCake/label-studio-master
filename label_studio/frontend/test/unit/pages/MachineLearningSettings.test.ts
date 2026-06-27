@@ -32,6 +32,18 @@ describe('getDefaultBackendCandidates', () => {
     }, {})).toEqual([]);
   });
 
+  test('text candidates empty when ML_TEXT_HOST not configured (button disabled)', () => {
+    // When ML_TEXT_HOST is not set, appSettings has no mlTextHost key
+    const candidates = getDefaultBackendCandidates('text', {
+      protocol: 'http:',
+      hostname: 'localhost',
+    }, {});
+    // Empty array means button should be disabled
+    expect(candidates).toEqual([]);
+    // Verify the array is truly empty, not [undefined] or ['']
+    expect(candidates.length).toBe(0);
+  });
+
   test('keeps image and text candidate lists separate', () => {
     const location = {
       protocol: 'http:',

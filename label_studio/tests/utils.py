@@ -134,10 +134,27 @@ def azure_client_mock():
 
 @contextmanager
 def redis_client_mock():
-    from fakeredis import FakeRedis
     from io_storages.redis.models import RedisStorageMixin
 
-    redis = FakeRedis()
+    try:
+        from fakeredis import FakeRedis
+        redis = FakeRedis()
+    except ImportError:
+        class FakeRedis:
+            def __init__(self):
+                self.data = {}
+
+            def get(self, key):
+                return self.data.get(key)
+
+            def set(self, key, value, *args, **kwargs):
+                self.data[key] = value
+                return True
+
+            def delete(self, *keys):
+                return sum(1 for key in keys if self.data.pop(key, None) is not None)
+
+        redis = FakeRedis()
     # TODO: add mocked redis data
 
     with mock.patch.object(RedisStorageMixin, 'get_redis_connection', return_value=redis):

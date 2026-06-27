@@ -592,6 +592,7 @@ DataManagerPage.context = ({dmRef}) => {
   const [smartLabeling, setSmartLabeling] = useState(false);
   const isSwitchingTaskRef = useRef(false);
   const smartLabelingModalRef = useRef(null);
+  const isMountedRef = useRef(true);
 
   // Review controls are temporarily disabled; the handlers and state remain in
   // place so they can be re-enabled quickly if needed.
@@ -734,19 +735,16 @@ DataManagerPage.context = ({dmRef}) => {
     return String(status || 'pending').toLowerCase();
   }, []);
 
-  const extractTaskInfo = useCallback(() => {
-    if (!dmRef?.store) {
-      setCurrentTaskId(null);
-      setCurrentReviewStatus('pending');
-      return;
-    }
-
-    const taskStore = dmRef.store.taskStore;
+  const getActiveTaskInfo = useCallback(() => {
+    const taskStore = dmRef?.store?.taskStore;
     const selected = [
       taskStore?.selected,
+      taskStore?.selectedTask,
       taskStore?.current,
       taskStore?.currentTask,
       taskStore?.task,
+      dmRef.store?.task,
+      dmRef.task,
       dmRef.lsf?.task,
       dmRef.lsf?.store?.task,
       dmRef.lsf?.store?.completionStore?.selected?.task,
@@ -754,9 +752,40 @@ DataManagerPage.context = ({dmRef}) => {
     const id = resolveTaskId(selected);
     const status = resolveReviewStatus(selected);
 
+    if (id) return { id, status };
+
+    const searchParams = new URLSearchParams(location.search || '');
+    const taskIdFromLocation = searchParams.get('task') || searchParams.get('task_id') || searchParams.get('taskID');
+
+    return {
+      id: taskIdFromLocation ? Number(taskIdFromLocation) : null,
+      status: status || 'pending',
+    };
+  }, [dmRef, location.search, resolveReviewStatus, resolveTaskId]);
+
+  const extractTaskInfo = useCallback(() => {
+    if (!dmRef?.store) {
+      if (!isMountedRef.current) return;
+      setCurrentTaskId(null);
+      setCurrentReviewStatus('pending');
+      return;
+    }
+
+    const { id, status } = getActiveTaskInfo();
+
+    if (!isMountedRef.current) return;
     setCurrentTaskId(id);
     setCurrentReviewStatus(status || 'pending');
-  }, [dmRef, resolveReviewStatus, resolveTaskId]);
+  }, [dmRef, getActiveTaskInfo]);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+      smartLabelingModalRef.current?.close?.();
+      smartLabelingModalRef.current = null;
+    };
+  }, []);
 
   const selectNextTask = useCallback(async () => {
     if (!dmRef?.store) return;
@@ -1090,12 +1119,12 @@ DataManagerPage.context = ({dmRef}) => {
     };
   }, [getSmartLabelingSelection]);
 
-  const buildCurrentTaskSmartLabelingRequest = useCallback(() => ({
+  const buildCurrentTaskSmartLabelingRequestFor = useCallback((taskId) => ({
     selectedItems: {
       all: false,
-      included: [currentTaskId],
+      included: [taskId],
     },
-  }), [currentTaskId]);
+  }), []);
 
   const loadSmartLabelingBackends = useCallback(async () => {
     if (!dmRef || !project?.id) return [];
@@ -1137,6 +1166,8 @@ DataManagerPage.context = ({dmRef}) => {
         body: requestBody ?? buildSmartLabelingRequest(),
       });
 
+      if (!isMountedRef.current) return;
+
       if (result?.error || result?.response?.detail) {
         const detail = result?.response?.detail || result?.detail || result?.error;
         throw new Error(detail || '\u0041\u0049 \u521d\u7a3f\u751f\u6210\u5931\u8d25\uff0c\u8bf7\u68c0\u67e5\u667a\u80fd\u6807\u6ce8\u6a21\u578b\u662f\u5426\u5df2\u8fde\u63a5\u3002');
@@ -1170,9 +1201,11 @@ DataManagerPage.context = ({dmRef}) => {
         `${result?.detail || '\u0041\u0049 \u521d\u7a3f\u5df2\u751f\u6210\uff0c\u8bf7\u8fdb\u5165\u6807\u6ce8\u9875\u786e\u8ba4\u6216\u4fee\u6539\u3002'}${failureSummary}`
       );
     } catch (error) {
+      if (!isMountedRef.current) return;
       console.error('[smart-labeling] Failed to generate AI drafts', error);
       showSmartLabelingResult('\u667a\u80fd\u9884\u6807\u6ce8\u5931\u8d25', error?.message || '\u8bf7\u68c0\u67e5\u667a\u80fd\u6807\u6ce8\u6a21\u578b\u662f\u5426\u5df2\u8fde\u63a5\uff0c\u6216\u7a0d\u540e\u91cd\u8bd5\u3002');
     } finally {
+      if (!isMountedRef.current) return;
       closeSmartLabelingProgress();
       setSmartLabeling(false);
     }
@@ -1180,9 +1213,10 @@ DataManagerPage.context = ({dmRef}) => {
 
   const confirmSmartLabeling = useCallback(async () => {
     const isCurrentTaskMode = mode !== 'explorer';
-    const requestBody = isCurrentTaskMode ? buildCurrentTaskSmartLabelingRequest() : buildSmartLabelingRequest();
+    const activeTaskId = isCurrentTaskMode ? (getActiveTaskInfo().id ?? currentTaskId) : null;
+    const requestBody = isCurrentTaskMode ? buildCurrentTaskSmartLabelingRequestFor(activeTaskId) : buildSmartLabelingRequest();
 
-    if (isCurrentTaskMode && !currentTaskId) {
+    if (isCurrentTaskMode && !activeTaskId) {
       showSmartLabelingResult(
         '\u8bf7\u5148\u6253\u5f00\u4efb\u52a1',
         '\u8bf7\u5148\u6253\u5f00\u9700\u8981\u667a\u80fd\u9884\u6807\u6ce8\u7684\u4efb\u52a1\uff0c\u7136\u540e\u518d\u70b9\u51fb\u201c\u667a\u80fd\u9884\u6807\u6ce8\u201d\u3002'
@@ -1210,6 +1244,8 @@ DataManagerPage.context = ({dmRef}) => {
     }
 
     let modalInstance;
+    let selectedBackendId = connectedBackends[0]?.id;
+    const requiresBackendChoice = connectedBackends.length > 1;
 
     modalInstance = modal({
       title: '\u751f\u6210 AI \u521d\u7a3f',
@@ -1218,8 +1254,35 @@ DataManagerPage.context = ({dmRef}) => {
           <p>{isCurrentTaskMode
             ? '\u5c06\u4ec5\u4e3a\u5f53\u524d\u6253\u5f00\u7684\u4efb\u52a1\u751f\u6210 AI \u521d\u7a3f\u3002\u751f\u6210\u540e\u9700\u8981\u4eba\u5de5\u786e\u8ba4\u6216\u4fee\u6539\uff0c\u624d\u4f1a\u6210\u4e3a\u6b63\u5f0f\u6807\u6ce8\u3002'
             : '\u5c06\u4e3a\u6570\u636e\u5217\u8868\u4e2d\u5f53\u524d\u52fe\u9009\u7684\u4efb\u52a1\u751f\u6210 AI \u521d\u7a3f\u3002\u751f\u6210\u540e\u9700\u8981\u4eba\u5de5\u786e\u8ba4\u6216\u4fee\u6539\uff0c\u624d\u4f1a\u6210\u4e3a\u6b63\u5f0f\u6807\u6ce8\u3002'}</p>
-          <p style={{ marginTop: 12, fontWeight: 600 }}>{'\u672c\u6b21\u5c06\u8c03\u7528\u7684\u673a\u5668\u5b66\u4e60\u540e\u7aef\uff1a'}</p>
-          <pre style={{ whiteSpace: 'pre-wrap', margin: 0 }}>{formatBackendList(connectedBackends)}</pre>
+          <p style={{ marginTop: 12, fontWeight: 600 }}>
+            {requiresBackendChoice
+              ? '\u8bf7\u9009\u62e9\u672c\u6b21\u8981\u8c03\u7528\u7684\u673a\u5668\u5b66\u4e60\u540e\u7aef\uff1a'
+              : '\u672c\u6b21\u5c06\u8c03\u7528\u7684\u673a\u5668\u5b66\u4e60\u540e\u7aef\uff1a'}
+          </p>
+          {requiresBackendChoice ? (
+            <div style={{ display: 'grid', gap: 8 }}>
+              {connectedBackends.map((backend) => {
+                const title = backend.title || `\u6a21\u578b ${backend.id}`;
+                const url = backend.url ? `\uff08${backend.url}\uff09` : '';
+
+                return (
+                  <label key={backend.id} style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+                    <input
+                      type="radio"
+                      name="smart-labeling-backend"
+                      defaultChecked={backend.id === selectedBackendId}
+                      onChange={() => {
+                        selectedBackendId = backend.id;
+                      }}
+                    />
+                    <span>{`${title}${url}`}</span>
+                  </label>
+                );
+              })}
+            </div>
+          ) : (
+            <pre style={{ whiteSpace: 'pre-wrap', margin: 0 }}>{formatBackendList(connectedBackends)}</pre>
+          )}
         </div>
       ),
       footer: (
@@ -1231,8 +1294,18 @@ DataManagerPage.context = ({dmRef}) => {
             size="compact"
             look="primary"
             onClick={() => {
+              if (!selectedBackendId) {
+                showSmartLabelingResult(
+                  '\u8bf7\u9009\u62e9\u6a21\u578b',
+                  '\u8bf7\u5148\u9009\u62e9\u672c\u6b21\u8981\u8c03\u7528\u7684\u667a\u80fd\u6807\u6ce8\u6a21\u578b\u3002'
+                );
+                return;
+              }
               modalInstance?.close();
-              runSmartLabeling(requestBody);
+              runSmartLabeling({
+                ...requestBody,
+                ml_backend_id: selectedBackendId,
+              });
             }}
           >
             {'\u5f00\u59cb\u751f\u6210'}
@@ -1240,7 +1313,7 @@ DataManagerPage.context = ({dmRef}) => {
         </Space>
       ),
     });
-  }, [buildCurrentTaskSmartLabelingRequest, buildSmartLabelingRequest, currentTaskId, formatBackendList, hasSmartLabelingSelection, loadSmartLabelingBackends, mode, runSmartLabeling, showSmartLabelingResult]);
+  }, [buildCurrentTaskSmartLabelingRequestFor, buildSmartLabelingRequest, currentTaskId, formatBackendList, getActiveTaskInfo, hasSmartLabelingSelection, loadSmartLabelingBackends, mode, runSmartLabeling, showSmartLabelingResult]);
 
   const reviewStatusTranslations = createReviewStatusTranslations();
   const statusText = localizeReviewStatus({
