@@ -17,6 +17,31 @@ from rest_framework.exceptions import ValidationError
 
 logger = logging.getLogger(__name__)
 
+TEXT_ENCODING = 'utf-8-sig'
+
+
+def _read_utf8_text(filepath):
+    try:
+        with io.open(filepath, encoding=TEXT_ENCODING) as f:
+            return f.read()
+    except UnicodeError as exc:
+        raise ValidationError(
+            '文件内容无法按 UTF-8 编码读取。系统当前仅支持 UTF-8 文本/表格文件；'
+            '如果文件来自 Excel、旧版 Windows 软件或其他系统，可能保存为了 GBK、GB18030、Big5 或 UTF-16。'
+            '请先在本地将文件另存为 UTF-8 编码后再重新导入。'
+        ) from exc
+
+
+def _read_utf8_csv(filepath, sep=','):
+    try:
+        return pd.read_csv(filepath, sep=sep, encoding=TEXT_ENCODING).fillna('').to_dict('records')
+    except UnicodeError as exc:
+        raise ValidationError(
+            '表格文件无法按 UTF-8 编码读取。系统当前仅支持 UTF-8 CSV/TSV 文件；'
+            '如果文件来自 Excel、旧版 Windows 软件或其他系统，可能保存为了 GBK、GB18030、Big5 或 UTF-16。'
+            '请先在本地将 CSV/TSV 另存为 UTF-8 编码后再重新导入。'
+        ) from exc
+
 
 class FileUpload(models.Model):
     user = models.ForeignKey('users.User', related_name='file_uploads', on_delete=models.CASCADE)
@@ -55,12 +80,11 @@ class FileUpload(models.Model):
 
     @property
     def content(self):
-        with io.open(self.filepath, encoding='utf-8') as f:
-            return f.read()
+        return _read_utf8_text(self.filepath)
 
     def read_tasks_list_from_csv(self, sep=','):
         logger.debug('Read tasks list from CSV file {}'.format(self.filepath))
-        tasks = pd.read_csv(self.filepath, sep=sep).fillna('').to_dict('records')
+        tasks = _read_utf8_csv(self.filepath, sep=sep)
         tasks = [{'data': task} for task in tasks]
         return tasks
 
@@ -134,8 +158,10 @@ class FileUpload(models.Model):
             else:
                 tasks = self.read_task_from_uploaded_file()
 
+        except ValidationError:
+            raise
         except Exception as exc:
-            raise ValidationError('Failed to parse input file ' + self.filepath + ': ' + str(exc))
+            raise ValidationError('导入文件解析失败：' + os.path.basename(self.filepath) + '。原因：' + str(exc))
         return tasks
 
     @classmethod
@@ -179,18 +205,15 @@ class FileUpload(models.Model):
 def _old_vs_new_data_keys_inconsistency_message(new_data_keys, old_data_keys, current_file):
     new_data_keys_list = ','.join(new_data_keys)
     old_data_keys_list = ','.join(old_data_keys)
-    common_prefix = "You're trying to import inconsistent data:\n"
+    common_prefix = "导入的数据字段不一致：\n"
     if new_data_keys_list == old_data_keys_list:
         return ''
     elif new_data_keys_list == settings.DATA_UNDEFINED_NAME:
-        return common_prefix + "uploading a single file {0} " \
-                               "clashes with data key(s) found from other files:\n\"{1}\"".format(
+        return common_prefix + "当前单文件 {0} 与其他文件中的数据字段冲突：\n\"{1}\"".format(
                                 current_file, old_data_keys_list)
     elif old_data_keys_list == settings.DATA_UNDEFINED_NAME:
-        return common_prefix + "uploading tabular data from {0} with data key(s) {1}, " \
-                               "clashes with other raw binary files (images, audios, etc.)".format(
+        return common_prefix + "当前表格文件 {0} 的字段 {1} 与已上传的图片、音频等单文件任务冲突。".format(
                                 current_file, new_data_keys_list)
     else:
-        return common_prefix + "uploading tabular data from \"{0}\" with data key(s) \"{1}\", " \
-                               "clashes with data key(s) found from other files:\n\"{2}\"".format(
+        return common_prefix + "当前表格文件 \"{0}\" 的字段 \"{1}\" 与其他文件中的字段冲突：\n\"{2}\"".format(
                                 current_file, new_data_keys_list, old_data_keys_list)

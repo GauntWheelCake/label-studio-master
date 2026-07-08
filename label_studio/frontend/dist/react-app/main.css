@@ -3338,6 +3338,18 @@ body {
 .ls-datamanager #ls-label-studio-dm [class*=Annotations_annotation_selected] {
   background: #e3f1ff;
 }
+.ls-datamanager #ls-label-studio-dm textarea {
+  min-height: 160px;
+  min-width: 100%;
+  width: 100%;
+  max-width: 100%;
+  line-height: 1.6;
+  resize: both;
+}
+.ls-datamanager #ls-label-studio-dm textarea[rows="1"],
+.ls-datamanager #ls-label-studio-dm textarea[rows="2"] {
+  min-height: 120px;
+}
 @-moz-keyframes ls-dm-spinner-rotate {
   from {
     transform: rotate(0deg);

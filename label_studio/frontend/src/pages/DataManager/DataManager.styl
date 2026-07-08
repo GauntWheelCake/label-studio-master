@@ -27,6 +27,21 @@
   #label-studio-dm [class*=Annotations_annotation_selected]
     background: #e3f1ff
 
+  // The embedded labeling frontend renders TextArea controls for text
+  // generation / translation tasks. Give those fields enough room for Chinese
+  // text and leave native resize enabled so annotators can pull the box larger.
+  #label-studio-dm textarea
+    min-height: 160px
+    min-width: min(520px, 100%)
+    width: 100%
+    max-width: 100%
+    line-height: 1.6
+    resize: both
+
+  #label-studio-dm textarea[rows="1"],
+  #label-studio-dm textarea[rows="2"]
+    min-height: 120px
+
 @keyframes dm-spinner-rotate
   from
     transform: rotate(0deg)

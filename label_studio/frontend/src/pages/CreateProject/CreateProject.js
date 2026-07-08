@@ -41,7 +41,7 @@ const StepIconConfig = () => (
     <form className={cn("project-name")} onSubmit={e => { e.preventDefault(); }}>
       <div className="field field--wide">
         <label htmlFor="project_name">{t('createProject.projectName.label')}</label>
-        <input name="name" id="project_name" value={name} onChange={e => setName(e.target.value)} onBlur={onSaveName} />
+        <input name="name" id="project_name" value={name} onChange={e => setName(e.target.value)} onBlur={() => onSaveName({ validateModelClass: false })} />
         {error && <span className="error">{error}</span>}
       </div>
       <div className="field field--wide">
@@ -216,12 +216,12 @@ export const CreateProject = ({ onClose }) => {
     setWaitingStatus(false);
   }, [project, projectBody, finishUpload, api, modelClass, name, description, history]);
 
-  const onSaveName = async () => {
+  const onSaveName = async ({ validateModelClass = true } = {}) => {
     if (!name.trim()) {
       setError('项目名不能为空');
       return false;
     }
-    if (!modelClass) {
+    if (validateModelClass && !modelClass) {
       setError('请选择模型分类');
       return false;
     }
@@ -232,7 +232,7 @@ export const CreateProject = ({ onClose }) => {
       body: {
         title: name,
         description,
-        model_class: modelClass,
+        ...(modelClass ? { model_class: modelClass } : {}),
       },
     });
     if (res.ok) {
@@ -258,7 +258,7 @@ export const CreateProject = ({ onClose }) => {
 
   const goToNextStep = async () => {
     if (step === 'name') {
-      const ok = await onSaveName();
+      const ok = await onSaveName({ validateModelClass: true });
       if (ok) setStep('import');
     } else if (step === 'import') {
       setStep('config');
@@ -271,10 +271,10 @@ export const CreateProject = ({ onClose }) => {
   };
 
   const canGoNext = React.useMemo(() => {
-    if (step === 'name') return name.trim().length > 0 && !error && !!modelClass;
+    if (step === 'name') return name.trim().length > 0 && !error;
     if (step === 'import') return !uploadDisabled;
     return false;
-  }, [step, name, error, modelClass, uploadDisabled]);
+  }, [step, name, error, uploadDisabled]);
 
   const canSave = React.useMemo(() => {
     return configValid && !uploadDisabled && !waiting && !uploading;

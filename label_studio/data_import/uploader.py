@@ -46,16 +46,14 @@ def csv_generate_header(file):
 def check_max_task_number(tasks):
     # max tasks
     if len(tasks) > settings.TASKS_MAX_NUMBER:
-        raise ValidationError(f'Maximum task number is {settings.TASKS_MAX_NUMBER}, '
-                              f'current task number is {len(tasks)}')
+        raise ValidationError(f'导入任务数量超过上限：最多 {settings.TASKS_MAX_NUMBER} 条，当前 {len(tasks)} 条。')
 
 
 def check_file_sizes_and_number(files):
     total = sum([file.size for _, file in files.items()])
 
     if total >= settings.TASKS_MAX_FILE_SIZE:
-        raise ValidationError(f'Maximum total size of all files is {settings.TASKS_MAX_FILE_SIZE} bytes, '
-                              f'current size is {total} bytes')
+        raise ValidationError(f'上传文件总大小超过上限：最多 {settings.TASKS_MAX_FILE_SIZE} 字节，当前 {total} 字节。')
 
 
 def create_file_upload(request, project, file):
@@ -104,7 +102,7 @@ def load_tasks(request, project):
         except ValidationError as e:
             raise e
         except Exception as e:
-            raise ValidationError(str(e))
+            raise ValidationError('通过 URL 导入文件失败：' + str(e))
 
     # take one task from request DATA
     elif 'application/json' in request.content_type and isinstance(request.data, dict):
@@ -116,15 +114,15 @@ def load_tasks(request, project):
 
     # incorrect data source
     else:
-        raise ValidationError('load_tasks: No data found in DATA or in FILES')
+        raise ValidationError('没有找到可导入的数据，请上传文件、填写 URL，或提交 JSON 数据。')
 
     # check is data root is list
     if not isinstance(tasks, list):
-        raise ValidationError('load_tasks: Data root must be list')
+        raise ValidationError('导入数据格式错误：任务数据根节点必须是列表。')
 
     # empty tasks error
     if not tasks:
-        raise ValidationError('load_tasks: No tasks added')
+        raise ValidationError('没有解析到可导入的任务，请检查文件内容是否为空或格式是否正确。')
 
     check_max_task_number(tasks)
     return tasks, file_upload_ids, could_be_tasks_lists, found_formats, list(data_keys)

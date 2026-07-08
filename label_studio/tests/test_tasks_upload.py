@@ -7,9 +7,11 @@ import zipfile
 import ujson as json
 
 from rest_framework.authtoken.models import Token
+from rest_framework.exceptions import ValidationError
 
 from tasks.models import Task, Annotation, Prediction
 from projects.models import Project
+from data_import.models import TEXT_ENCODING, _read_utf8_csv, _read_utf8_text
 
 
 def post_data_as_format(setup, format_type, body, archive, multiply_files):
@@ -207,6 +209,57 @@ def test_txt_task_upload(setup_project_dialog, format_type, tasks, status_code, 
 
     assert r.status_code == status_code, f'Upload one task {format_type} failed. Response data: {r.data}'
     assert Task.objects.filter(project=setup_project_dialog.project.id).count() == task_count * multiplier
+
+
+def test_text_import_reads_utf8_and_utf8_bom(tmp_path):
+    content = '中文\n第二行'
+
+    assert TEXT_ENCODING == 'utf-8-sig'
+
+    for encoding in ('utf-8-sig', 'utf-8'):
+        file_path = tmp_path / f'tasks-{encoding}.txt'
+        file_path.write_bytes(content.encode(encoding))
+
+        assert _read_utf8_text(str(file_path)) == content
+
+
+def test_csv_import_reads_utf8_and_utf8_bom(tmp_path):
+    content = 'text,label\n中文,第一\n第二行,第二'
+
+    for encoding in ('utf-8-sig', 'utf-8'):
+        file_path = tmp_path / f'tasks-{encoding}.csv'
+        file_path.write_bytes(content.encode(encoding))
+
+        tasks = _read_utf8_csv(str(file_path))
+
+        assert tasks == [
+            {'text': '中文', 'label': '第一'},
+            {'text': '第二行', 'label': '第二'},
+        ]
+
+
+def test_text_import_rejects_non_utf8_with_chinese_error(tmp_path):
+    file_path = tmp_path / 'tasks-gbk.txt'
+    file_path.write_bytes('中文'.encode('gbk'))
+
+    with pytest.raises(ValidationError) as exc:
+        _read_utf8_text(str(file_path))
+
+    assert '仅支持 UTF-8' in str(exc.value)
+    assert 'GBK' in str(exc.value)
+    assert '另存为 UTF-8' in str(exc.value)
+
+
+def test_csv_import_rejects_non_utf8_with_chinese_error(tmp_path):
+    file_path = tmp_path / 'tasks-gbk.csv'
+    file_path.write_bytes('text\n中文'.encode('gbk'))
+
+    with pytest.raises(ValidationError) as exc:
+        _read_utf8_csv(str(file_path))
+
+    assert '仅支持 UTF-8' in str(exc.value)
+    assert 'CSV/TSV' in str(exc.value)
+    assert '另存为 UTF-8' in str(exc.value)
 
 
 @pytest.mark.parametrize('tasks, status_code, task_count, max_duration', [

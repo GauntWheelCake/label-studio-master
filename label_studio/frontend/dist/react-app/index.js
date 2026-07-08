@@ -7663,7 +7663,9 @@ const ProjectName = ({
       id: "project_name",
       value: name,
       onChange: e => setName(e.target.value),
-      onBlur: onSaveName
+      onBlur: () => onSaveName({
+        validateModelClass: false
+      })
     }), error && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("span", {
       className: "error",
       children: error
@@ -7854,13 +7856,15 @@ const CreateProject = ({
     }
     setWaitingStatus(false);
   }, [project, projectBody, finishUpload, api, modelClass, name, description, history]);
-  const onSaveName = async () => {
+  const onSaveName = async ({
+    validateModelClass = true
+  } = {}) => {
     var _err$validation_error;
     if (!name.trim()) {
       setError('项目名不能为空');
       return false;
     }
-    if (!modelClass) {
+    if (validateModelClass && !modelClass) {
       setError('请选择模型分类');
       return false;
     }
@@ -7871,7 +7875,9 @@ const CreateProject = ({
       body: {
         title: name,
         description,
-        model_class: modelClass
+        ...(modelClass ? {
+          model_class: modelClass
+        } : {})
       }
     });
     if (res.ok) {
@@ -7895,7 +7901,9 @@ const CreateProject = ({
   }, [project]);
   const goToNextStep = async () => {
     if (step === 'name') {
-      const ok = await onSaveName();
+      const ok = await onSaveName({
+        validateModelClass: true
+      });
       if (ok) setStep('import');
     } else if (step === 'import') {
       setStep('config');
@@ -7905,10 +7913,10 @@ const CreateProject = ({
     if (step === 'import') setStep('name');else if (step === 'config') setStep('import');
   };
   const canGoNext = react__WEBPACK_IMPORTED_MODULE_0__.useMemo(() => {
-    if (step === 'name') return name.trim().length > 0 && !error && !!modelClass;
+    if (step === 'name') return name.trim().length > 0 && !error;
     if (step === 'import') return !uploadDisabled;
     return false;
-  }, [step, name, error, modelClass, uploadDisabled]);
+  }, [step, name, error, uploadDisabled]);
   const canSave = react__WEBPACK_IMPORTED_MODULE_0__.useMemo(() => {
     return configValid && !uploadDisabled && !waiting && !uploading;
   }, [configValid, uploadDisabled, waiting, uploading]);
@@ -8101,6 +8109,17 @@ const ErrorMessage = ({
   var _error$validation_err;
   if (!error) return null;
   let extra = (_error$validation_err = error.validation_errors) !== null && _error$validation_err !== void 0 ? _error$validation_err : error.extra;
+  let message = error.detail || error.message;
+  if (!message && Array.isArray(error)) {
+    message = error.join("; ");
+  }
+  if (!message && typeof error === "string") {
+    message = error;
+  }
+  if (message && /utf-?8|codec|decode|UnicodeDecodeError/i.test(message)) {
+    message = '文件内容无法按 UTF-8 编码读取。系统当前仅支持 UTF-8 文本/表格文件；如果文件来自 Excel、旧版 Windows 软件或其他系统，可能保存为了 GBK、GB18030、Big5 或 UTF-16。请先在本地将文件另存为 UTF-8 编码后再重新导入。';
+  }
+
   // support all possible responses
   if (extra && typeof extra === "object" && !Array.isArray(extra)) {
     var _extra$non_field_erro;
@@ -8113,7 +8132,7 @@ const ErrorMessage = ({
       style: {
         marginRight: 8
       }
-    }), error.id && `[${error.id}] `, error.detail || error.message, extra && ` (${extra})`]
+    }), error.id && `[${error.id}] `, message || '导入失败，请检查文件格式后重试。', extra && ` (${extra})`]
   });
 };
 const ImportPage = ({
@@ -9379,7 +9398,7 @@ DataManagerPage.context = ({
     return String(status || 'pending').toLowerCase();
   }, []);
   const getActiveTaskInfo = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => {
-    var _dmRef$store, _dmRef$store2, _dmRef$lsf, _dmRef$lsf2, _dmRef$lsf2$store, _dmRef$lsf3, _dmRef$lsf3$store, _dmRef$lsf3$store$com, _dmRef$lsf3$store$com2;
+    var _dmRef$store, _dmRef$store2, _dmRef$lsf, _dmRef$lsf2, _dmRef$lsf2$store, _dmRef$lsf3, _dmRef$lsf3$store, _dmRef$lsf3$store$com, _dmRef$lsf3$store$com2, _location$pathname, _location$pathname$ma, _location$pathname$ma2;
     const taskStore = dmRef === null || dmRef === void 0 ? void 0 : (_dmRef$store = dmRef.store) === null || _dmRef$store === void 0 ? void 0 : _dmRef$store.taskStore;
     const selected = [taskStore === null || taskStore === void 0 ? void 0 : taskStore.selected, taskStore === null || taskStore === void 0 ? void 0 : taskStore.selectedTask, taskStore === null || taskStore === void 0 ? void 0 : taskStore.current, taskStore === null || taskStore === void 0 ? void 0 : taskStore.currentTask, taskStore === null || taskStore === void 0 ? void 0 : taskStore.task, (_dmRef$store2 = dmRef.store) === null || _dmRef$store2 === void 0 ? void 0 : _dmRef$store2.task, dmRef.task, (_dmRef$lsf = dmRef.lsf) === null || _dmRef$lsf === void 0 ? void 0 : _dmRef$lsf.task, (_dmRef$lsf2 = dmRef.lsf) === null || _dmRef$lsf2 === void 0 ? void 0 : (_dmRef$lsf2$store = _dmRef$lsf2.store) === null || _dmRef$lsf2$store === void 0 ? void 0 : _dmRef$lsf2$store.task, (_dmRef$lsf3 = dmRef.lsf) === null || _dmRef$lsf3 === void 0 ? void 0 : (_dmRef$lsf3$store = _dmRef$lsf3.store) === null || _dmRef$lsf3$store === void 0 ? void 0 : (_dmRef$lsf3$store$com = _dmRef$lsf3$store.completionStore) === null || _dmRef$lsf3$store$com === void 0 ? void 0 : (_dmRef$lsf3$store$com2 = _dmRef$lsf3$store$com.selected) === null || _dmRef$lsf3$store$com2 === void 0 ? void 0 : _dmRef$lsf3$store$com2.task].find(candidate => resolveTaskId(candidate));
     const id = resolveTaskId(selected);
@@ -9390,11 +9409,13 @@ DataManagerPage.context = ({
     };
     const searchParams = new URLSearchParams(location.search || '');
     const taskIdFromLocation = searchParams.get('task') || searchParams.get('task_id') || searchParams.get('taskID');
+    const taskIdFromPath = (_location$pathname = location.pathname) === null || _location$pathname === void 0 ? void 0 : (_location$pathname$ma = _location$pathname.match) === null || _location$pathname$ma === void 0 ? void 0 : (_location$pathname$ma2 = _location$pathname$ma.call(_location$pathname, /\/tasks?\/(\d+)/)) === null || _location$pathname$ma2 === void 0 ? void 0 : _location$pathname$ma2[1];
+    const resolvedId = taskIdFromLocation || taskIdFromPath;
     return {
-      id: taskIdFromLocation ? Number(taskIdFromLocation) : null,
+      id: resolvedId ? Number(resolvedId) : null,
       status: status || 'pending'
     };
-  }, [dmRef, location.search, resolveReviewStatus, resolveTaskId]);
+  }, [dmRef, location.pathname, location.search, resolveReviewStatus, resolveTaskId]);
   const extractTaskInfo = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => {
     if (!(dmRef !== null && dmRef !== void 0 && dmRef.store)) {
       if (!isMountedRef.current) return;
@@ -9741,15 +9762,16 @@ DataManagerPage.context = ({
     var _view$conjunction2, _view$serializedFilte2;
     const {
       view,
-      selectedItems
+      selectedItems,
+      hasSelectedItems
     } = getSmartLabelingSelection();
     return {
       ...(view !== null && view !== void 0 && view.ordering ? {
         ordering: view.ordering
       } : {}),
-      selectedItems: selectedItems !== null && selectedItems !== void 0 ? selectedItems : {
-        all: false,
-        included: []
+      selectedItems: hasSelectedItems ? selectedItems : {
+        all: true,
+        excluded: []
       },
       filters: {
         conjunction: (_view$conjunction2 = view === null || view === void 0 ? void 0 : view.conjunction) !== null && _view$conjunction2 !== void 0 ? _view$conjunction2 : 'and',
@@ -9839,10 +9861,7 @@ DataManagerPage.context = ({
       showSmartLabelingResult('\u8bf7\u5148\u6253\u5f00\u4efb\u52a1', '\u8bf7\u5148\u6253\u5f00\u9700\u8981\u667a\u80fd\u9884\u6807\u6ce8\u7684\u4efb\u52a1\uff0c\u7136\u540e\u518d\u70b9\u51fb\u201c\u667a\u80fd\u9884\u6807\u6ce8\u201d\u3002');
       return;
     }
-    if (!isCurrentTaskMode && !hasSmartLabelingSelection()) {
-      showSmartLabelingResult('\u8bf7\u5148\u9009\u62e9\u6570\u636e', '\u8bf7\u5148\u5728\u6570\u636e\u5217\u8868\u4e2d\u52fe\u9009\u9700\u8981\u667a\u80fd\u9884\u6807\u6ce8\u7684\u4efb\u52a1\uff0c\u7136\u540e\u518d\u70b9\u51fb\u201c\u667a\u80fd\u9884\u6807\u6ce8\u201d\u3002');
-      return;
-    }
+    const hasListSelection = !isCurrentTaskMode && hasSmartLabelingSelection();
     const backends = await loadSmartLabelingBackends();
     const connectedBackends = backends.filter(backend => backend.state === 'CO');
     if (!connectedBackends.length) {
@@ -9856,7 +9875,7 @@ DataManagerPage.context = ({
       title: '\u751f\u6210 AI \u521d\u7a3f',
       body: () => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsxs)("div", {
         children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)("p", {
-          children: isCurrentTaskMode ? '\u5c06\u4ec5\u4e3a\u5f53\u524d\u6253\u5f00\u7684\u4efb\u52a1\u751f\u6210 AI \u521d\u7a3f\u3002\u751f\u6210\u540e\u9700\u8981\u4eba\u5de5\u786e\u8ba4\u6216\u4fee\u6539\uff0c\u624d\u4f1a\u6210\u4e3a\u6b63\u5f0f\u6807\u6ce8\u3002' : '\u5c06\u4e3a\u6570\u636e\u5217\u8868\u4e2d\u5f53\u524d\u52fe\u9009\u7684\u4efb\u52a1\u751f\u6210 AI \u521d\u7a3f\u3002\u751f\u6210\u540e\u9700\u8981\u4eba\u5de5\u786e\u8ba4\u6216\u4fee\u6539\uff0c\u624d\u4f1a\u6210\u4e3a\u6b63\u5f0f\u6807\u6ce8\u3002'
+          children: isCurrentTaskMode ? '\u5c06\u4ec5\u4e3a\u5f53\u524d\u6253\u5f00\u7684\u4efb\u52a1\u751f\u6210 AI \u521d\u7a3f\u3002\u751f\u6210\u540e\u9700\u8981\u4eba\u5de5\u786e\u8ba4\u6216\u4fee\u6539\uff0c\u624d\u4f1a\u6210\u4e3a\u6b63\u5f0f\u6807\u6ce8\u3002' : hasListSelection ? '\u5c06\u4e3a\u6570\u636e\u5217\u8868\u4e2d\u5f53\u524d\u52fe\u9009\u7684\u4efb\u52a1\u751f\u6210 AI \u521d\u7a3f\u3002\u751f\u6210\u540e\u9700\u8981\u4eba\u5de5\u786e\u8ba4\u6216\u4fee\u6539\uff0c\u624d\u4f1a\u6210\u4e3a\u6b63\u5f0f\u6807\u6ce8\u3002' : '\u5f53\u524d\u672a\u52fe\u9009\u4efb\u52a1\uff0c\u5c06\u6309\u5f53\u524d\u7b5b\u9009\u6761\u4ef6\u5bf9\u5217\u8868\u4e2d\u7684\u4efb\u52a1\u6279\u91cf\u751f\u6210 AI \u521d\u7a3f\u3002\u751f\u6210\u540e\u9700\u8981\u4eba\u5de5\u786e\u8ba4\u6216\u4fee\u6539\uff0c\u624d\u4f1a\u6210\u4e3a\u6b63\u5f0f\u6807\u6ce8\u3002'
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_19__.jsx)("p", {
           style: {
             marginTop: 12,

@@ -82,6 +82,18 @@ const Upload = ({ children, sendFiles }) => {
 const ErrorMessage = ({ error }) => {
   if (!error) return null;
   let extra = error.validation_errors ?? error.extra;
+  let message = error.detail || error.message;
+
+  if (!message && Array.isArray(error)) {
+    message = error.join("; ");
+  }
+  if (!message && typeof error === "string") {
+    message = error;
+  }
+  if (message && /utf-?8|codec|decode|UnicodeDecodeError/i.test(message)) {
+    message = '文件内容无法按 UTF-8 编码读取。系统当前仅支持 UTF-8 文本/表格文件；如果文件来自 Excel、旧版 Windows 软件或其他系统，可能保存为了 GBK、GB18030、Big5 或 UTF-16。请先在本地将文件另存为 UTF-8 编码后再重新导入。';
+  }
+
   // support all possible responses
   if (extra && typeof extra === "object" && !Array.isArray(extra)) {
     extra = extra.non_field_errors ?? Object.values(extra);
@@ -92,7 +104,7 @@ const ErrorMessage = ({ error }) => {
     <div className={importClass.elem("error")}>
       <IconError style={{ marginRight: 8 }} />
       {error.id && `[${error.id}] `}
-      {error.detail || error.message}
+      {message || '导入失败，请检查文件格式后重试。'}
       {extra && ` (${extra})`}
     </div>
   );

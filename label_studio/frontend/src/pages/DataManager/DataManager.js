@@ -756,12 +756,14 @@ DataManagerPage.context = ({dmRef}) => {
 
     const searchParams = new URLSearchParams(location.search || '');
     const taskIdFromLocation = searchParams.get('task') || searchParams.get('task_id') || searchParams.get('taskID');
+    const taskIdFromPath = location.pathname?.match?.(/\/tasks?\/(\d+)/)?.[1];
+    const resolvedId = taskIdFromLocation || taskIdFromPath;
 
     return {
-      id: taskIdFromLocation ? Number(taskIdFromLocation) : null,
+      id: resolvedId ? Number(resolvedId) : null,
       status: status || 'pending',
     };
-  }, [dmRef, location.search, resolveReviewStatus, resolveTaskId]);
+  }, [dmRef, location.pathname, location.search, resolveReviewStatus, resolveTaskId]);
 
   const extractTaskInfo = useCallback(() => {
     if (!dmRef?.store) {
@@ -1107,11 +1109,11 @@ DataManagerPage.context = ({dmRef}) => {
   }, [getSmartLabelingSelection]);
 
   const buildSmartLabelingRequest = useCallback(() => {
-    const { view, selectedItems } = getSmartLabelingSelection();
+    const { view, selectedItems, hasSelectedItems } = getSmartLabelingSelection();
 
     return {
       ...(view?.ordering ? { ordering: view.ordering } : {}),
-      selectedItems: selectedItems ?? { all: false, included: [] },
+      selectedItems: hasSelectedItems ? selectedItems : { all: true, excluded: [] },
       filters: {
         conjunction: view?.conjunction ?? 'and',
         items: view?.serializedFilters ?? [],
@@ -1224,13 +1226,7 @@ DataManagerPage.context = ({dmRef}) => {
       return;
     }
 
-    if (!isCurrentTaskMode && !hasSmartLabelingSelection()) {
-      showSmartLabelingResult(
-        '\u8bf7\u5148\u9009\u62e9\u6570\u636e',
-        '\u8bf7\u5148\u5728\u6570\u636e\u5217\u8868\u4e2d\u52fe\u9009\u9700\u8981\u667a\u80fd\u9884\u6807\u6ce8\u7684\u4efb\u52a1\uff0c\u7136\u540e\u518d\u70b9\u51fb\u201c\u667a\u80fd\u9884\u6807\u6ce8\u201d\u3002'
-      );
-      return;
-    }
+    const hasListSelection = !isCurrentTaskMode && hasSmartLabelingSelection();
 
     const backends = await loadSmartLabelingBackends();
     const connectedBackends = backends.filter((backend) => backend.state === 'CO');
@@ -1253,7 +1249,9 @@ DataManagerPage.context = ({dmRef}) => {
         <div>
           <p>{isCurrentTaskMode
             ? '\u5c06\u4ec5\u4e3a\u5f53\u524d\u6253\u5f00\u7684\u4efb\u52a1\u751f\u6210 AI \u521d\u7a3f\u3002\u751f\u6210\u540e\u9700\u8981\u4eba\u5de5\u786e\u8ba4\u6216\u4fee\u6539\uff0c\u624d\u4f1a\u6210\u4e3a\u6b63\u5f0f\u6807\u6ce8\u3002'
-            : '\u5c06\u4e3a\u6570\u636e\u5217\u8868\u4e2d\u5f53\u524d\u52fe\u9009\u7684\u4efb\u52a1\u751f\u6210 AI \u521d\u7a3f\u3002\u751f\u6210\u540e\u9700\u8981\u4eba\u5de5\u786e\u8ba4\u6216\u4fee\u6539\uff0c\u624d\u4f1a\u6210\u4e3a\u6b63\u5f0f\u6807\u6ce8\u3002'}</p>
+            : hasListSelection
+              ? '\u5c06\u4e3a\u6570\u636e\u5217\u8868\u4e2d\u5f53\u524d\u52fe\u9009\u7684\u4efb\u52a1\u751f\u6210 AI \u521d\u7a3f\u3002\u751f\u6210\u540e\u9700\u8981\u4eba\u5de5\u786e\u8ba4\u6216\u4fee\u6539\uff0c\u624d\u4f1a\u6210\u4e3a\u6b63\u5f0f\u6807\u6ce8\u3002'
+              : '\u5f53\u524d\u672a\u52fe\u9009\u4efb\u52a1\uff0c\u5c06\u6309\u5f53\u524d\u7b5b\u9009\u6761\u4ef6\u5bf9\u5217\u8868\u4e2d\u7684\u4efb\u52a1\u6279\u91cf\u751f\u6210 AI \u521d\u7a3f\u3002\u751f\u6210\u540e\u9700\u8981\u4eba\u5de5\u786e\u8ba4\u6216\u4fee\u6539\uff0c\u624d\u4f1a\u6210\u4e3a\u6b63\u5f0f\u6807\u6ce8\u3002'}</p>
           <p style={{ marginTop: 12, fontWeight: 600 }}>
             {requiresBackendChoice
               ? '\u8bf7\u9009\u62e9\u672c\u6b21\u8981\u8c03\u7528\u7684\u673a\u5668\u5b66\u4e60\u540e\u7aef\uff1a'
