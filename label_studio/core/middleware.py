@@ -173,11 +173,31 @@ class SSOAuthMiddleware(MiddlewareMixin):
         # No token in URL, but we have a cached SSO user in session.
         sso_user = request.session.get('sso_user')
         if sso_user:
+            if getattr(settings, 'SSO_DEBUG_MOCK', False):
+                effective_token = request.session.get('sso_token') or self._mock_token()
+                refreshed_sso_user = get_sso_user_info(effective_token)
+                if refreshed_sso_user:
+                    request.session['sso_token'] = effective_token
+                    request.session['sso_user'] = refreshed_sso_user
+                    sso_user = refreshed_sso_user
             logger.warning('[SSOAuthMiddleware] restoring user from session=%s', sso_user.get('username'))
             user = self._get_or_create_sso_user(sso_user)
             self._ensure_sso_organization(user, request)
             self._login_user(request, user)
             return
+
+        # Local standalone mode: allow mock login without an upstream URL token.
+        if getattr(settings, 'SSO_DEBUG_MOCK', False) and self._should_redirect(request):
+            effective_token = self._mock_token()
+            sso_user = get_sso_user_info(effective_token)
+            if sso_user:
+                logger.warning('[SSOAuthMiddleware] mock login without token, user=%s', sso_user.get('username'))
+                user = self._get_or_create_sso_user(sso_user)
+                self._ensure_sso_organization(user, request)
+                request.session['sso_token'] = effective_token
+                request.session['sso_user'] = sso_user
+                self._login_user(request, user)
+                return
 
         # No token and no session: redirect page requests to SSO login.
         if self._should_redirect(request):
@@ -211,6 +231,10 @@ class SSOAuthMiddleware(MiddlewareMixin):
         if len(token) <= 16:
             return '*' * len(token)
         return f'{token[:8]}...{token[-4:]}(len={len(token)})'
+
+    def _mock_token(self):
+        return getattr(settings, 'SSO_MOCK_DEFAULT_TOKEN', '') or 'mock-local-user'
+
     def _sso_host(self):
         host = settings.SSO_USERINFO_HOST
         if not host:
@@ -294,7 +318,7 @@ class SSOAuthMiddleware(MiddlewareMixin):
                 organization = None
 
         if organization is None:
-            org_title = f"{user.first_name or user.username} 的标注团队"
+            org_title = f"{user.first_name or user.username} annotation team"
             try:
                 organization = Organization.create_organization(
                     created_by=user,

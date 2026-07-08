@@ -20,6 +20,13 @@
   margin: 32px auto 50px;
   display: block;
 }
+.login_page .login-avatar {
+  width: 160px;
+  height: 160px;
+  border-radius: 32px;
+  object-fit: cover;
+  box-shadow: 0 12px 28px rgba(75, 55, 98, 0.18);
+}
 .login_page .link a {
   border-color: #1890FF;
   color: #1890FF;

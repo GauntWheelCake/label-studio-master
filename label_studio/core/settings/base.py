@@ -67,6 +67,12 @@ ML_LABEL_STUDIO_URL = _normalize_optional_url(get_env('ML_LABEL_STUDIO_URL', '')
 # Local development helper: when True, bypass the external SSO userinfo call
 # and return a mock user for any non-empty token. Never enable in production.
 SSO_DEBUG_MOCK = get_bool_env('SSO_DEBUG_MOCK', default=False)
+SSO_MOCK_DEFAULT_TOKEN = get_env('SSO_MOCK_DEFAULT_TOKEN', 'mock-local-user')
+SSO_MOCK_USER_ID = get_env('SSO_MOCK_USER_ID', '')
+SSO_MOCK_USERNAME = get_env('SSO_MOCK_USERNAME', '')
+SSO_MOCK_EMAIL = get_env('SSO_MOCK_EMAIL', '')
+SSO_MOCK_NICKNAME = get_env('SSO_MOCK_NICKNAME', '')
+SSO_MOCK_AVATAR = get_env('SSO_MOCK_AVATAR', '/static/images/mock-avatar.jpg')
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '$(fefwefwef13;LFK{P!)@#*!)kdsjfWF2l+i5e3t(8a1n'

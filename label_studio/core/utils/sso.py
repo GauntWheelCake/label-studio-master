@@ -1,4 +1,5 @@
 """SSO user info helpers for external platform integration."""
+import hashlib
 import logging
 
 import requests
@@ -280,12 +281,15 @@ def _mock_sso_dict(dict_name):
 
 def _mock_sso_user(token):
     """Return a deterministic mock SSO user for local development."""
-    token_hash = str(hash(token) % 100000).zfill(5)
+    token_digest = hashlib.sha256(str(token).encode('utf-8')).hexdigest()
+    token_hash = str(int(token_digest, 16) % 100000).zfill(5)
+    username = getattr(settings, 'SSO_MOCK_USERNAME', '') or f'mock-user-{token_hash}'
+
     return {
-        'id': int(token_hash),
-        'username': f'mock-user-{token_hash}',
-        'email': f'mock-user-{token_hash}@localhost',
-        'nickName': f'本地测试用户-{token_hash}',
+        'id': getattr(settings, 'SSO_MOCK_USER_ID', '') or int(token_hash),
+        'username': username,
+        'email': getattr(settings, 'SSO_MOCK_EMAIL', '') or f'{username}@localhost',
+        'nickName': getattr(settings, 'SSO_MOCK_NICKNAME', '') or f'Local Test User {token_hash}',
         'enabled': True,
-        'userAvatarPath': '',
+        'userAvatarPath': getattr(settings, 'SSO_MOCK_AVATAR', '') or '',
     }

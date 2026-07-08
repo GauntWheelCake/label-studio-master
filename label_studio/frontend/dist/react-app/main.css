@@ -920,6 +920,9 @@
   font-family: Roboto;
   opacity: 0.4;
 }
+.ls-userpic--cute-default {
+  background: #ffe8f0;
+}
 
 .ls-version-notifier {
   display: flex;
@@ -3570,8 +3573,12 @@ body {
   align-items: center;
 }
 .ls-empty-projects-page__heidi {
+  width: 256px;
   height: 256px;
   margin-top: 24px;
+  border-radius: 40px;
+  object-fit: cover;
+  box-shadow: 0 16px 36px rgba(75,55,98,0.18);
 }
 .ls-empty-projects-page__header {
   font-size: 32px;

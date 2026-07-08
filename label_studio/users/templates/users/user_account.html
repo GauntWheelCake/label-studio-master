@@ -51,7 +51,7 @@ title: "账户与设置"
       <div class="user-some-actions">
 
         <div class="user-pic {{ user.avatar|yesno:'can_delete,can_upload' }}">
-          <div class="userpic userpic--big">
+          <div class="userpic userpic--big {% if not user.avatar %}userpic--cute-default{% endif %}">
             {% if user.avatar %}
             <img src="{{user.avatar_url}}" alt="User photo" width="92" />
             {% endif %}

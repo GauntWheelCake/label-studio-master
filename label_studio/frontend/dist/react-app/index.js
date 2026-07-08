@@ -5614,7 +5614,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const FALLBACK_IMAGE = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+const DEFAULT_AVATAR_IMAGE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Crect width='96' height='96' rx='48' fill='%23FFE8F0'/%3E%3Ccircle cx='48' cy='50' r='29' fill='%23FFF7F2'/%3E%3Cpath d='M24 45c4-18 17-29 34-28 16 1 25 12 25 29-9-9-17-13-27-13-12 0-22 4-32 12z' fill='%236B4B7A'/%3E%3Cpath d='M33 51c5 5 10 5 15 0M57 51c5 5 10 5 15 0' fill='none' stroke='%2339293F' stroke-width='4' stroke-linecap='round'/%3E%3Ccircle cx='35' cy='62' r='5' fill='%23FFB6C8' opacity='.75'/%3E%3Ccircle cx='66' cy='62' r='5' fill='%23FFB6C8' opacity='.75'/%3E%3Cpath d='M44 68c3 2 6 2 9 0' fill='none' stroke='%23D9829B' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M22 71c9 9 43 11 52 0 0 13-11 21-26 21S22 84 22 71z' fill='%23FFFFFF'/%3E%3C/svg%3E";
 const Userpic = /*#__PURE__*/(0,react__WEBPACK_IMPORTED_MODULE_0__.forwardRef)(({
   username,
   size,
@@ -5625,10 +5625,10 @@ const Userpic = /*#__PURE__*/(0,react__WEBPACK_IMPORTED_MODULE_0__.forwardRef)((
   style,
   ...rest
 }, ref) => {
-  var _user$avatar;
+  var _ref, _user$avatar;
   const imgRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)();
   const [finalUsername, setFinalUsername] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(username);
-  const [finalSrc, setFinalSrc] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)((_user$avatar = user === null || user === void 0 ? void 0 : user.avatar) !== null && _user$avatar !== void 0 ? _user$avatar : src);
+  const [finalSrc, setFinalSrc] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)((_ref = (_user$avatar = user === null || user === void 0 ? void 0 : user.avatar) !== null && _user$avatar !== void 0 ? _user$avatar : src) !== null && _ref !== void 0 ? _ref : DEFAULT_AVATAR_IMAGE);
   const [imgVisible, setImgVisible] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
   const [nameVisible, setNameVisible] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(true);
   if (size) {
@@ -5656,15 +5656,15 @@ const Userpic = /*#__PURE__*/(0,react__WEBPACK_IMPORTED_MODULE_0__.forwardRef)((
       } else if (email) {
         setFinalUsername(email.substring(0, 2));
       }
-      if (user.avatar) setFinalSrc(user.avatar);
+      setFinalSrc(user.avatar || src || DEFAULT_AVATAR_IMAGE);
     } else {
       setFinalUsername(username);
-      setFinalSrc(src);
+      setFinalSrc(src || DEFAULT_AVATAR_IMAGE);
     }
-  }, [user]);
+  }, [user, username, src]);
   const onImageLoaded = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => {
     setImgVisible(true);
-    if (finalSrc !== FALLBACK_IMAGE) setNameVisible(false);
+    setNameVisible(false);
   }, [finalSrc]);
   const userpic = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(_utils_bem__WEBPACK_IMPORTED_MODULE_1__.Block, {
     ref: ref,
@@ -5682,7 +5682,7 @@ const Userpic = /*#__PURE__*/(0,react__WEBPACK_IMPORTED_MODULE_0__.forwardRef)((
         opacity: imgVisible ? 1 : 0
       },
       onLoad: onImageLoaded,
-      onError: () => setFinalSrc(FALLBACK_IMAGE)
+      onError: () => setFinalSrc(DEFAULT_AVATAR_IMAGE)
     }), nameVisible && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_1__.Elem, {
       tag: "span",
       name: "username",
@@ -11426,7 +11426,7 @@ const EmptyProjectsList = ({
     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_8__.Elem, {
       name: "heidi",
       tag: "img",
-      src: (0,_utils_helpers__WEBPACK_IMPORTED_MODULE_9__.absoluteURL)("/static/images/empty-state.svg")
+      src: (0,_utils_helpers__WEBPACK_IMPORTED_MODULE_9__.absoluteURL)("/static/images/mock-avatar.jpg")
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_11__.jsx)(_utils_bem__WEBPACK_IMPORTED_MODULE_8__.Elem, {
       name: "header",
       tag: "h1",
@@ -33582,7 +33582,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // extracted by mini-css-extract-plugin
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({"userpic":"ls-userpic","userpic__username":"ls-userpic__username"});
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({"userpic":"ls-userpic","userpic__username":"ls-userpic__username","userpic--cute-default":"ls-userpic--cute-default"});
 
 /***/ },
 
