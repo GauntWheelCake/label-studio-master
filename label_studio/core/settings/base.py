@@ -56,6 +56,12 @@ SSO_USERINFO_TIMEOUT = int(get_env('SSO_USERINFO_TIMEOUT', '5'))
 # Label Studio, so the browser uses relative URLs and avoids CORS.
 SSO_DATASET_API_HOST = get_env('SSO_DATASET_API_HOST', SSO_USERINFO_HOST)
 
+# Shared AES-256-GCM key for project configuration validation payloads.
+# The fallback keeps local deployments functional; production can override it.
+PROJECT_CONFIG_ENCRYPTION_KEY = get_env(
+    'PROJECT_CONFIG_ENCRYPTION_KEY', 'MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY='
+)
+
 # ML backend host exposed to the frontend for default smart annotation backend
 # candidates. Configure via the ML_HOST environment variable. Accept either
 # "host:port" or a full "http(s)://host:port" URL prefix.

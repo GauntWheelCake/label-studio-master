@@ -24,6 +24,7 @@ from rest_framework.views import exception_handler
 from core.utils.common import conditional_atomic
 from core.utils.disable_signals import DisableSignals
 from core.label_config import config_essential_data_has_changed
+from projects.crypto import ProjectConfigDecryptionError, decrypt_project_config_payload
 from projects.models import (
     Project, ProjectSummary
 )
@@ -519,7 +520,14 @@ class ProjectLabelConfigValidateAPI(generics.RetrieveAPIView):
 
     def post(self, request, *args, **kwargs):
         project = self.get_object()
-        label_config = self.request.data.get('label_config')
+        payload = self.request.data
+        if payload.get('encrypted') is True:
+            try:
+                payload = decrypt_project_config_payload(payload, settings.PROJECT_CONFIG_ENCRYPTION_KEY)
+            except ProjectConfigDecryptionError:
+                raise RestValidationError('Encrypted label config is invalid')
+
+        label_config = payload.get('label_config')
         if not label_config:
             raise RestValidationError('Label config is not set or is empty')
 
@@ -630,7 +638,14 @@ class ProjectSampleTask(generics.RetrieveAPIView):
     swagger_schema = None
 
     def post(self, request, *args, **kwargs):
-        label_config = self.request.data.get('label_config')
+        payload = self.request.data
+        if payload.get('encrypted') is True:
+            try:
+                payload = decrypt_project_config_payload(payload, settings.PROJECT_CONFIG_ENCRYPTION_KEY)
+            except ProjectConfigDecryptionError:
+                raise RestValidationError('Encrypted label config is invalid')
+
+        label_config = payload.get('label_config')
         if not label_config:
             raise RestValidationError('Label config is not set or is empty')
 

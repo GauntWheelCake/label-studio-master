@@ -13,6 +13,7 @@ import { Preview } from './Preview';
 import { DEFAULT_COLUMN, isEmptyConfig, Template } from './Template';
 import { TemplatesList } from './TemplatesList';
 import { useAPI } from '../../../providers/ApiProvider';
+import { encryptProjectConfigPayload } from '../../../utils/projectConfigCrypto';
 import { t } from '../../../i18n';
 
 // don't do this, kids
@@ -277,11 +278,21 @@ const Configurator = ({ columns, config, project, template, setTemplate, onBrows
   React.useEffect(async () => {
     if (!configToCheck) return;
 
-    const validation = await api.callApi(`validateConfig`, {
-      params: { pk: project.id },
-      body: { label_config: configToCheck },
-      errorFilter: () => true,
-    });
+    let validation;
+    try {
+      const body = await encryptProjectConfigPayload(
+        { label_config: configToCheck },
+        window.APP_SETTINGS?.projectConfigEncryptionKey,
+      );
+      validation = await api.callApi(`validateConfig`, {
+        params: { pk: project.id },
+        body,
+        errorFilter: () => true,
+      });
+    } catch (error) {
+      setError({ detail: error.message });
+      return;
+    }
 
     if (validation?.error) {
       setError(validation.response);
@@ -291,9 +302,20 @@ const Configurator = ({ columns, config, project, template, setTemplate, onBrows
     setError(null);
     onValidate?.(validation);
 
+    let sampleBody;
+    try {
+      sampleBody = await encryptProjectConfigPayload(
+        { label_config: configToCheck },
+        window.APP_SETTINGS?.projectConfigEncryptionKey,
+      );
+    } catch (error) {
+      setError({ detail: error.message });
+      return;
+    }
+
     const sample = await api.callApi("createSampleTask", {
       params: {pk: project.id },
-      body: { label_config: configToCheck },
+      body: sampleBody,
       errorFilter: () => true,
     });
 

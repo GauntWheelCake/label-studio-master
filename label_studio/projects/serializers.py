@@ -16,6 +16,24 @@ class CreatedByFromContext:
         return serializer_field.context.get('created_by')
 
 
+def mask_project_creator_email(email):
+    if not email:
+        return email
+    if '@' not in email:
+        return f'{email[0]}***'
+
+    local_part, domain = email.split('@', 1)
+    return f'{local_part[0]}***@{domain}' if local_part else f'***@{domain}'
+
+
+class ProjectCreatorSerializer(UserSimpleSerializer):
+    email = serializers.SerializerMethodField()
+
+    @staticmethod
+    def get_email(user):
+        return mask_project_creator_email(user.email)
+
+
 class ProjectSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     """ Serializer get numbers from project queryset annotation,
         make sure, that you use correct one(Project.objects.with_counts())
@@ -39,7 +57,7 @@ class ProjectSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     skipped_annotations_number = serializers.IntegerField(default=None, read_only=True,
                                                       help_text='Skipped by collaborators annotation number in project')
     num_tasks_with_annotations = serializers.IntegerField(default=None, read_only=True, help_text='Tasks with annotations count')
-    created_by = UserSimpleSerializer(default=CreatedByFromContext())
+    created_by = ProjectCreatorSerializer(default=CreatedByFromContext())
 
     parsed_label_config = SerializerMethodField(default=None, read_only=True,
                                                 help_text='JSON-formatted labeling configuration')

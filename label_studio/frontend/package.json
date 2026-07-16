@@ -18,7 +18,6 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "postcss": "8.3.11",
     "@babel/core": "^7.12.13",
     "@babel/plugin-proposal-class-properties": "^7.12.13",
     "@babel/plugin-proposal-nullish-coalescing-operator": "^7.12.13",
@@ -28,6 +27,7 @@
     "@babel/preset-react": "^7.12.13",
     "@babel/preset-typescript": "^7.13.0",
     "@babel/runtime": "^7.12.13",
+    "@noble/ciphers": "^1.2.1",
     "@svgr/webpack": "^5.5.0",
     "@types/chroma-js": "^2.1.3",
     "@types/enzyme": "^3.10.8",
@@ -66,6 +66,7 @@
     "mini-css-extract-plugin": "^1.3.7",
     "mkdirp": "^1.0.4",
     "node-fetch": "^2.6.1",
+    "postcss": "8.3.11",
     "puppeteer": "^8.0.0",
     "react": "^17.0.1",
     "react-codemirror2": "^7.2.1",
@@ -89,6 +90,7 @@
     "webpack-cli": "^4.5.0"
   },
   "overrides": {
+    "cheerio": "1.0.0-rc.12",
     "postcss": "8.3.11"
   },
   "babel": {

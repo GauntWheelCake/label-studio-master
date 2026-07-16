@@ -105,6 +105,7 @@ def settings(request):
         'hostname': django_settings.HOSTNAME,
         'ssoHost': sso_host,
         'ssoDebugMock': django_settings.SSO_DEBUG_MOCK,
+        'projectConfigEncryptionKey': getattr(django_settings, 'PROJECT_CONFIG_ENCRYPTION_KEY', ''),
         'mlHost': getattr(django_settings, 'ML_HOST', ''),
         'mlImageHost': getattr(django_settings, 'ML_IMAGE_HOST', ''),
         'mlTextHost': getattr(django_settings, 'ML_TEXT_HOST', ''),
